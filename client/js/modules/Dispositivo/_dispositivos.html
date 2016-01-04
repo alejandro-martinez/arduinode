@@ -1,0 +1,8 @@
+<table>
+	<tr ng-repeat="d in dispositivos">
+		<td><a href="/#/dispositivo/update/{{d.id_disp}}">{{d.ip}}</a></td>
+		<td><a href="/#/dispositivo/update/{{d.id_disp}}">{{d.note}}</a></td>
+		<td><a class="button" href="/#/salida/estados/{{d.id_disp}}">Estados</a></td>
+	</tr>
+</table>
+<a class="button" href="/#/dispositivo/create">Nuevo</a>

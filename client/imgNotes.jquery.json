@@ -1,0 +1,38 @@
+{
+  "name": "imgNotes",
+  "title": "jQuery imgNotes",
+  "description": "Extension of the jQuery imgViewer plugin to add markers and notes to the image.",
+  "version": "0.7.6",
+  "homepage": "",
+  "author": {
+    "name": "Wayne Mogg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/waynegm/imgNotes.git"
+  },
+  "bugs": "https://github.com/waynegm/imgNotes/issues",
+  "homepage": "https://github.com/waynegm/imgNotes",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ],
+  "dependencies": {
+    "jquery": ">=1.8",
+    "jquery-ui": ">=1.8",
+    "toe.js":  ">=3.0",
+    "zoetrope": ">=3.0",
+    "jquery-mousewheel": ">=3.0",
+    "jQuery imgViewer": ">=0.7.3"
+  },
+  "keywords": [
+      "jQuery",
+      "plugin",
+      "image",
+      "notes",
+      "zoom",
+      "pan"
+  ]
+}

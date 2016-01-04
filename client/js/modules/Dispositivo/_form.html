@@ -1,0 +1,15 @@
+<div>
+	<form novalidate class="simple-form" name="dispositivoForm" ng-model="model">
+		<input type="hidden" ng-model="model.id_disp" />
+		<label>IP:
+			<br>
+			<input type="text" required ng-model="model.ip" ng-pattern='/\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/' placeholder='xxx.xxx.xxx.xxx'/>
+		</label>
+		<label>Descripción:
+			<br>
+			<textarea ng-model="model.note" required />
+		</label>
+		<input class="button" ng-show="model.id_disp" type="button" ng-click="delete(model.id_disp)" value="Eliminar" />
+		<input class="button" ng-disabled="dispositivoForm.$valid" type="submit" ng-click="save(model)" value="Guardar" />
+	</form>
+</div>

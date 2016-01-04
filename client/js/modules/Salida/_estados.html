@@ -1,0 +1,13 @@
+<ul id="estados">
+	<li ng-repeat="d in estados">
+		<span ng-repeat="(key, val) in d">
+			<h4 ng-show="{{key == 'salida'}}">{{val}}</h4>
+			<label class="switch">
+				<input class="switch-input" ng-checked="{{d.estado}}" type="checkbox" />
+				<span class="switch-label" data-on="Prendida" data-off="Apagada"></span>
+				<span class="switch-handle"></span>
+			</label>
+		</span>
+	</li>
+</ul>
+<a class="button" href="/#/dispositivo/create">Nuevo</a>

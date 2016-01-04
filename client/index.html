@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="Arduinode">
+	<head>
+		<title>Arduino Node</title>
+		<!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" media="all">-->
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="css/main.css" media="all">
+		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog.min.css" media="all">
+		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css" media="all">
+		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-plain.min.css" media="all">
+		<script type="text/javascript" src="libs/jquery/jquery.js"></script>
+		<script type="text/javascript" src="libs/jquery/jquery-ui.js"></script>
+		<script type="text/javascript" src="libs/jquery.fs.zoetrope.min.js"></script>
+		<script type="text/javascript" src="libs/toe.min.js"></script>
+		<script type="text/javascript" src="libs/jquery.mousewheel.min.js"></script>
+		<script type="text/javascript" src="libs/imgViewer.min.js"></script>
+		<script type="text/javascript" src="libs/imgNotes.js"></script>
+		<script src="bower_components/socket.io-client/socket.io.js"></script>
+		<script src="bower_components/angular/angular.min.js"></script>
+		<script src="bower_components/angular-route/angular-route.min.js"></script>
+		<script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
+		<script src="js/modules/app.js"></script>
+		<script src="js/modules/Socket/Socket.js"></script>
+		<script src="js/modules/Salida/Salida.js"></script>
+		<script src="js/modules/Home/Home.js"></script>
+		<script src="js/modules/Dispositivo/Dispositivo.js"></script>
+		<script src="js/modules/ImgNotes/ImgNotes.js"></script>
+	</head>
+	<body ng-controller="MainCtrl">
+		<div ng-view></div>
+	</body>
+</html>
