@@ -111,5 +111,14 @@ http.listen(app.get('port'), function()
 				loopGetEstadosSalida(i);
 			});
 		});
+		socket.on('toggleSalida', function(nro_salida)
+		{
+			console.log(nro_salida);
+			//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
+			socketArduino.getSalidas(function(salidas)
+			{
+			}
+		});
+
 	});
 });

@@ -28,6 +28,14 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				callback(error)
 			});
 		},
+		toggle: function(nro_salida, callback)
+		{
+			Socket.send('toggleSalida',nro_salida);
+			Socket.listen('toggleSalida', function(response)
+			{
+				callback(response);
+			});
+		},
 		getSalidasArduino: function(callback)
 		{
 			Socket.send('getSalidas');
@@ -173,6 +181,13 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				console.log('Estado:' + data);
 			});
 		*/
+		$scope.toggle = function(nro_salida)
+		{
+			Salida.toggle(nro_salida, function(response)
+			{
+				console.log("Response tooggle:",response);
+			});
+		});
 		Salida.getSalidasArduino(function(salidas)
 		{
 			console.log(salidas);
