@@ -94,9 +94,10 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 	}
 	return Dispositivo;
 }])
-.controller('DispositivoCtrl', ['$scope','ImgNotesFct', 'SocketIO','DispositivoFct',
-	function ($scope,ImgNotes, Socket, Dispositivo)
+.controller('DispositivoCtrl', ['$rootScope','$scope','ImgNotesFct', 'SocketIO','DispositivoFct',
+	function ($rootScope,$scope,ImgNotes, Socket, Dispositivo)
 	{
+		$rootScope.currentMenu = 'Dispositivos';
 		/*	s = io(window.location.origin);
 			s.emit({'param': 'G'});
 			s.on('data', function(data){

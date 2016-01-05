@@ -40,9 +40,11 @@
 			<div class="overlay" ng-class="{show:showmenu}" ng-swipe-left="showmenu=false"></div>
 			<div id="header">
 				<button ng-click="toggleMenu()"></button>
+				<h1>{{currentMenu}}</h1>
 			</div>
+
 			<div id="wrapper"></div>
 		</div>
-		<div ng-view></div>
+		<div id="content" ng-view></div>
 	</body>
 </html>

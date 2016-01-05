@@ -9,8 +9,9 @@ angular.module('Arduinode',
 	'Arduinode.Salida',
 	'Arduinode.Dispositivo'
 ])
-.controller('MainCtrl', ['$scope', function ($scope )
+.controller('MainCtrl', ['$rootScope', function ($scope )
 {
+	$scope.currentMenu = 'Home';
 	$scope.linksMenu = [
 		{link: "salida/a",		texto: "Plano 1"},
 		{link: "salida/b", 	texto: "Plano 2"},

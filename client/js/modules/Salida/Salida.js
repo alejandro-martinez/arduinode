@@ -2,7 +2,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .config(['$routeProvider', function ($routeProvider)
 {
 	$routeProvider
-		.when('/salida/estados/:id_disp', {
+		.when('/salida/estados/:id_disp/:ip', {
 			templateUrl: 'js/modules/Salida/_estados.html',
 			controller: 'EstadosCtrl'
 		})
@@ -82,10 +82,11 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	}
 	return Salida;
 }])
-.controller('SalidaCtrl', ['$routeParams','ngDialog','DispositivoFct',
+.controller('SalidaCtrl', ['$rootScope','$routeParams','ngDialog','DispositivoFct',
 			'$scope','ImgNotesFct','SalidaFct',
-	function ($routeParams, Popup,Dispositivo, $scope,ImgNotes, Salida)
+	function ($rootScope,$routeParams, Popup,Dispositivo, $scope,ImgNotes, Salida)
 	{
+		$rootScope.currentMenu = 'Plano: ' + $routeParams.route;
 		$scope.models = {};
 		$scope.loaded = false;
 		$('#image').attr('src',"/image/planos_p" + $routeParams.route + ".jpg");
@@ -168,9 +169,10 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		};
 	}
 ])
-.controller('EstadosCtrl', ['$routeParams','ngDialog','$scope', 'SalidaFct',
-	function ($routeParams, Popup, $scope, Salida)
+.controller('EstadosCtrl', ['$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
+	function ($rootScope,$routeParams, Popup, $scope, Salida)
 	{
+		$rootScope.currentMenu = 'Salidas del dispositivo: ' + $routeParams.ip;
 		/*	s = io(window.location.origin);
 			s.emit({'param': 'G'});
 			s.on('data', function(data){
