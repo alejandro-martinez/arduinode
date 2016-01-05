@@ -60,6 +60,9 @@ body
 {
 	padding:0 !important;
 }
+html {
+    height: 100%;
+}
 label
 {
 	padding:10px 0;
@@ -104,12 +107,19 @@ input[type="text"],textarea,select
 	text-align: center;
 }
 /*GENERAL*/
+ul.actions
+{
+	position:absolute;
+	bottom:10px;
+	right:10px;
+}
 /*CasaCtrl HOME*/
 button,.button
 {
 	font-size:1em;
 	background: #333;
 	color:#fff;
+	display: block;
 	border-radius: 5px;
 	font-weight: bold;
 	padding: 13px;
