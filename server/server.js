@@ -32,19 +32,19 @@ var socketArduino =
 			callback(this.data);
 		});
 	},
-	getEstado: function(nro_salida, callback)
+	getEstadoSalida: function(nro_salida, callback)
 	{
 		var This = this;
 		this.data = "";
 		this.connect(function(socket)
 		{
 			socket.on('data', function(_data) {
-				This.data += _data.toString();
+				This.data = _data.toString();
 			});
 
 			This.send('S'+nro_salida, function(estado)
 			{
-				callback( estado);
+				callback( This.data );
 			});
 		});
 	},
@@ -87,47 +87,29 @@ http.listen(app.get('port'), function()
 			{
 				var This = this;
 				This.response = [];
-				//Por cada salida, consulto su estado
-				salidas.forEach(function(s)
-				{
-					socketArduino.getEstado(s, function(e)
-					{
-						This.response.push({salida: s, estado: e })
-					});
-				});
-				console.log(salidas);
-				socket.emit('salidas', this.response);
-			});
-		});
 
-		socket.on('estados', function()
-		{
-			//Obtengo las salidas del dispositivo
-			socketArduino.connect(function()
-			{
-				socketArduino.send(salida, function(data)
+				//Por cada salida, consulto su estado
+				var i = 0;
+				var loopGetEstadosSalida = function(nro_salida)
 				{
-					var estado = (data === 0) ? 'off' : 'on';
-					socket.emit('estado',
-					[
-						{salida: salida, estado: estado},
-					]);
-				});
-			});/*
-			salidas.forEach(function(salida)
-			{
-				socketArduino.connect(function()
-				{
-					socketArduino.send(salida, function(data)
+					if (i <= salidas.length)
 					{
-						var estado = (data === 0) ? 'off' : 'on';
-						socket.emit('estado',
-						[
-							{salida: salida, estado: estado},
-						]);
-					});
-				});
-			});*/
+						socketArduino.getEstadoSalida(salidas[i], function(e)
+						{
+							This.response.push({
+								salida: salidas[i],
+								estado: (e == 1) ? 'on' : 'off'
+							})
+							loopGetEstadosSalida(i++);
+						});
+					}
+					else
+					{
+						socket.emit('salidas', This.response);
+					}
+				}
+				loopGetEstadosSalida(i);
+			});
 		});
 	});
 });

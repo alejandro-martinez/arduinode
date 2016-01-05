@@ -1,9 +1,9 @@
 <ul id="estados">
-	<li ng-repeat="d in estados">
-		<span ng-repeat="(key, val) in d">
+	<li ng-repeat="s in salidas">
+		<span ng-repeat="(key, val) in s">
 			<h4 ng-show="{{key == 'salida'}}">{{val}}</h4>
 			<label class="switch">
-				<input class="switch-input" ng-checked="{{d.estado}}" type="checkbox" />
+				<input class="switch-input" ng-checked="{{s.estado == 'on'}}" type="checkbox" />
 				<span class="switch-label" data-on="Prendida" data-off="Apagada"></span>
 				<span class="switch-handle"></span>
 			</label>
