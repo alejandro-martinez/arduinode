@@ -72,7 +72,17 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 		{
 			$http.post('/dispositivo/save/',dispositivo).then(function(response)
 			{
-				window.location.href = '/#/dispositivo';
+				if (response.data && response.data.error)
+				{
+					Popup.open({
+						template:'<h1>' + response.data.error	+ '</h1>',
+						plain:true
+					});
+				}
+				else
+				{
+					window.location.href = '/#/dispositivo';
+				}
 			}, function(error)
 			{
 				Popup.open({

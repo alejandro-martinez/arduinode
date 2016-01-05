@@ -22,15 +22,17 @@ module.exports = function(app)
 	//Crea o modifica dispositivos
 	app.post('/dispositivo/save', function(req, res)
 	{
-		sequelize.models.dispositivos.save(req.body, function(response){
-			res.json(response)
+		sequelize.models.dispositivos.save(req.body, function(response)
+		{
+			res.json(response);
 		})
+
 	});
 
 	//Eliminar
 	app.get('/dispositivo/delete/:id', function(req, res)
 	{
-		sequelize.models.dispositivos.findOne({id_disp: req.params.id }).then(function(salida) 
+		sequelize.models.dispositivos.findOne({id_disp: req.params.id }).then(function(salida)
 		{
 			return salida.destroy();
 		}).then(function(){
