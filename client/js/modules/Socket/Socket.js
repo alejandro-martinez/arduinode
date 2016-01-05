@@ -7,9 +7,9 @@ socketIOModule.factory('SocketIO', ['$rootScope', function ($rootScope )
 	}
 
 	return {
-		send: function(param)
+		send: function(param, _data)
 		{
-			$rootScope.socket.emit(param);
+			$rootScope.socket.emit(param, _data || {});
 		},
 		listen: function(param, callback)
 		{

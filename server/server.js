@@ -42,7 +42,23 @@ var socketArduino =
 				This.data = _data.toString();
 			});
 
-			This.send('S'+nro_salida, function(estado)
+			This.send('S'+nro_salida, function()
+			{
+				callback( This.data );
+			});
+		});
+	},
+	toggleSalida: function(nro_salida,callback)
+	{
+		var This = this;
+		this.data = "";
+		this.connect(function(socket)
+		{
+			socket.on('data', function(_data) {
+				This.data = _data.toString();
+			});
+
+			This.send('T'+nro_salida, function()
 			{
 				callback( This.data );
 			});
@@ -114,10 +130,11 @@ http.listen(app.get('port'), function()
 		socket.on('toggleSalida', function(nro_salida)
 		{
 			console.log(nro_salida);
-			//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
-			socketArduino.getSalidas(function(salidas)
+			//Intercambia el estado de una salida, ON/OFF
+			socketArduino.toggleSalida(nro_salida, function(response)
 			{
-			}
+				socket.emit('toggleSalida', response);
+			});
 		});
 
 	});

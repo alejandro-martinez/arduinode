@@ -181,13 +181,14 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				console.log('Estado:' + data);
 			});
 		*/
-		$scope.toggle = function(nro_salida)
+		$scope.toggle = function(nro_salida, estado)
 		{
+			console.log("Toggle",nro_salida,estado);
 			Salida.toggle(nro_salida, function(response)
 			{
 				console.log("Response tooggle:",response);
 			});
-		});
+		}
 		Salida.getSalidasArduino(function(salidas)
 		{
 			console.log(salidas);
