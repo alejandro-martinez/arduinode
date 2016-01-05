@@ -19,6 +19,7 @@ menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
 	padding: 0;
+	text-decoration: none;
 	border: 0;
 	font-size: 100%;
 	font: inherit;
@@ -31,6 +32,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	font-family: Arial;
 }
 ol, ul {
 	list-style: none;
@@ -57,6 +59,16 @@ th, td {
 body
 {
 	padding:0 !important;
+}
+label
+{
+	padding:10px 0;
+}
+input[type="text"],textarea,select
+{
+	margin-top:5px;
+	border-radius:2px;
+	padding:5px;
 }
 .simple-form
 {
@@ -99,7 +111,8 @@ button,.button
 	background: #333;
 	color:#fff;
 	border-radius: 5px;
-	padding:5px;
+	font-weight: bold;
+	padding: 13px;
 }
 #actions
 {

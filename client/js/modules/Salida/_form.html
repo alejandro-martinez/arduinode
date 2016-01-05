@@ -2,12 +2,11 @@
 	<form novalidate class="simple-form" name="salidaForm" ng-model="salida">
 		<input type="hidden" name="x" ng-model="ngDialogData.x" />
 		<input type="hidden" name="y" ng-model="ngDialogData.y" />
-		<h1>{{(editing) ? "Modificar salida" : "Nueva salida" }}</h1>
-	    <label>Descripción
+		<h3>{{(editing) ? "Modificar salida" : "Nueva salida" }}</h3>
+	    <label>Descripción<br>
 	    	<textarea required ng-model="salida.note"></textarea>
 	    </label>
-	    <br>
-	    <label>Dispositivo
+	    <label>Dispositivo<br>
 	    <select required id="dispositivo_slt" ng-options="d.id_disp as d.note for d in dispositivos" ng-model="salida.id_disp"></select>
 	    </label>
 	    <input class="button" ng-disabled="!salida.nro" type="button" ng-click="delete(salida.nro)" value="Eliminar" />

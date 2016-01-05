@@ -2,23 +2,23 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .config(['$routeProvider', function ($routeProvider)
 {
 	$routeProvider
-		.when('/dispositivo/', 
+		.when('/dispositivo/',
 		{
 			templateUrl: 'js/modules/Dispositivo/_dispositivos.html',
 			controller: 'DispositivoCtrl'
 		})
-		.when('/dispositivo/create', 
+		.when('/dispositivo/create',
 		{
 			templateUrl: 'js/modules/Dispositivo/_form.html',
 			controller: 'FormCtrl'
 		})
-		.when('/dispositivo/update/:id_disp', 
+		.when('/dispositivo/update/:id_disp',
 		{
 			templateUrl: 'js/modules/Dispositivo/_form.html',
 			controller: 'FormCtrl'
 		})
 		.otherwise(
-		{		
+		{
 			redirectTo: '/'
 		});
 }])
@@ -72,15 +72,13 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 		{
 			$http.post('/dispositivo/save/',dispositivo).then(function(response)
 			{
-				Popup.open({
-					template:'<h1>Se ' + (response.data === 1) ? "creó" : "modificó"
-					+ ' el dispositivo</h1>',
-					plain:true
-				});
 				window.location.href = '/#/dispositivo';
 			}, function(error)
 			{
-				callback(error)
+				Popup.open({
+					template:'<h1>' + error	+ '</h1>',
+					plain:true
+				});
 			});
 		}
 	}
@@ -112,17 +110,18 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 	*/
 		$scope.model = {};
 		//actualización
-		if ($routeParams.id_disp) 
+		if ($routeParams.id_disp)
 		{
 			Dispositivo.get($routeParams.id_disp, function(model)
 			{
 				$scope.model = model;
 			});
 		}
-		
+
 		$scope.save = function(model)
 		{
-			Dispositivo.save(model);
+			if (!$scope.dispositivoForm.$invalid)
+				Dispositivo.save(model);
 		};
 
 		$scope.delete = function(id)

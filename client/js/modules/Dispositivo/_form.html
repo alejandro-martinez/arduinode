@@ -10,6 +10,6 @@
 			<textarea ng-model="model.note" required />
 		</label>
 		<input class="button" ng-show="model.id_disp" type="button" ng-click="delete(model.id_disp)" value="Eliminar" />
-		<input class="button" ng-disabled="dispositivoForm.$valid" type="submit" ng-click="save(model)" value="Guardar" />
+		<input class="button" type="submit" ng-click="save(model)" value="Guardar" />
 	</form>
 </div>
