@@ -22,11 +22,26 @@
 		<script src="js/modules/app.js"></script>
 		<script src="js/modules/Socket/Socket.js"></script>
 		<script src="js/modules/Salida/Salida.js"></script>
-		<script src="js/modules/Home/Home.js"></script>
 		<script src="js/modules/Dispositivo/Dispositivo.js"></script>
 		<script src="js/modules/ImgNotes/ImgNotes.js"></script>
+		<script src="bower_components/angular-touch/angular-touch.min.js"></script>
 	</head>
 	<body ng-controller="MainCtrl">
+		<div id="menuleft" ng-class="{hide:!showmenu,slide:showmenu}">
+			<ul>
+				<li ng-repeat="m in linksMenu">
+					<a ng-click="toggleMenu()" href="/#/{{m.link}}">{{m.texto}}</a>
+				</li>
+			</ul>
+		</div>
+
+		<div id="all" ng-class="{hide:showmenu,slide:!showmenu}">
+			<div class="overlay" ng-class="{show:showmenu}" ng-swipe-left="showmenu=false"></div>
+			<div id="header">
+				<button ng-click="toggleMenu()"></button>
+			</div>
+			<div id="wrapper"></div>
+		</div>
 		<div ng-view></div>
 	</body>
 </html>

@@ -108,7 +108,7 @@ http.listen(app.get('port'), function()
 				var i = 0;
 				var loopGetEstadosSalida = function(nro_salida)
 				{
-					if (i <= salidas.length)
+					if (i < salidas.length)
 					{
 						socketArduino.getEstadoSalida(salidas[i], function(e)
 						{

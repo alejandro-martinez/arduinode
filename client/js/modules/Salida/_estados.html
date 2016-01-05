@@ -1,14 +1,8 @@
 <ul id="estados">
 	<li ng-repeat="s in salidas">
 		<span ng-repeat="(key, val) in s">
-			<h4 ng-show="{{key == 'salida'}}">{{val}}</h4>
-			<label class="switch">
-				<input class="switch-input" ng-model="s.estado" type="checkbox"
-				ng-checked="{{s.estado == 'on'}}"
-				ng-click="toggle(s.salida, s.estado)" />
-				<span class="switch-label" data-on="Prendida" data-off="Apagada"></span>
-				<span class="switch-handle"></span>
-			</label>
+			<h4 ng-show="{{key == 'salida'}}">Salida: {{val}}</h4>
+			<div ng-include="(key=='estado') ? getTemplate() : null"></div>
 		</span>
 	</li>
 </ul>
