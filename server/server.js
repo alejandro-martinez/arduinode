@@ -1,3 +1,4 @@
+'use strict';
 //Dependencias
 var express = require('express'),
 	app = express(),
@@ -14,13 +15,15 @@ var socketArduino =
 {
 	client: {},
 	socket: {},
-	connect: function(callback)
+	connect: function(ip, callback)
 	{
 		var This = this;
-		this.client = net.connect({
-			host: '192.168.2.200',
+		this.client = net.connect(
+		{
+			host: ip,
 			port: 8000
-		},function() {
+		},function()
+		{
 			callback(this);
 		});
 	},
@@ -32,11 +35,12 @@ var socketArduino =
 			callback(this.data);
 		});
 	},
-	getEstadoSalida: function(nro_salida, callback)
+	getEstadoSalida: function(ip, nro_salida, callback)
 	{
 		var This = this;
 		this.data = "";
-		this.connect(function(socket)
+		console.log("estado salida de"+ip)
+		this.connect(ip,function(socket)
 		{
 			socket.on('data', function(_data) {
 				This.data = _data.toString();
@@ -48,28 +52,30 @@ var socketArduino =
 			});
 		});
 	},
-	toggleSalida: function(nro_salida,callback)
+	toggleSalida: function(params, callback)
 	{
 		var This = this;
 		this.data = "";
-		this.connect(function(socket)
+
+		this.connect(params.ip, function(socket)
 		{
 			socket.on('data', function(_data) {
 				This.data = _data.toString();
 			});
 
-			This.send('T'+nro_salida, function()
+			This.send('T'+params.salida, function()
 			{
 				callback( This.data );
 			});
 		});
 	},
-	getSalidas: function(callback)
+	getSalidas: function(ip,callback)
 	{
 		var This = this;
 		this.data = "";
 		this.salidas = [];
-		this.connect(function(socket)
+		console.log(ip)
+		this.connect(ip, function(socket)
 		{
 			socket.on('data', function(_data) {
 				This.data += _data.toString();
@@ -77,7 +83,7 @@ var socketArduino =
 
 			This.send('G', function(salidas)
 			{
-				for (i=0; i < This.data.length; i+= 2)
+				for (var i=0; i < This.data.length; i+= 2)
 				{
 					This.salidas.push(This.data[i] + This.data[i + 1]);
 				}
@@ -92,16 +98,15 @@ http.listen(app.get('port'), function()
 {
 	console.log('Servidor corriendo en: ' + app.get('port'));
 
-
 	//Socket listener
 	io.on('connection', function(socket)
 	{
-		socket.on('getSalidas', function()
+		socket.on('getSalidas', function(ip)
 		{
+			var This = this;
 			//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
-			socketArduino.getSalidas(function(salidas)
+			socketArduino.getSalidas(ip,function(salidas)
 			{
-				var This = this;
 				This.response = [];
 
 				//Por cada salida, consulto su estado
@@ -110,7 +115,7 @@ http.listen(app.get('port'), function()
 				{
 					if (i < salidas.length)
 					{
-						socketArduino.getEstadoSalida(salidas[i], function(e)
+						socketArduino.getEstadoSalida(ip,salidas[i], function(e)
 						{
 							This.response.push({
 								salida: salidas[i],
@@ -127,11 +132,10 @@ http.listen(app.get('port'), function()
 				loopGetEstadosSalida(i);
 			});
 		});
-		socket.on('toggleSalida', function(nro_salida)
+		socket.on('toggleSalida', function(data)
 		{
-			console.log(nro_salida);
 			//Intercambia el estado de una salida, ON/OFF
-			socketArduino.toggleSalida(nro_salida, function(response)
+			socketArduino.toggleSalida(data, function(response)
 			{
 				socket.emit('toggleSalida', response);
 			});

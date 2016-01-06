@@ -2,7 +2,7 @@
 	<li ng-repeat="s in salidas">
 		<span ng-repeat="(key, val) in s">
 			<h4 ng-show="{{key == 'salida'}}">Salida: {{val}}</h4>
-			<div ng-include="(key=='estado') ? getTemplate() : null"></div>
+			<div ng-include="(key=='estado') ? getSwitchButton() : null"></div>
 		</span>
 	</li>
 </ul>

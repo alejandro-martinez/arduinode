@@ -9,18 +9,8 @@ angular.module('Arduinode',
 	'Arduinode.Salida',
 	'Arduinode.Dispositivo'
 ])
-.factory("appConfig",["$rootScope", function($rootScope)
+.controller('MainCtrl', ['$scope', function ($scope )
 {
-
-})
-.controller('MainCtrl', ['$rootScope', function ($scope )
-{
-	$rootScope.appConfig = {
-		getModulePath: function(module)
-		{
-			return "js/modules/"+module+"/";
-		}
-	}
 	$scope.currentMenu = 'Home';
 	$scope.linksMenu = [
 		{link: "salida/a",		texto: "Plano 1"},

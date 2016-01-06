@@ -1,15 +1,16 @@
-'use strict';
-
 angular.module('Arduinode.Salida',['Socket','ImgNotes'])
-.config(['$routeProvider', function ($routeProvider)
+.constant('SalidaConfig',{
+		rootFolder: 'js/modules/Salida/'
+})
+.config(['$routeProvider','SalidaConfig', function ($routeProvider,config)
 {
 	$routeProvider
 		.when('/salida/estados/:id_disp/:ip', {
-			templateUrl: 'js/modules/Salida/_estados.html',
+			templateUrl: config.rootFolder+'_estados.html',
 			controller: 'EstadosCtrl'
 		})
 		.when('/salida/:route', {
-			templateUrl: 'js/modules/Salida/_salidas.html',
+			templateUrl: config.rootFolder+'_salidas.html',
 			controller: 'SalidaCtrl'
 		})
 		.otherwise(
@@ -30,13 +31,14 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				callback(error)
 			});
 		},
-		toggle: function(nro_salida, callback)
+		toggle: function(ip, nro_salida, callback)
 		{
-			Socket.send('toggleSalida',nro_salida);
+			Socket.send('toggleSalida',{ip: ip, salida: nro_salida});
 		},
-		getSalidasArduino: function(callback)
+		getSalidasArduino: function(ip, callback)
 		{
-			Socket.send('getSalidas');
+			console.log(ip);
+			Socket.send('getSalidas',ip);
 			Socket.listen('salidas', function(salidas)
 			{
 				callback(salidas);
@@ -84,14 +86,25 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	}
 	return Salida;
 }])
-.controller('SalidaCtrl', ['appConfig','$rootScope','$routeParams','ngDialog','DispositivoFct',
-			'$scope','ImgNotesFct','SalidaFct',
-	function (getModuleFolder, $rootScope,$routeParams, Popup,Dispositivo, $scope,ImgNotes, Salida)
+.factory('SwitchButton',['SalidaConfig', function(config)
+{
+	var Factory = {
+		getTemplate: function()
+		{
+			return config.rootFolder + '_switchButton.html';
+		}
+	}
+	return Factory;
+}])
+.controller('SalidaCtrl', ['SwitchButton','SalidaConfig','$rootScope','$routeParams',
+			'ngDialog','DispositivoFct','$scope','ImgNotesFct','SalidaFct',
+	function (SwitchButton,config,$rootScope,$routeParams, Popup,Dispositivo, $scope,ImgNotes, Salida)
 	{
-		var rootFolder = $rootScope.appConfig.getModuleFolder("Salida");
+		var This = this;
 		$rootScope.currentMenu = 'Plano: ' + $routeParams.route;
 		$scope.models = {};
 		$scope.loaded = false;
+		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$('#image').attr('src',"/image/planos_p" + $routeParams.route + ".jpg");
 
 		Salida.getAll(function(models)
@@ -115,16 +128,21 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			$scope.salida.y = note.rely;
 			Popup.open(
 			{
-				template: rootFolder+'_form.html',
+				template: config.rootFolder+'_form.html',
 				scope: $scope
 			});
 		});
 
 		$(document).off('ImgNotesShow').on('ImgNotesShow', function(e, note)
 		{
+			note.dispositivo = $scope.dispositivos.filter(function(e)
+			{
+				if (e.id_disp == note.id_disp)
+					return e;
+			});
 			Popup.open(
 			{
-				template: rootFolder+'_view.html',
+				template: config.rootFolder+'_view.html',
 				data: note
 			});
 		});
@@ -136,7 +154,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.salida = note;
 				Popup.open(
 				{
-					template: rootFolder+'_form.html',
+					template: config.rootFolder+'_form.html',
 					scope: $scope
 				});
 			}
@@ -172,20 +190,18 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		};
 	}
 ])
-.controller('EstadosCtrl', ['$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
-	function ($rootScope,$routeParams, Popup, $scope, Salida)
+.controller('EstadosCtrl', ['SalidaConfig','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
+	function (config,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
 	{
-		var rootFolder = $rootScope.appConfig.getModuleFolder("Salida");
-		$rootScope.currentMenu = 'Salidas del dispositivo: ' + $routeParams.ip;
-		$scope.getTemplate = function()
-		{
-			return rootFolder + '_switchButton.html';
-		}
+		var This = this;
+		$scope.ipDispositivo = $routeParams.ip;
+		$rootScope.currentMenu = 'Salidas del dispositivo: ' + $scope.ipDispositivo;
+		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$scope.toggle = function(nro_salida, estado)
 		{
-			Salida.toggle(nro_salida);
+			Salida.toggle($scope.ipDispositivo,nro_salida);
 		}
-		Salida.getSalidasArduino(function(salidas)
+		Salida.getSalidasArduino($scope.ipDispositivo,function(salidas)
 		{
 			$scope.salidas = salidas;
 			$scope.$apply();

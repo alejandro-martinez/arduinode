@@ -1,21 +1,24 @@
+'use strict';
 angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
-.config(['$routeProvider', function ($routeProvider)
+.constant('DispositivoConfig',{
+		rootFolder: 'js/modules/Dispositivo/'
+})
+.config(['$routeProvider','DispositivoConfig', function ($routeProvider,config)
 {
-	var rootFolder = $rootScope.appConfig.getModuleFolder("Dispositivo");
 	$routeProvider
 		.when('/dispositivo/',
 		{
-			templateUrl: rootFolder+'_dispositivos.html',
+			templateUrl: config.rootFolder+'_dispositivos.html',
 			controller: 'DispositivoCtrl'
 		})
 		.when('/dispositivo/create',
 		{
-			templateUrl: rootFolder+'_form.html',
+			templateUrl: config.rootFolder+'_form.html',
 			controller: 'FormCtrl'
 		})
 		.when('/dispositivo/update/:id_disp',
 		{
-			templateUrl: rootFolder+'_form.html',
+			templateUrl: config.rootFolder+'_form.html',
 			controller: 'FormCtrl'
 		})
 		.otherwise(
@@ -99,12 +102,6 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 	function ($rootScope,$scope,ImgNotes, Socket, Dispositivo)
 	{
 		$rootScope.currentMenu = 'Dispositivos';
-		/*	s = io(window.location.origin);
-			s.emit({'param': 'G'});
-			s.on('data', function(data){
-				console.log('Estado:' + data);
-			});
-		*/
 		Dispositivo.getAll(function(dispositivos)
 		{
 			$scope.dispositivos = dispositivos;
@@ -114,14 +111,8 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .controller('FormCtrl', ['$routeParams','$scope','SocketIO','DispositivoFct',
 	function ($routeParams, $scope, Socket, Dispositivo)
 	{
-	/*	s = io(window.location.origin);
-		s.emit({'param': 'G'});
-		s.on('data', function(data){
-			console.log('Estado:' + data);
-		});
-	*/
 		$scope.model = {};
-		//actualización
+
 		if ($routeParams.id_disp)
 		{
 			Dispositivo.get($routeParams.id_disp, function(model)
