@@ -104,6 +104,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		$rootScope.currentMenu = 'Plano: ' + $routeParams.route;
 		$scope.models = {};
 		$scope.loaded = false;
+		console.log(SwitchButton);
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$('#image').attr('src',"/image/planos_p" + $routeParams.route + ".jpg");
 
@@ -159,11 +160,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				});
 			}
 		});
-		$scope.export = function()
-		{
-			$scope.models = ImgNotes.getMarkers();
-			Salida.save( $scope.models );
-		}
 		$scope.delete = function(id)
 		{
 			Salida.delete(id, function(r)

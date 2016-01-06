@@ -135,7 +135,17 @@ button,.button
 	right: 0;
 	bottom: 0;
 }
-#actions button
+.inlineButtons
+{
+	width:100%;
+	overflow:hidden;
+}
+.inlineButtons li
+{
+	width:50%;
+	float:left;
+}
+#actions button,ul.inlineButtons .button
 {
 	display:inline-block;
 }

@@ -7,9 +7,20 @@
 	    	<textarea required ng-model="salida.note"></textarea>
 	    </label>
 	    <label>Dispositivo<br>
-	    <select required id="dispositivo_slt" ng-options="d.id_disp as d.note for d in dispositivos" ng-model="salida.id_disp"></select>
+	    <select required id="dispositivo_slt"
+	    ng-options="d.id_disp as d.note for d in dispositivos"
+	    ng-model="salida.id_disp">
+	    </select>
 	    </label>
-	    <input class="button" ng-disabled="!salida.nro" type="button" ng-click="delete(salida.nro)" value="Eliminar" />
-	    <input class="button" ng-disabled="!salidaForm.$valid" type="submit" ng-click="save(salidaForm)" value="Guardar" />
+	    <ul class="inlineButtons">
+			<li><input class="button" ng-disabled="!salida.nro"
+			type="button" ng-click="delete(salida.nro)"
+			value="Eliminar" />
+			</li>
+			<li>
+			<input class="button" ng-disabled="!salidaForm.$valid"
+			type="submit" ng-click="save(salidaForm)" value="Guardar" />
+			</li>
+	    </div>
 	</form>
 </div>
