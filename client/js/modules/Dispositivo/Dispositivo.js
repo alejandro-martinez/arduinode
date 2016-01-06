@@ -1,20 +1,21 @@
 angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .config(['$routeProvider', function ($routeProvider)
 {
+	var rootFolder = $rootScope.appConfig.getModuleFolder("Dispositivo");
 	$routeProvider
 		.when('/dispositivo/',
 		{
-			templateUrl: 'js/modules/Dispositivo/_dispositivos.html',
+			templateUrl: rootFolder+'_dispositivos.html',
 			controller: 'DispositivoCtrl'
 		})
 		.when('/dispositivo/create',
 		{
-			templateUrl: 'js/modules/Dispositivo/_form.html',
+			templateUrl: rootFolder+'_form.html',
 			controller: 'FormCtrl'
 		})
 		.when('/dispositivo/update/:id_disp',
 		{
-			templateUrl: 'js/modules/Dispositivo/_form.html',
+			templateUrl: rootFolder+'_form.html',
 			controller: 'FormCtrl'
 		})
 		.otherwise(

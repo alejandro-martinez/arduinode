@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .config(['$routeProvider', function ($routeProvider)
 {
@@ -82,10 +84,11 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	}
 	return Salida;
 }])
-.controller('SalidaCtrl', ['$rootScope','$routeParams','ngDialog','DispositivoFct',
+.controller('SalidaCtrl', ['appConfig','$rootScope','$routeParams','ngDialog','DispositivoFct',
 			'$scope','ImgNotesFct','SalidaFct',
-	function ($rootScope,$routeParams, Popup,Dispositivo, $scope,ImgNotes, Salida)
+	function (getModuleFolder, $rootScope,$routeParams, Popup,Dispositivo, $scope,ImgNotes, Salida)
 	{
+		var rootFolder = $rootScope.appConfig.getModuleFolder("Salida");
 		$rootScope.currentMenu = 'Plano: ' + $routeParams.route;
 		$scope.models = {};
 		$scope.loaded = false;
@@ -112,7 +115,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			$scope.salida.y = note.rely;
 			Popup.open(
 			{
-				template: 'js/modules/Salida/_form.html',
+				template: rootFolder+'_form.html',
 				scope: $scope
 			});
 		});
@@ -121,7 +124,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			Popup.open(
 			{
-				template: 'js/modules/Salida/_view.html',
+				template: rootFolder+'_view.html',
 				data: note
 			});
 		});
@@ -133,7 +136,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.salida = note;
 				Popup.open(
 				{
-					template: 'js/modules/Salida/_form.html',
+					template: rootFolder+'_form.html',
 					scope: $scope
 				});
 			}
@@ -172,16 +175,11 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .controller('EstadosCtrl', ['$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
 	function ($rootScope,$routeParams, Popup, $scope, Salida)
 	{
+		var rootFolder = $rootScope.appConfig.getModuleFolder("Salida");
 		$rootScope.currentMenu = 'Salidas del dispositivo: ' + $routeParams.ip;
-		/*	s = io(window.location.origin);
-			s.emit({'param': 'G'});
-			s.on('data', function(data){
-				console.log('Estado:' + data);
-			});
-		*/
 		$scope.getTemplate = function()
 		{
-			return 'js/modules/Salida/_switchButton.html';
+			return rootFolder + '_switchButton.html';
 		}
 		$scope.toggle = function(nro_salida, estado)
 		{
