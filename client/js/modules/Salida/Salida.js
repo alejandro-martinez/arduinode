@@ -35,9 +35,10 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			Socket.send('toggleSalida',{ip: ip, salida: nro_salida});
 		},
-		getSalidasArduino: function(param, callback)
+		getSalidasArduino: function(params, callback)
 		{
-			Socket.send('getSalidas',param);
+			console.log(params);
+			Socket.send('getSalidas',params);
 			Socket.listen('salidas', function(salidas)
 			{
 				callback(salidas);
@@ -238,7 +239,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			Salida.toggle($scope.ipDispositivo,nro_salida);
 		}
-		Salida.getSalidasArduino($scope.ipDispositivo,function(salidas)
+		Salida.getSalidasArduino({ip: $scope.ipDispositivo},function(salidas)
 		{
 			//Actualiza combo de salidas
 			//para quitar las que ya fueron agregadas

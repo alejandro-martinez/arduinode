@@ -23,6 +23,7 @@ http.listen(app.get('port'), function()
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
+			console.log(params)
 			arduino.getSalidas(params,function(salidas)
 			{
 				params.salidas = salidas;
