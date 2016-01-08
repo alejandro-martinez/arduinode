@@ -1,7 +1,8 @@
 <label class="switch">
 	<input class="switch-input" ng-model="s.estado" type="checkbox"
+	ng-click="toggle(s.nro_salida)"
 	ng-checked="{{s.estado == 'on'}}"
-	ng-click="toggle(s.nro_salida, s.estado)" />
+/>
 	<span class="switch-label" data-on="Encendida" data-off="Apagada"></span>
 	<span class="switch-handle"></span>
 </label>

@@ -31,15 +31,20 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				callback(error)
 			});
 		},
-		toggle: function(ip, nro_salida, callback)
+		toggleOnOff: function(ip, nro_salida, callback)
 		{
 			Socket.send('toggleSalida',{ip: ip, salida: nro_salida});
+			Socket.listen('responseToggle', function(estado)
+			{
+				callback(estado);
+			});
 		},
 		getSalidasArduino: function(params, callback)
 		{
 			Socket.send('getSalidas',params);
 			Socket.listen('salidas', function(salidas)
 			{
+				console.log(salidas);
 				callback(salidas);
 			});
 		},
@@ -231,14 +236,26 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .controller('EstadosCtrl', ['SalidaConfig','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
 	function (config,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
 	{
+		$scope.loading = true;
 		$scope.ipDispositivo = $routeParams.ip;
 		$rootScope.currentMenu = 'Salidas del dispositivo: ' + $scope.ipDispositivo;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
+
 		$scope.toggle = function(nro_salida, estado)
 		{
-			Salida.toggle($scope.ipDispositivo,nro_salida);
-		}
 
+			Salida.toggleOnOff( $scope.ipDispositivo, nro_salida, function(_estado)
+			{
+				var salida = $scope.salidas.filter(function(s)
+				{
+					return s.nro_salida === nro_salida;
+				})
+				//Esta funcoin se ejecuta varias veces, arreglar
+				//Aca deberia tildar o destildar el checkbox segun
+				//El resultado de toggle
+		//		salida[0].estado = (_estado == 1 ) ? 'on' : 'off';
+			});
+		}
 		Salida.getSalidasArduino(
 		{
 			ip		: $scope.ipDispositivo,
@@ -246,6 +263,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		},
 		function(salidas)
 		{
+			$scope.loading = false;
 			$scope.salidas = salidas;
 			$scope.$apply();
 		});

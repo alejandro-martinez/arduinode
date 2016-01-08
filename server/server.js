@@ -55,7 +55,8 @@ http.listen(app.get('port'), function()
 		{
 			arduino.toggleSalida(params, function(response)
 			{
-				socket.emit('toggleSalida', response);
+				console.log("Resp toggle",response);
+				socket.emit('responseToggle', response);
 			});
 		});
 	});

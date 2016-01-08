@@ -56,7 +56,7 @@ module.exports = function()
 				callback( This.data );
 			});
 		},
-		//Intercambia el estado de una salida
+		// Intercambia el estado de una salida
 		// (Si está en ON, la pasa a OFF y viceversa)
 		toggleSalida: function(params, callback)
 		{
@@ -65,7 +65,7 @@ module.exports = function()
 			params.command = 'T'+params.salida;
 			this.send(params, function()
 			{
-				callback( This.data );
+				callback(This.data);
 			});
 		},
 		//Devuelve listado de salidas de una placa
