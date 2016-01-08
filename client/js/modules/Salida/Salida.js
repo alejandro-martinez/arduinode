@@ -35,10 +35,9 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			Socket.send('toggleSalida',{ip: ip, salida: nro_salida});
 		},
-		getSalidasArduino: function(ip, callback)
+		getSalidasArduino: function(param, callback)
 		{
-			console.log(ip);
-			Socket.send('getSalidas',ip);
+			Socket.send('getSalidas',param);
 			Socket.listen('salidas', function(salidas)
 			{
 				callback(salidas);
@@ -73,6 +72,28 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				callback(estados);
 			});
 		},
+		getSalidasDisponibles: function(todas, ocupadas)
+		{
+			var salidasOcupadas = function(id_disp,nro)
+			{
+				var found = $.grep(ocupadas, function (item) {
+					return item.id_disp == id_disp && item.nro_salida==nro;
+				});
+				return found;
+			}
+
+			var salidasDisponibles = todas.filter(function(s)
+			{
+
+				var found = salidasOcupadas(s.id_disp,s.nro_salida);
+				if (found.length === 0)
+				{
+					return s;
+				}
+			});
+
+			return salidasDisponibles;
+		},
 		save: function( salida, callback)
 		{
 			$http.post('/salida/save/', salida).then(function(response)
@@ -88,7 +109,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 }])
 .factory('SwitchButton',['SalidaConfig', function(config)
 {
-	var Factory = {
+	var Factory =
+	{
 		getTemplate: function()
 		{
 			return config.rootFolder + '_switchButton.html';
@@ -98,16 +120,14 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 }])
 .controller('SalidaCtrl', ['SwitchButton','SalidaConfig','$rootScope','$routeParams',
 			'ngDialog','DispositivoFct','$scope','ImgNotesFct','SalidaFct',
-	function (SwitchButton,config,$rootScope,$routeParams, Popup,Dispositivo, $scope,ImgNotes, Salida)
+	function (SwitchButton,config,$rootScope,$routeParams, Popup,Dispositivo,
+			  $scope,ImgNotes, Salida)
 	{
-		var This = this;
 		$rootScope.currentMenu = 'Plano: ' + $routeParams.route;
 		$scope.models = {};
-		$scope.loaded = false;
-		console.log(SwitchButton);
 		$scope.getSwitchButton = SwitchButton.getTemplate;
-		$('#image').attr('src',"/image/planos_p" + $routeParams.route + ".jpg");
 
+		$('#image').attr('src',"/image/planos_p" + $routeParams.route + ".jpg");
 		Salida.getAll(function(models)
 		{
 			$scope.models = models.data;
@@ -173,6 +193,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		}
 		$scope.save = function()
 		{
+			$scope.salida.id_disp = $scope.disp.id_disp;
 			Salida.save($scope.salida, function(r)
 			{
 				Popup.close();
@@ -182,14 +203,34 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 					ImgNotes.addMarker(r.model);
 				}
 				ImgNotes.refreshMarker($scope.salida.note);
+				//Actualiza combo de salidas
+				//para quitar las que ya fueron agregadas
+				$scope.salidas = Salida.getSalidasDisponibles($scope.salidas, ImgNotes.getMarkers());
 			});
 		};
+		$scope.disp = {};
+		$scope.changeDispositivo = function()
+		{
+			var disp = $scope.dispositivos.filter(function(e)
+			{
+				if (e.id_disp == $scope.disp.id_disp)
+				{
+					return e;
+				}
+			});
+			Salida.getSalidasArduino( disp[0], function(salidas)
+			{
+				//Actualiza combo de salidas
+				//para quitar las que ya fueron agregadas
+				$scope.salidas = Salida.getSalidasDisponibles(salidas, $scope.models);
+				$scope.$apply();
+			});
+		}
 	}
 ])
 .controller('EstadosCtrl', ['SalidaConfig','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
 	function (config,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
 	{
-		var This = this;
 		$scope.ipDispositivo = $routeParams.ip;
 		$rootScope.currentMenu = 'Salidas del dispositivo: ' + $scope.ipDispositivo;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
@@ -199,6 +240,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		}
 		Salida.getSalidasArduino($scope.ipDispositivo,function(salidas)
 		{
+			//Actualiza combo de salidas
+			//para quitar las que ya fueron agregadas
 			$scope.salidas = salidas;
 			$scope.$apply();
 		});

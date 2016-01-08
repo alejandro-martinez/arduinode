@@ -5,7 +5,6 @@ angular.module('ImgNotes',[])
 	return {
 		init: function($scope)
 		{
-			var This = this;
 			this.tag = $scope.tag;
 			$scope.btEditText = 'Editar';
 			$scope.toggleEdit = function()
@@ -17,14 +16,8 @@ angular.module('ImgNotes',[])
 			}
 			$scope.zoom = function(p)
 			{
-				zoomActual = this.tag.imgNotes("option","zoom");
-				if (p === 1)
-				{
-					zoomActual+= 0.3;
-				}
-				else {
-					zoomActual-= 0.3;
-				}
+				var zoomActual = this.tag.imgNotes("option","zoom");
+				zoomActual+= (p === 1) ? 0.3 : -0.3;
 				this.tag.imgNotes("option","zoom", zoomActual);
 			}
 		},
@@ -32,12 +25,12 @@ angular.module('ImgNotes',[])
 		{
 			var models = this.getMarkers();
 			models.push({
-				id_disp: data.id_disp, 
-				x: data.x, 
-				y: data.y, 
-				nro: data.nro_salida, 
+				id_disp: data.id_disp,
+				x: data.x,
+				y: data.y,
+				nro: data.nro_salida,
 				note:data.note
-			});	
+			});
 			this.tag.imgNotes("clear");
 			this.setMarkers(models);
 		},

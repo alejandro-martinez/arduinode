@@ -1,10 +1,10 @@
 <div id="imgdiv" ng-app="ImgNotes">
 	<input type="hidden" ng-model="model.id_disp" value="1"/>
 	<input type="hidden" ng-model="model.ipDispositivo" />
-	<div id="actions">
-		<button ng-click="zoom(0)">-</button>
-		<button ng-click="zoom(1)">+</button>
-		<button ng-click="toggleEdit()">{{btEditText}}</button>
-	</div>
+	<ul class="inlineButtons" id="actionsPage">
+		<li><button ng-click="zoom(0)">-</button></li>
+		<li><button ng-click="zoom(1)">+</button></li>
+		<li><button ng-click="toggleEdit()">{{btEditText}}</button></li>
+	</ul>
 	<img id="image" />
 </div>

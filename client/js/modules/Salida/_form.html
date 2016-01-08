@@ -3,16 +3,21 @@
 		<input type="hidden" name="x" ng-model="ngDialogData.x" />
 		<input type="hidden" name="y" ng-model="ngDialogData.y" />
 		<h3>{{(editing) ? "Modificar salida" : "Nueva salida" }}</h3>
+	    <label>Dispositivo<br>
+	    <select required id="dispositivo_slt"
+	    ng-options="disp.id_disp as disp.note for disp in dispositivos"
+	    ng-change="changeDispositivo()"
+	    ng-model="disp.id_disp" name="dispositivo_id">
+	    </select>
+	    </label>
+	    <label>Salidas<br>
+	     <select ng-options="salida.nro_salida as salida.note for salida in salidas"
+	     ng-model="salida.nro_salida"></select>
+	    </label>
 	    <label>Descripción<br>
 	    	<textarea required ng-model="salida.note"></textarea>
 	    </label>
-	    <label>Dispositivo<br>
-	    <select required id="dispositivo_slt"
-	    ng-options="d.id_disp as d.note for d in dispositivos"
-	    ng-model="salida.id_disp">
-	    </select>
-	    </label>
-	    <ul class="inlineButtons">
+	    <ul class="inlineButtons actionsPopup">
 			<li><input class="button" ng-disabled="!salida.nro"
 			type="button" ng-click="delete(salida.nro)"
 			value="Eliminar" />
@@ -21,6 +26,7 @@
 			<input class="button" ng-disabled="!salidaForm.$valid"
 			type="submit" ng-click="save(salidaForm)" value="Guardar" />
 			</li>
+		</ul>
 	    </div>
 	</form>
 </div>

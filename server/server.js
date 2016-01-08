@@ -21,14 +21,11 @@ http.listen(app.get('port'), function()
 	io.on('connection', function(socket)
 	{
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
-		socket.on('getSalidas', function(_ip)
+		socket.on('getSalidas', function(params)
 		{
-			var params = {ip: _ip}
-
 			arduino.getSalidas(params,function(salidas)
 			{
 				params.salidas = salidas;
-
 				//Las salidas vienen
 
 				//Consulto los estados(ON/OFF) de cada salida

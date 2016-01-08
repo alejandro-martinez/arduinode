@@ -79,8 +79,6 @@ input[type="text"],textarea,select
 }
 .simple-form
 {
-	width:80%;
-	padding:10px;
 }
 .simple-form .ng-invalid
 {
@@ -111,9 +109,9 @@ input[type="text"],textarea,select
 	text-align: center;
 }
 /*GENERAL*/
-ul.actions
+ul.actionsPopup
 {
-	position:absolute;
+	/* position:absolute; */
 	bottom:10px;
 	right:10px;
 }
@@ -128,12 +126,14 @@ button,.button
 	font-weight: bold;
 	padding: 13px;
 }
-#actions
+#actionsPage
 {
 	float:right;
-	position: absolute;
+	position: fixed;
 	right: 0;
-	bottom: 0;
+	bottom: 10px;
+	z-index: 1;
+	width: 181px;
 }
 .inlineButtons
 {
@@ -142,8 +142,9 @@ button,.button
 }
 .inlineButtons li
 {
-	width:50%;
-	float:left;
+	float: left;
+	text-align:right;
+	margin-right: 10px;
 }
 #actions button,ul.inlineButtons .button
 {

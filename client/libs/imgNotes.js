@@ -25,7 +25,7 @@
  *	See the examples for a more elaborate alternative that includes a WYSIWYG editor
  */
 			onEdit: function(ev, elem) {
-				
+
 				var $elem = $(elem);
 				$(document).on('UpdateImgNotesMarker', function(e, note)
 				{
@@ -71,10 +71,9 @@
 				});
 			}
 		},
-		
-		
+
+
 		_create: function() {
-			console.log("Crearte")
 			var self = this;
 			if (!this.element.is("img")) {
 				$.error('imgNotes plugin can only be applied to img elements');
@@ -93,10 +92,10 @@
 									ev.preventDefault();
 									var rpos = imgv.cursorToImg(ev.pageX, ev.pageY);
 
-									if (rpos) 
+									if (rpos)
 									{
 										$(document).trigger('ImgNotesClick',[{
-											x: rpos.x, 
+											x: rpos.x,
 											y: rpos.y
 										}])
 										//var elem = self.addNote(id_disp,);
@@ -116,13 +115,13 @@
 		},
 /*
  *	Remove the plugin
- */  
+ */
 		destroy: function() {
 			this.clear();
 			$(this.img).imgViewer("destroy");
 			$.Widget.prototype.destroy.call(this);
 		},
-		
+
 		_setOption: function(key, value) {
 			switch(key) {
 				case 'vAll':
@@ -148,11 +147,9 @@
 			}
 			switch(key) {
 				case 'zoom':
-					console.log("zoom");
 					$(this.img).imgViewer("option", "zoom", value);
 					break;
 				case 'zoomStep':
-					console.log("zoomStep");
 					$(this.img).imgViewer("option", "zoomStep", value);
 					break;
 				case 'zoomable':
@@ -166,19 +163,18 @@
 		panTo: function(relx, rely) {
 			return $(this.img).imgViewer("panTo", relx, rely);
 		},
-			
+
 /*
  *	Add a note
  */
 		addNote: function(id_disp,relx, rely, text,nro_salida) {
-			console.log("añadiendo")
 			var self = this;
 			this.noteCount++;
 			var elem = this.options.onAdd.call(this);
 			var $elem = $(elem);
 			$(this.img).imgViewer("addElem",elem);
 			$elem.data("id_disp",id_disp).data("nro",nro_salida).data("relx", relx).data("rely", rely).data("note", text);
-			
+
 			switch (this.options.vAll) {
 				case "top": $elem.data("yOffset", 0); break;
 				case "bottom": $elem.data("yOffset", $elem.height()); break;
@@ -190,7 +186,6 @@
 				default: $elem.data("xOffset", Math.round($elem.width()/2));
 			}
 			$elem.click(function(ev) {
-				console.log("editar o ver")
 				ev.preventDefault();
 				if (self.options.canEdit) {
 					self._trigger("onEdit", ev, elem);
@@ -240,8 +235,8 @@
 		import: function(notes) {
 			var self = this;
 			$.each(notes, function() {
-				console.log(this.note)
-				self.addNote(this.id_disp,this.x, this.y, this.note,this.nro_salida);
+				var nro = this.nro_salida || this.nro;
+				self.addNote(this.id_disp,this.x, this.y, this.note,nro);
 			});
 			$(this.img).imgViewer("update");
 		},
@@ -254,7 +249,7 @@
 				var $elem = $(this);
 				notes.push({
 						id_disp: $elem.data("id_disp"),
-						nro: $elem.data("nro"),
+						nro_salida: $elem.data("nro"),
 						x: $elem.data("relx"),
 						y: $elem.data("rely"),
 						note: $elem.data("note")

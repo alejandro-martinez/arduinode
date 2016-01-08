@@ -6,7 +6,6 @@ module.exports = function(sequelize, DataTypes)
 		{
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			autoIncrement: true,
 			primaryKey: true
 		},
 		note:
@@ -17,7 +16,8 @@ module.exports = function(sequelize, DataTypes)
 		id_disp:
 		{
 			type: DataTypes.INTEGER,
-			allowNull: false
+			allowNull: false,
+			primaryKey: true
 		},
 		x:
 		{
@@ -37,44 +37,36 @@ module.exports = function(sequelize, DataTypes)
 		    createOrUpdate: function(model, callback)
 			{
 				var id = model.nro || model.nro_salida;
-				if (!id || id === 0) 
+				sequelize.models.salidas
+				.findOrCreate({
+					where: {nro_salida: id, id_disp: model.id_disp},
+					defaults: model
+				})
+				.catch(function(err)
 				{
-					sequelize.models.salidas
-					.build(model)
-					.save()
-					.then(function(model) 
+					callback({error: err.name})
+				})
+				.spread(function(salida, created) {
+					if (created)
 					{
 						callback({
 							res: 'created',
-							model: model
+							model: salida
 						});
-					}).catch(function(error) 
+					}
+					else
 					{
-						callback('error');
-					})
-				}
-				else 
-				{
-					sequelize.models.salidas.findOne({
-					  where: 
-					  { 
-					  	nro_salida: id
-					  }
-					}).then(function(_model) 
-					{
-						_model.id_disp  = model.id_disp;
-						_model.x		= model.x;
-						_model.y 		= model.y;
-						_model.note 	= model.note;
-
-						_model.save().then(function()
+						salida.note = model.note;
+						salida.x = model.x;
+						salida.y = model.y;
+						salida.save().then(function()
 						{
 							callback({
 								res: 'updated'
 							});
-						})
-					})
-				}
+						});
+					}
+				})
 			}
 		}
 	});
