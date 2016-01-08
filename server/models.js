@@ -8,14 +8,4 @@ module.exports = function(app, db){
         var model = file.substr(0, file.indexOf('.'));
 		module.exports[model] = sequelize.import('./models/' + model);
     });
-
-	// relaciones entre modelos
-	(function(m) {
-		/*m.Project.belongsToMany(m.User, {
-			through : 'UserProject'
-		});
-		m.User.belongsToMany(m.Project, {
-			through : 'UserProject'
-		});*/
-	})(module.exports);
 }

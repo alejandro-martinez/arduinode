@@ -47,15 +47,17 @@ module.exports = function()
 		//Consulta el estado de una salida en particular
 		getEstadoSalida: function(params, callback)
 		{
+
 			var This = this;
 			this.data = "";
-			params.command = 'S'+params.salida;
+			params.command = 'S'+params.salida.nro_salida;
 			this.send(params, function()
 			{
 				callback( This.data );
 			});
 		},
-		//Intercambia el estado de una salida (Si está en ON, la pasa a OFF y viceversa)
+		//Intercambia el estado de una salida
+		// (Si está en ON, la pasa a OFF y viceversa)
 		toggleSalida: function(params, callback)
 		{
 			var This = this;
@@ -77,7 +79,12 @@ module.exports = function()
 			{
 				for (var i=0; i < _data.length; i+= 2)
 				{
-					This.salidas.push(_data[i] + _data[i + 1]);
+					This.salidas.push({
+						nro_salida: _data[i] + _data[i + 1],
+						note: "",
+						estado: "",
+						id_disp: ""
+					});
 				}
 			}
 			this.send(params, function()
@@ -90,8 +97,6 @@ module.exports = function()
 		getEstados: function(params, callback)
 		{
 			var This = this;
-			This.estados = [];
-
 			//Por cada salida, consulto su estado
 			var i = 0;
 			var loop = function(nro_salida)
@@ -101,18 +106,14 @@ module.exports = function()
 					params.salida = params.salidas[i];
 					This.getEstadoSalida(params, function(e)
 					{
-						This.estados.push({
-							note: params.salidas[i],
-							nro_salida: params.salidas[i],
-							estado: (e == 1) ? 'on' : 'off',
-							id_disp: params.id_disp
-						})
+						params.salidas[i].estado = (e == 1) ? 'on' : 'off';
+						params.salidas[i].id_disp = params.id_disp;
 						loop(i++);
 					});
 				}
 				else
 				{
-					callback(This.estados);
+					callback(params.salidas);
 				}
 			}
 			loop(i);

@@ -26,6 +26,17 @@ module.exports = function(sequelize, DataTypes)
 		freezeTableName: true,
 		classMethods:
 		{
+			getSalidas: function(id,callback)
+			{
+				var sql = "SELECT salidas.nro_salida,salidas.note FROM salidas, dispositivos ";
+				sql+= " WHERE dispositivos.id_disp = '" + id + "'";
+				sql+= "  AND salidas.id_disp = dispositivos.id_disp";
+				sql+= "  ORDER BY nro_salida ASC";
+				sequelize.query(sql).then(function(salidas)
+				{
+					callback(salidas[0]);
+				})
+			},
 			save: function(model, callback)
 			{
 				sequelize.models.dispositivos

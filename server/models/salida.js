@@ -17,7 +17,8 @@ module.exports = function(sequelize, DataTypes)
 		{
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			primaryKey: true
+			primaryKey: true,
+			references: { model: "dispositivos", key: "id_disp" }
 		},
 		x:
 		{
@@ -38,15 +39,21 @@ module.exports = function(sequelize, DataTypes)
 			{
 				var id = model.nro || model.nro_salida;
 				sequelize.models.salidas
-				.findOrCreate({
-					where: {nro_salida: id, id_disp: model.id_disp},
+				.findOrCreate(
+				{
+					where:
+					{
+						nro_salida: id,
+						id_disp: model.id_disp
+					},
 					defaults: model
 				})
 				.catch(function(err)
 				{
 					callback({error: err.name})
 				})
-				.spread(function(salida, created) {
+				.spread(function(salida, created)
+				{
 					if (created)
 					{
 						callback({

@@ -23,11 +23,24 @@ http.listen(app.get('port'), function()
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
-			console.log(params)
-			arduino.getSalidas(params,function(salidas)
+			arduino.getSalidas(params,function(_salidas)
 			{
-				params.salidas = salidas;
-				//Las salidas vienen
+				//Traigo las descripciones de las salidas, (si existen)
+				sequelize.models.dispositivos.getSalidas(params.id_disp,
+				function(models)
+				{
+					models.forEach(function(x, i)
+					{
+						_salidas.filter(function(s, j,salidas)
+						{
+							if (s.nro_salida == x.nro_salida)
+							{
+								s.note = x.note;
+							}
+						});
+					});
+				});
+				params.salidas = _salidas;
 
 				//Consulto los estados(ON/OFF) de cada salida
 				arduino.getEstados(params, function(data)
