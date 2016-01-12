@@ -28,17 +28,6 @@ http.listen(app.get('port'), function()
 		{
 			arduino.getSalidas(params,function(response, err)
 			{
-				err = 0;
-				response = [{
-					note: 'Luz baño',
-					nro_salida: 23,
-					tipo: 'L'
-				},
-				{
-					note: 'Persiana 1',
-					tipo: 'P',
-					nro_salida: 30
-				}];
 				if (err)
 				{
 					socket.emit('Error', err);
@@ -76,15 +65,15 @@ http.listen(app.get('port'), function()
 		{
 			arduino.movePersiana(params, function(response, err)
 			{
+				console.log("Response",response);
 				if (err)
 				{
 					socket.emit('Error', err);
 				}
 				else
 				{
-					socket.emit('moveResponse', 0);
+					socket.emit('moveResponse', response);
 				}
-
 			});
 		});
 
@@ -99,7 +88,7 @@ http.listen(app.get('port'), function()
 				}
 				else
 				{
-					socket.emit('toggleResponse', 0);
+					socket.emit('toggleResponse', response);
 				}
 
 			});

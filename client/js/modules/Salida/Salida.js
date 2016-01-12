@@ -257,6 +257,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			Salida.toggleLuces($scope.ipDispositivo,nro_salida, function(_estado)
 			{
+				console.log(_estado);
 				$scope.salidas.filter(function(s)
 				{
 					if (s.nro_salida == nro_salida)
@@ -274,7 +275,16 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			}
 			Salida.movePersiana(params, function(_response)
 			{
-				console.log(_response);
+				var id = nro_salida+action;
+				$('.active').removeClass('active');
+				$('#' + id).addClass('active');
+				var timeout = setInterval(function()
+				{
+					$('#' + id).removeClass('active');
+					clearInterval(timeout);
+				}
+				, 3000);
+
 			});
 		}
 		Salida.getSalidasArduino(

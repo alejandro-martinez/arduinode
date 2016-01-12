@@ -9,7 +9,7 @@ module.exports = function()
 		connect: function(params, callback)
 		{
 			var timer;
-			timeout = 100;
+			timeout = 15000;
 			console.log("[INFO] Conectando al socket: " + params.ip + ":8000");
 			this.client = net.connect(
 			{
@@ -41,6 +41,7 @@ module.exports = function()
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
 		{
+			console.log("Comando",params.command);
 			var This = this;
 			if (params.ip)
 			{
@@ -53,13 +54,16 @@ module.exports = function()
 					else
 					{
 						This.client.write(params.command);
-						This.client.on('data', function(_data){
+						This.client.on('data', function(_data)
+						{
+							console.log(_data.toString());
 							if (params.decorator)
 							{
 								params.decorator(_data.toString())
 							}
 							else
 							{
+								console.log("la data es:",_data.toString());
 								This.data = _data.toString();
 							}
 						});
@@ -76,9 +80,14 @@ module.exports = function()
 		{
 			var This = this;
 			this.data = "";
+			params.decorator = function(_data)
+			{
+				This.data+= _data;
+			}
 			params.command = 'S'+params.salida.nro_salida;
 			this.send(params, function(response, err)
 			{
+				delete params.decorator;
 				if (err)
 				{
 					callback(null, err);
@@ -96,6 +105,10 @@ module.exports = function()
 			var This = this;
 			this.data = "";
 			params.command = 'T'+params.salida;
+			params.decorator = function(_data)
+			{
+				This.data+= _data;
+			}
 			this.send(params, function( response, err )
 			{
 				if (err)
@@ -182,6 +195,7 @@ module.exports = function()
 					params.salida = params.salidas[i];
 					This.getEstadoSalida(params, function(e)
 					{
+						console.log("Estado",e);
 						params.salidas[i].estado = (e == 1) ? 'on' : 'off';
 						params.salidas[i].id_disp = params.id_disp;
 						loop(i++);
@@ -194,14 +208,19 @@ module.exports = function()
 			}
 			loop(i);
 		},
-		movePersiana: function(params)
+		//Sube, baja o detiene la persiana.. params.action = 0, 1 o 2
+		movePersiana: function(params, callback)
 		{
-			console.log(params);
 			var This = this;
 			this.data = "";
 			params.command = 'P'+params.nro_salida+params.action;
+			params.decorator = function(_data)
+			{
+				This.data+= _data;
+			}
 			this.send(params, function( response, err )
 			{
+				delete params.decorator;
 				if (err)
 				{
 					callback(null, err);
