@@ -23,4 +23,24 @@ angular.module('Arduinode',
 	{
 		$scope.showmenu = ($scope.showmenu) ? false : true;
 	}
-}]);
+}])
+.factory('httpInterceptor', function ($q, $rootScope, $log) {
+
+    return {
+        request: function (config) {
+            $rootScope.loading = true;
+            return config || $q.when(config)
+        },
+        response: function (response) {
+            $rootScope.loading = false;
+            return response || $q.when(response);
+        },
+        responseError: function (response) {
+            $rootScope.loading = false;
+            return $q.reject(response);
+        }
+    };
+})
+.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('httpInterceptor');
+});

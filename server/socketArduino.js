@@ -8,14 +8,35 @@ module.exports = function()
 		//Conexion al socket arduino
 		connect: function(params, callback)
 		{
+			var timer;
+			timeout = 100;
+			console.log("[INFO] Conectando al socket: " + params.ip + ":8000");
 			this.client = net.connect(
 			{
 				host: params.ip,
 				port: 8000
 			},function()
 			{
-				callback();
+				clearTimeout(timer);
+				callback(1);
 			});
+			timer = setTimeout(function()
+			{
+				callback(null, "Se alcanzó el tiempo de espera límite para la conexión!");
+			}, timeout);
+
+			this.client.on('error', function(err) {
+				clearTimeout(timer);
+				if (err.code == "ENOTFOUND") {
+					callback(null, "No se encontró dispositivo en el socket solicitado: " + err);
+					return;
+				}
+
+				if (err.code == "ECONNREFUSED") {
+					callback(null, "Conexión rechazada: Chequea la IP y puerto ");
+					return;
+				}
+			})
 		},
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
@@ -23,37 +44,49 @@ module.exports = function()
 			var This = this;
 			if (params.ip)
 			{
-				console.log("Envia comando",params.command,"a ",params.ip);
-				this.connect(params, function()
+				this.connect(params, function(response, err)
 				{
-					This.client.write(params.command);
-					This.client.on('data', function(_data){
-						if (params.decorator)
-						{
-							params.decorator(_data.toString())
-						}
-						else
-						{
-							This.data = _data.toString();
-						}
-					});
-					This.client.on('end', function()
+					if (err)
 					{
-						callback(This.data);
-					});
+						callback(null, err);
+					}
+					else
+					{
+						This.client.write(params.command);
+						This.client.on('data', function(_data){
+							if (params.decorator)
+							{
+								params.decorator(_data.toString())
+							}
+							else
+							{
+								This.data = _data.toString();
+							}
+						});
+						This.client.on('end', function()
+						{
+							callback(This.data);
+						});
+					}
 				})
 			}
 		},
 		//Consulta el estado de una salida en particular
 		getEstadoSalida: function(params, callback)
 		{
-
 			var This = this;
 			this.data = "";
 			params.command = 'S'+params.salida.nro_salida;
-			this.send(params, function()
+			this.send(params, function(response, err)
 			{
-				callback( This.data );
+				if (err)
+				{
+					callback(null, err);
+				}
+				else
+				{
+					callback( This.data );
+				}
 			});
 		},
 		// Intercambia el estado de una salida
@@ -63,34 +96,77 @@ module.exports = function()
 			var This = this;
 			this.data = "";
 			params.command = 'T'+params.salida;
-			this.send(params, function()
+			this.send(params, function( response, err )
 			{
-				callback(This.data);
+				if (err)
+				{
+					callback(null, err);
+				}
+				else
+				{
+					callback( This.data );
+				}
 			});
+		},
+		buscarSalida: function(salidas, nro)
+		{
+			return salidas.filter(function(s)
+			{
+				return s.nro_salida == nro;
+			})
 		},
 		//Devuelve listado de salidas de una placa
 		getSalidas: function(params,callback)
 		{
 			var This = this;
 			this.data = "";
-			this.salidas = [];
 			params.command = 'G';
 			params.decorator = function(_data)
 			{
-				for (var i=0; i < _data.length; i+= 2)
-				{
-					This.salidas.push({
-						nro_salida: _data[i] + _data[i + 1],
-						note: "",
-						estado: "",
-						id_disp: ""
-					});
-				}
+				This.data+= _data;
 			}
-			this.send(params, function()
+			this.send(params, function(response, err)
 			{
 				delete params.decorator;
-				callback( This.salidas );
+				if (err)
+				{
+					callback(null, err);
+				}
+				else
+				{
+					var salidasRaw = This.data.match(/[^\r\n]+/g);
+
+					var salidas = [];
+					salidasRaw.forEach(function(s)
+					{
+						var posGuion = s.indexOf("-") + 1;
+						switch (s[0])
+						{
+							case 'L':
+								for (var i = posGuion; i < s.length; i+=2)
+								{
+									var nro = s[i].concat(s[i + 1]);
+								}
+								break;
+
+							case 'P':
+								var nro = s[posGuion].concat(s[posGuion + 1])
+								break;
+						}
+						var found = This.buscarSalida(salidas, nro);
+						if (found.length == 0 )
+						{
+							salidas.push({
+								nro_salida: nro,
+								note: s[0] + "-" +  nro,
+								tipo: s[0],
+								estado: "",
+								id_disp: ""
+							});
+						}
+					});
+					callback( salidas );
+				}
 			});
 		},
 		//Devuelve estados de cada salida del array pasado por parametro
@@ -117,6 +193,24 @@ module.exports = function()
 				}
 			}
 			loop(i);
+		},
+		movePersiana: function(params)
+		{
+			console.log(params);
+			var This = this;
+			this.data = "";
+			params.command = 'P'+params.nro_salida+params.action;
+			this.send(params, function( response, err )
+			{
+				if (err)
+				{
+					callback(null, err);
+				}
+				else
+				{
+					callback( This.data );
+				}
+			});
 		}
 	}
 	return Socket;

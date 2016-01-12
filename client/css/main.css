@@ -128,12 +128,8 @@ button,.button
 }
 #actionsPage
 {
-	float:right;
-	position: fixed;
-	right: 0;
-	bottom: 10px;
-	z-index: 1;
-	width: 181px;
+	text-align: right;
+	margin-top: 10px;
 }
 .inlineButtons
 {
@@ -268,12 +264,12 @@ button,.button
 	-moz-transition: All 0.3s ease;
 	-o-transition: All 0.3s ease;
 }
-#estados li
+#estados > li
 {
 	position:relative;
-	min-height: 4em;
+	height: 4em;
 }
-#estados li .switch
+#estados > li .switch
 {
 	position:absolute;
 	right:0;
@@ -337,6 +333,7 @@ button,.button
     position: fixed;
     left: 50%;
     top: 0;
+    z-index: 1;
     width: 100%
 }
 #all.slide {
@@ -411,3 +408,66 @@ p {
   opacity: 0.4;
   filter: alpha(opacity=40); /* For IE8 and earlier */
 }
+
+/*Boton switch window*/
+.containerSwitchWindow
+{
+	background:#eceeef;
+	position: absolute;
+	right: 0;
+	top: 0;
+	border-radius: 10%;
+	padding: 0px 8px -1px 0px;
+}
+.containerSwitchWindow ul, .containerSwitchWindow li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+    vertical-align:top;
+}
+.containerSwitchWindow li.moveDown, .containerSwitchWindow li.stopIcon, .containerSwitchWindow li.moveUp {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    background: #E1B42B;
+    margin: 5px;
+    border-radius: 2px;
+    border: 1px solid #aaaaaa;
+    box-shadow: 3px 2px 15px #cccccc;
+    text-align:center;
+    line-height: 23px;
+}
+.containerSwitchWindow li.moveDown:before {
+    content:"";
+    display:inline-block;
+    width: 0;
+    height: 0;
+    vertical-align:middle;
+    border-style: solid;
+    border-width: 0 8px 13px 8px;
+    border-color: transparent transparent white transparent;
+}
+.containerSwitchWindow li.stopIcon {
+    cursor: default;
+}
+.containerSwitchWindow li.moveUp:before {
+    content:'';
+    display:inline-block;
+    vertical-align:middle;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 12.7px 8px 0 8px;
+    border-color: #fff transparent transparent transparent;
+}
+.stopIcon:before {
+    content:'';
+    display:inline-block;
+    vertical-align:middle;
+    height: 12px;
+    width: 12px;
+    border-radius: 0;
+    box-shadow: 0 0 0 0px gray, inset 3px 35px 0 27px white;
+}
+/*Boton switch window*/

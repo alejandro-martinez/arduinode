@@ -16,47 +16,92 @@ var express = require('express'),
 http.listen(app.get('port'), function()
 {
 	console.log('Servidor corriendo en: ' + app.get('port'));
-
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)
 	{
+		process.on('uncaughtException', function (err)
+		{
+			socket.emit('Error', err)
+		});
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
-			arduino.getSalidas(params,function(_salidas)
+			arduino.getSalidas(params,function(response, err)
 			{
-				//Traigo las descripciones de las salidas, (si existen)
-				sequelize.models.dispositivos.getSalidas(params.id_disp,
-				function(models)
+				err = 0;
+				response = [{
+					note: 'Luz baño',
+					nro_salida: 23,
+					tipo: 'L'
+				},
 				{
-					models.forEach(function(x, i)
+					note: 'Persiana 1',
+					tipo: 'P',
+					nro_salida: 30
+				}];
+				if (err)
+				{
+					socket.emit('Error', err);
+				}
+				else
+				{
+					//Traigo las descripciones de las salidas, (si existen)
+					sequelize.models.dispositivos.getSalidas(params.id_disp,
+					function(models)
 					{
-						_salidas.filter(function(s, j,salidas)
+						models.forEach(function(x, i)
 						{
-							if (s.nro_salida == x.nro_salida)
+							response.filter(function(s, j)
 							{
-								s.note = x.note;
-							}
+								if (s.nro_salida == x.nro_salida)
+								{
+									s.note = x.note;
+								}
+							});
 						});
 					});
-				});
-				params.salidas = _salidas;
+					params.salidas = response;
 
-				//Consulto los estados(ON/OFF) de cada salida
-				arduino.getEstados(params, function(data)
+					//Consulto los estados(ON/OFF) de cada salida
+					arduino.getEstados(params, function(data)
+					{
+						socket.emit('salidas', data);
+					});
+				}
+			});
+		});
+
+		//Sube,baja o detiene las persianas
+		socket.on('movePersiana', function(params)
+		{
+			arduino.movePersiana(params, function(response, err)
+			{
+				if (err)
 				{
-					socket.emit('salidas', data);
-				});
+					socket.emit('Error', err);
+				}
+				else
+				{
+					socket.emit('moveResponse', 0);
+				}
+
 			});
 		});
 
 		//Intercambia el estado de una salida, ON/OFF
 		socket.on('toggleSalida', function(params)
 		{
-			arduino.toggleSalida(params, function(response)
+			arduino.toggleSalida(params, function(response, err)
 			{
-				console.log("Resp toggle",response);
-				socket.emit('responseToggle', response);
+				if (err)
+				{
+					socket.emit('Error', err);
+				}
+				else
+				{
+					socket.emit('toggleResponse', 0);
+				}
+
 			});
 		});
 	});

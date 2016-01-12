@@ -1,9 +1,21 @@
 var socketIOModule = angular.module('Socket',[]);
-socketIOModule.factory('SocketIO', ['$rootScope', function ($rootScope )
+socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScope, Popup )
 {
 	if (!$rootScope.socket)
 	{
 		$rootScope.socket = io(window.location.origin);
+
+		//Listen for errors
+		$rootScope.socket.on('Error', function(error)
+		{
+			if ( Object.getOwnPropertyNames(error).length == 0 )
+				var error = 'Error Desconocido';
+			$rootScope.loading = false;
+			Popup.open({
+				template: '<h1>' + error + '</h1>',
+				plain: true
+			});
+		});
 	}
 
 	return {
@@ -16,7 +28,8 @@ socketIOModule.factory('SocketIO', ['$rootScope', function ($rootScope )
 			$rootScope.socket.on(param, function(data)
 			{
 				callback(data);
-			})
+			});
+
 		}
 	}
 }]);

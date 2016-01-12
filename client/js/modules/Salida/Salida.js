@@ -20,7 +20,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 }])
 .factory('SalidaFct', ['$http','SocketIO', function($http, Socket)
 {
-	var Salida = {
+	var Salida =
+	{
 		getAll: function(callback)
 		{
 			$http.get('/salida').then(function(response)
@@ -31,12 +32,20 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				callback(error)
 			});
 		},
-		toggleOnOff: function(ip, nro_salida, callback)
+		toggleLuces: function(ip, nro_salida, callback)
 		{
 			Socket.send('toggleSalida',{ip: ip, salida: nro_salida});
-			Socket.listen('responseToggle', function(estado)
+			Socket.listen('toggleResponse', function(estado)
 			{
 				callback(estado);
+			});
+		},
+		movePersiana: function(params, callback)
+		{
+			Socket.send('movePersiana',params);
+			Socket.listen('moveResponse', function(response)
+			{
+				callback(response);
 			});
 		},
 		getSalidasArduino: function(params, callback)
@@ -44,7 +53,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidas',params);
 			Socket.listen('salidas', function(salidas)
 			{
-				console.log(salidas);
 				callback(salidas);
 			});
 		},
@@ -116,9 +124,10 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 {
 	var Factory =
 	{
-		getTemplate: function()
+		getTemplate: function(tipo)
 		{
-			return config.rootFolder + '_switchButton.html';
+			var tpl = (tipo == 'P') ? '_switchWindow.html' : '_switchButton.html';
+			return config.rootFolder + tpl;
 		}
 	}
 	return Factory;
@@ -139,6 +148,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			$scope.tag = $('#image').imgNotes();
 			ImgNotes.init( $scope );
 			ImgNotes.setMarkers( $scope.models );
+
 		});
 
 		Dispositivo.getAll(function(dispositivos)
@@ -225,6 +235,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			});
 			Salida.getSalidasArduino( disp[0], function(salidas)
 			{
+				$rootScope.loading = false;
 				//Actualiza combo de salidas
 				//para quitar las que ya fueron agregadas
 				$scope.salidas = Salida.getSalidasDisponibles(salidas, $scope.models);
@@ -236,24 +247,34 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .controller('EstadosCtrl', ['SalidaConfig','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
 	function (config,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
 	{
-		$scope.loading = true;
+		$rootScope.loading = true;
 		$scope.ipDispositivo = $routeParams.ip;
 		$rootScope.currentMenu = 'Salidas del dispositivo: ' + $scope.ipDispositivo;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 
+		//Funcionamiento Luces
 		$scope.toggle = function(nro_salida, estado)
 		{
-
-			Salida.toggleOnOff( $scope.ipDispositivo, nro_salida, function(_estado)
+			Salida.toggleLuces($scope.ipDispositivo,nro_salida, function(_estado)
 			{
-				var salida = $scope.salidas.filter(function(s)
+				$scope.salidas.filter(function(s)
 				{
-					return s.nro_salida === nro_salida;
-				})
-				//Esta funcoin se ejecuta varias veces, arreglar
-				//Aca deberia tildar o destildar el checkbox segun
-				//El resultado de toggle
-		//		salida[0].estado = (_estado == 1 ) ? 'on' : 'off';
+					if (s.nro_salida == nro_salida)
+						 return s.estado = (_estado == 1) ? 'on' : 'off';
+				});
+			});
+		}
+		//Funcionamiento Persianas
+		$scope.move = function(nro_salida, action)
+		{
+			var params = {
+				ip: $scope.ipDispositivo,
+				action: action,
+				nro_salida: nro_salida
+			}
+			Salida.movePersiana(params, function(_response)
+			{
+				console.log(_response);
 			});
 		}
 		Salida.getSalidasArduino(
@@ -263,7 +284,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		},
 		function(salidas)
 		{
-			$scope.loading = false;
+			$rootScope.loading = false;
 			$scope.salidas = salidas;
 			$scope.$apply();
 		});
