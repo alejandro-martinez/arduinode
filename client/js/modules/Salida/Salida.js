@@ -275,15 +275,13 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			}
 			Salida.movePersiana(params, function(_response)
 			{
-				var id = nro_salida+action;
+				var boton = $('#' + nro_salida+action);
 				$('.active').removeClass('active');
-				$('#' + id).addClass('active');
-				var timeout = setInterval(function()
+				boton.addClass('active');
+				setTimeout(function()
 				{
-					$('#' + id).removeClass('active');
-					clearInterval(timeout);
-				}
-				, 3000);
+ 					boton.removeClass('active');
+				}, 3000);
 
 			});
 		}
