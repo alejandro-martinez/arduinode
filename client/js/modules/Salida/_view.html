@@ -1,6 +1,3 @@
-<div ng-include="getSwitchButton('L')"></div>
-<h3>Salida: {{ngDialogData.note}}</h3>
-<h4>Dispositivo:</h4>
-<h2>{{ngDialogData.dispositivo[0].ip}}
-	<p>{{ngDialogData.dispositivo[0].note}}</p>
-</h2>
+<div id="viewSalida">
+	<h3>Salida {{::ngDialogData.note}} en <br>{{::ngDialogData.estado}}</h3>
+</div>

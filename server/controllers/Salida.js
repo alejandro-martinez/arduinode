@@ -1,8 +1,9 @@
 module.exports = function(app)
 {
-	app.get('/salida', function(req, res)
+	app.get('/salida/:id_planta', function(req, res)
 	{
-		sequelize.models.salidas.getAll(function(models)
+		console.log(req);
+		sequelize.models.salidas.getAll(req.params.id_planta,function(models)
 		{
 			res.json(models);
 		})

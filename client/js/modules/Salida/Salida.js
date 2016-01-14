@@ -9,7 +9,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			templateUrl: config.rootFolder+'_estados.html',
 			controller: 'EstadosCtrl'
 		})
-		.when('/salida/:route', {
+		.when('/salida/:id_planta/:plano', {
 			templateUrl: config.rootFolder+'_salidas.html',
 			controller: 'SalidaCtrl'
 		})
@@ -22,9 +22,9 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 {
 	var Salida =
 	{
-		getAll: function(callback)
+		getAll: function(id_planta,callback)
 		{
-			$http.get('/salida').then(function(response)
+			$http.get('/salida/'+id_planta).then(function(response)
 			{
 				callback(response)
 			}, function(err)
@@ -35,9 +35,12 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		toggleLuces: function(ip, nro_salida, callback)
 		{
 			Socket.send('toggleSalida',{ip: ip, salida: nro_salida});
+
 			Socket.listen('toggleResponse', function(estado)
 			{
+				console.log(estado);
 				callback(estado);
+				Socket.listen('toggleResponse',function(){});
 			});
 		},
 		movePersiana: function(params, callback)
@@ -137,15 +140,15 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	function (SwitchButton,config,$rootScope,$routeParams, Popup,Dispositivo,
 			  $scope,ImgNotes, Salida)
 	{
-		$rootScope.currentMenu = 'Plano: ' + $routeParams.route;
+		$rootScope.currentMenu = 'Planta ' + $routeParams.plano;
 		$scope.models = {};
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 
-		$('#image').attr('src',"/image/planos_p" + $routeParams.route + ".jpg");
-
-
-		Salida.getAll(function(models)
+		$('#image').attr('src',"/image/" + $routeParams.plano + ".jpg");
+		console.log($routeParams);
+		Salida.getAll($routeParams.id_planta,function(models)
 		{
+			console.log(models);
 			$scope.models = models.data;
 			$scope.tag = $('#image').imgNotes();
 			ImgNotes.init( $scope );
@@ -178,7 +181,25 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 		$(document).off('ImgNotesShow').on('ImgNotesShow', function(e, note)
 		{
-			note.dispositivo = $scope.dispositivos.filter(function(e)
+			console.log(note);
+			Salida.toggleLuces(note.ip, note.nro, function(_estado)
+			{
+				var state = (_estado == 1) ? 'on' : 'off';
+				$scope.models.filter(function(s)
+				{
+					if (s.nro_salida == note.nro)
+						 return s.estado = state;
+				});
+				note.estado = state;
+				ImgNotes.clearMarkers();
+				ImgNotes.setMarkers( $scope.models);
+				Popup.open(
+				{
+					template: config.rootFolder+'_view.html',
+					data: note
+				});
+			});
+			/*note.dispositivo = $scope.dispositivos.filter(function(e)
 			{
 				if (e.id_disp == note.id_disp)
 					return e;
@@ -188,7 +209,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				template: config.rootFolder+'_view.html',
 				data: note,
 				scope: $scope
-			});
+			});*/
 		});
 
 		$(document).off('ImgNotesClick').on('ImgNotesClick', function(e,note)
@@ -214,19 +235,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				}
 			})
 		}
-		$scope.toggle = function(salida)
-		{
-			Salida.toggleLuces(salida.ip,salida.nro, function(_estado)
-			{
-				$scope.models.filter(function(s)
-				{
-					if (s.nro_salida == salida.nro)
-						 return s.estado = (_estado == 1) ? 'on' : 'off';
-				});
-				ImgNotes.clearMarkers();
-				ImgNotes.setMarkers( $scope.models );
-			});
-		};
+
 		$scope.save = function()
 		{
 			$scope.salida.id_disp = $scope.disp.id_disp;
@@ -268,7 +277,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	}
 ])
 .controller('EstadosCtrl', ['SalidaConfig','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
-	function (config,SwitchButton,ImgNotesFct,$rootScope,$routeParams, Popup, $scope, Salida)
+	function (config,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
 	{
 		$rootScope.loading = true;
 		$scope.ipDispositivo = $routeParams.ip;
@@ -278,10 +287,12 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		//Funcionamiento Luces
 		$scope.toggle = function(nro_salida, estado)
 		{
+			console.log("paso",nro_salida);
 			Salida.toggleLuces($scope.ipDispositivo,nro_salida, function(_estado)
 			{
 				$scope.salidas.filter(function(s)
 				{
+					console.log(s.nro_salida== nro_salida)
 					if (s.nro_salida == nro_salida)
 						 return s.estado = (_estado == 1) ? 'on' : 'off';
 				});

@@ -25,11 +25,12 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 		},
 		listen: function(param, callback)
 		{
+			$rootScope.socket.removeListener(param);
+
 			$rootScope.socket.on(param, function(data)
 			{
 				callback(data);
 			});
-
 		}
 	}
 }]);

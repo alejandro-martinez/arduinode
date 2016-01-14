@@ -71,6 +71,7 @@ module.exports = function()
 						});
 						This.client.on('end', function()
 						{
+							console.log("cierra");
 							callback(This.data);
 						});
 					}

@@ -29,16 +29,22 @@ module.exports = function(sequelize, DataTypes)
 		{
 			type: DataTypes.FLOAT,
 			allowNull: false
+		},
+		tipo:
+		{
+			type: DataTypes.STRING,
+			allowNull: false
 		}
 	},
 	{
 		timestamps: false,
 		freezeTableName: true,
 		classMethods: {
-			getAll: function(callback)
+			getAll: function(id_planta,callback)
 			{
+				console.log(id_planta);
 				var sql = "SELECT ip,nro_salida,s.note, s.y,s.x from salidas s, dispositivos d";
-				sql+= " WHERE d.id_disp = s.id_disp ";
+				sql+= " WHERE d.id_disp = s.id_disp AND id_planta = " + id_planta;
 				sequelize.query(sql).then(function(salidas)
 				{
 					callback(salidas[0]);

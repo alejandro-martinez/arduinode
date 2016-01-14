@@ -25,11 +25,9 @@ http.listen(app.get('port'), function()
 		});
 		socket.on('getEstados', function(_salidas)
 		{
-			console.log(_salidas);
 			//Consulto los estados(ON/OFF) de cada salida
 			arduino.getEstados({salidas: _salidas}, function(data)
 			{
-				console.log(data);
 				socket.emit('estados', data);
 			});
 		});
@@ -96,7 +94,11 @@ http.listen(app.get('port'), function()
 				}
 				else
 				{
-					socket.emit('toggleResponse', response);
+					console.log("EEEE",response);
+					if (response == 1 || response == 0)
+					{
+						socket.emit('toggleResponse', response);
+					}
 				}
 
 			});

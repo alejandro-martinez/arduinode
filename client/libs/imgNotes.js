@@ -43,6 +43,7 @@
  *	See examples for alternatives such as using tooltips.
  */
 			onShow: function(ev, elem) {
+				console.log("paso");
 				var $elem = $(elem);
 				$(document).trigger('ImgNotesShow', [$elem.data()]);
 			},

@@ -7,6 +7,7 @@ angular.module('Arduinode',
 	'ngDialog',
 	'ngTouch',
 	'Arduinode.Salida',
+	'Arduinode.Planta',
 	'Arduinode.Home',
 	'Arduinode.Dispositivo'
 ])

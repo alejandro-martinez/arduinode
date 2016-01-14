@@ -76,7 +76,7 @@ module.exports = function()
 					callback(null, err);
 				}
 				else
-				{
+ 				{
 					callback( This.data );
 				}
 			});

@@ -407,3 +407,10 @@ button,.button
    background:green !important;
 }
 /*Boton switch window*/
+/* Plano popup salida */
+#viewSalida .switch
+{
+	float:right;
+	margin-right:30px;
+}
+/* Plano popup salida */
