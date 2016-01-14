@@ -167,13 +167,13 @@
 /*
  *	Add a note
  */
-		addNote: function(id_disp,relx, rely, text,nro_salida) {
+		addNote: function(id_disp,relx, rely, text,nro_salida,ip) {
 			var self = this;
 			this.noteCount++;
 			var elem = this.options.onAdd.call(this);
 			var $elem = $(elem);
 			$(this.img).imgViewer("addElem",elem);
-			$elem.data("id_disp",id_disp).data("nro",nro_salida).data("relx", relx).data("rely", rely).data("note", text);
+			$elem.data("id_disp",id_disp).data("nro",nro_salida).data("relx", relx).data("rely", rely).data("note", text).data("ip", ip);
 
 			switch (this.options.vAll) {
 				case "top": $elem.data("yOffset", 0); break;
@@ -236,7 +236,7 @@
 			var self = this;
 			$.each(notes, function() {
 				var nro = this.nro_salida || this.nro;
-				self.addNote(this.id_disp,this.x, this.y, this.note,nro);
+				self.addNote(this.id_disp,this.x, this.y, this.note,nro, this.ip);
 			});
 			$(this.img).imgViewer("update");
 		},
@@ -252,7 +252,8 @@
 						nro_salida: $elem.data("nro"),
 						x: $elem.data("relx"),
 						y: $elem.data("rely"),
-						note: $elem.data("note")
+						note: $elem.data("note"),
+						ip: $elem.data("ip")
 				});
 			});
 			return notes;

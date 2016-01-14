@@ -7,22 +7,12 @@ angular.module('Arduinode',
 	'ngDialog',
 	'ngTouch',
 	'Arduinode.Salida',
+	'Arduinode.Home',
 	'Arduinode.Dispositivo'
 ])
 .controller('MainCtrl', ['$scope', function ($scope )
 {
 	$scope.currentMenu = 'Home';
-	$scope.linksMenu = [
-		{link: "salida/a",		texto: "Plano 1"},
-		{link: "salida/b", 	texto: "Plano 2"},
-		{link: "dispositivo", 	texto: "Dispositivos"}
-	];
-	$scope.showmenu = false;
-
-	$scope.toggleMenu = function()
-	{
-		$scope.showmenu = ($scope.showmenu) ? false : true;
-	}
 }])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 

@@ -29,7 +29,8 @@ angular.module('ImgNotes',[])
 				x: data.x,
 				y: data.y,
 				nro: data.nro_salida,
-				note:data.note
+				note: data.note,
+			    ip: data.ip
 			});
 			this.tag.imgNotes("clear");
 			this.setMarkers(models);

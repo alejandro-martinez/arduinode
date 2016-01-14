@@ -56,7 +56,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				callback(salidas);
 			});
 		},
-		delete: function(id, callback)
+		deleteSalida: function(id, callback)
 		{
 			$http.get('/salida/delete/'+id).then(function(response)
 			{
@@ -82,6 +82,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('S'+id_disp);
 			Socket.listen('estados', function(estados)
 			{
+				console.log("Estados",estados);
 				callback(estados);
 			});
 		},
@@ -142,12 +143,21 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 
 		$('#image').attr('src',"/image/planos_p" + $routeParams.route + ".jpg");
+
+
 		Salida.getAll(function(models)
 		{
 			$scope.models = models.data;
 			$scope.tag = $('#image').imgNotes();
 			ImgNotes.init( $scope );
 			ImgNotes.setMarkers( $scope.models );
+			angular.forEach($scope.models, function(x)
+			{
+				Salida.getEstados(x.id_disp, function(estados)
+				{
+					console.log(estados);
+				});
+			});
 
 		});
 
@@ -197,7 +207,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		});
 		$scope.delete = function(id)
 		{
-			Salida.delete(id, function(r)
+			Salida.deleteSalida(id, function(r)
 			{
 				Popup.close();
 				if (r.res === 1)

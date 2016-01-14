@@ -26,7 +26,7 @@ http.listen(app.get('port'), function()
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
-			arduino.getSalidas(params,function(response, err)
+			arduino.getSalidas(params, function(response, err)
 			{
 				if (err)
 				{
@@ -54,18 +54,17 @@ http.listen(app.get('port'), function()
 					//Consulto los estados(ON/OFF) de cada salida
 					arduino.getEstados(params, function(data)
 					{
+						console.log(data);
 						socket.emit('salidas', data);
 					});
 				}
 			});
 		});
-
 		//Sube,baja o detiene las persianas
 		socket.on('movePersiana', function(params)
 		{
 			arduino.movePersiana(params, function(response, err)
 			{
-				console.log("Response",response);
 				if (err)
 				{
 					socket.emit('Error', err);
@@ -76,7 +75,6 @@ http.listen(app.get('port'), function()
 				}
 			});
 		});
-
 		//Intercambia el estado de una salida, ON/OFF
 		socket.on('toggleSalida', function(params)
 		{

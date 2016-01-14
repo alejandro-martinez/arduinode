@@ -2,7 +2,7 @@ module.exports = function(app)
 {
 	app.get('/salida', function(req, res)
 	{
-		sequelize.models.salidas.findAll().then(function(models)
+		sequelize.models.salidas.getAll(function(models)
 		{
 			res.json(models);
 		})

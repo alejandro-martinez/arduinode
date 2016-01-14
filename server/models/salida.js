@@ -35,6 +35,15 @@ module.exports = function(sequelize, DataTypes)
 		timestamps: false,
 		freezeTableName: true,
 		classMethods: {
+			getAll: function(callback)
+			{
+				var sql = "SELECT ip,nro_salida,s.note, s.y,s.x from salidas s, dispositivos d";
+				sql+= " WHERE d.id_disp = s.id_disp ";
+				sequelize.query(sql).then(function(salidas)
+				{
+					callback(salidas[0]);
+				})
+			},
 		    createOrUpdate: function(model, callback)
 			{
 				var id = model.nro || model.nro_salida;

@@ -1,83 +1,13 @@
-var net = require('net');
+var socket = require('./socket')();
 
 module.exports = function()
 {
-	var Socket =
+	var Arduino =
 	{
-		client: {},
-		//Conexion al socket arduino
-		connect: function(params, callback)
-		{
-			var timer;
-			timeout = 15000;
-			console.log("[INFO] Conectando al socket: " + params.ip + ":8000");
-			this.client = net.connect(
-			{
-				host: params.ip,
-				port: 8000
-			},function()
-			{
-				clearTimeout(timer);
-				callback(1);
-			});
-			timer = setTimeout(function()
-			{
-				callback(null, "Se alcanzó el tiempo de espera límite para la conexión!");
-			}, timeout);
-
-			this.client.on('error', function(err) {
-				clearTimeout(timer);
-				if (err.code == "ENOTFOUND") {
-					callback(null, "No se encontró dispositivo en el socket solicitado: " + err);
-					return;
-				}
-
-				if (err.code == "ECONNREFUSED") {
-					callback(null, "Conexión rechazada: Chequea la IP y puerto ");
-					return;
-				}
-			})
-		},
-		//Envia comando al socket. Viene en params.command
-		send: function(params, callback)
-		{
-			console.log("Comando",params.command);
-			var This = this;
-			if (params.ip)
-			{
-				this.connect(params, function(response, err)
-				{
-					if (err)
-					{
-						callback(null, err);
-					}
-					else
-					{
-						This.client.write(params.command);
-						This.client.on('data', function(_data)
-						{
-							console.log(_data.toString());
-							if (params.decorator)
-							{
-								params.decorator(_data.toString())
-							}
-							else
-							{
-								console.log("la data es:",_data.toString());
-								This.data = _data.toString();
-							}
-						});
-						This.client.on('end', function()
-						{
-							callback(This.data);
-						});
-					}
-				})
-			}
-		},
 		//Consulta el estado de una salida en particular
 		getEstadoSalida: function(params, callback)
 		{
+			console.log(params);
 			var This = this;
 			this.data = "";
 			params.decorator = function(_data)
@@ -85,7 +15,7 @@ module.exports = function()
 				This.data+= _data;
 			}
 			params.command = 'S'+params.salida.nro_salida;
-			this.send(params, function(response, err)
+			socket.send(params, function(response, err)
 			{
 				delete params.decorator;
 				if (err)
@@ -98,6 +28,32 @@ module.exports = function()
 				}
 			});
 		},
+		//Devuelve estados de cada salida del array pasado por parametro
+		getEstados: function(params, callback)
+		{
+			var This = this;
+			//Por cada salida, consulto su estado
+			var i = 0;
+			var loop = function(nro_salida)
+			{
+				if (i < params.salidas.length)
+				{
+					params.salida = params.salidas[i];
+					This.getEstadoSalida(params, function(e)
+					{
+						console.log("Estado",e);
+						params.salidas[i].estado = (e == 1) ? 'on' : 'off';
+						params.salidas[i].id_disp = params.id_disp;
+						loop(i++);
+					});
+				}
+				else
+				{
+					callback(params.salidas);
+				}
+			}
+			loop(i);
+		},
 		// Intercambia el estado de una salida
 		// (Si está en ON, la pasa a OFF y viceversa)
 		toggleSalida: function(params, callback)
@@ -109,7 +65,7 @@ module.exports = function()
 			{
 				This.data+= _data;
 			}
-			this.send(params, function( response, err )
+			socket.send(params, function( response, err )
 			{
 				if (err)
 				{
@@ -138,7 +94,7 @@ module.exports = function()
 			{
 				This.data+= _data;
 			}
-			this.send(params, function(response, err)
+			socket.send(params, function(response, err)
 			{
 				delete params.decorator;
 				if (err)
@@ -182,32 +138,6 @@ module.exports = function()
 				}
 			});
 		},
-		//Devuelve estados de cada salida del array pasado por parametro
-		getEstados: function(params, callback)
-		{
-			var This = this;
-			//Por cada salida, consulto su estado
-			var i = 0;
-			var loop = function(nro_salida)
-			{
-				if (i < params.salidas.length)
-				{
-					params.salida = params.salidas[i];
-					This.getEstadoSalida(params, function(e)
-					{
-						console.log("Estado",e);
-						params.salidas[i].estado = (e == 1) ? 'on' : 'off';
-						params.salidas[i].id_disp = params.id_disp;
-						loop(i++);
-					});
-				}
-				else
-				{
-					callback(params.salidas);
-				}
-			}
-			loop(i);
-		},
 		//Sube, baja o detiene la persiana.. params.action = 0, 1 o 2
 		movePersiana: function(params, callback)
 		{
@@ -218,7 +148,7 @@ module.exports = function()
 			{
 				This.data+= _data;
 			}
-			this.send(params, function( response, err )
+			socket.send(params, function( response, err )
 			{
 				delete params.decorator;
 				if (err)
@@ -232,5 +162,5 @@ module.exports = function()
 			});
 		}
 	}
-	return Socket;
+	return Arduino;
 }
