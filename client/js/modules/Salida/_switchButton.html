@@ -1,7 +1,8 @@
-
 <label class="switch">
-	<input class="switch-input" type="checkbox" id="s{{s.nro_salida}}"	ng-click="toggle(s.nro_salida)"
-	ng-checked="{{s.estado == 'on'}}"
+	<input class="switch-input" type="checkbox"
+	id="s{{s.nro_salida || ngDialogData.nro_salida}}"
+	ng-click="toggle(s || ngDialogData)"
+	ng-checked="{{(s.estado || ngDialogData.estado) == 'on'}}"
 />
 	<span class="switch-label" data-on="Encendida" data-off="Apagada"></span>
 	<span class="switch-handle"></span>

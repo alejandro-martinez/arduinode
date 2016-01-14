@@ -126,8 +126,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	{
 		getTemplate: function(tipo)
 		{
-			var tpl = (tipo == 'P') ? '_switchWindow.html' : '_switchButton.html';
-			return config.rootFolder + tpl;
+			var tpl = (tipo == 'P') ? '_switchWindow' : '_switchButton';
+			return config.rootFolder.concat(tpl,".html");
 		}
 	}
 	return Factory;
@@ -186,7 +186,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Popup.open(
 			{
 				template: config.rootFolder+'_view.html',
-				data: note
+				data: note,
+				scope: $scope
 			});
 		});
 
@@ -213,6 +214,19 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				}
 			})
 		}
+		$scope.toggle = function(salida)
+		{
+			Salida.toggleLuces(salida.ip,salida.nro, function(_estado)
+			{
+				$scope.models.filter(function(s)
+				{
+					if (s.nro_salida == salida.nro)
+						 return s.estado = (_estado == 1) ? 'on' : 'off';
+				});
+				ImgNotes.clearMarkers();
+				ImgNotes.setMarkers( $scope.models );
+			});
+		};
 		$scope.save = function()
 		{
 			$scope.salida.id_disp = $scope.disp.id_disp;
@@ -248,11 +262,13 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.salidas = Salida.getSalidasDisponibles(salidas, $scope.models);
 				$scope.$apply();
 			});
+
 		}
+
 	}
 ])
 .controller('EstadosCtrl', ['SalidaConfig','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
-	function (config,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
+	function (config,SwitchButton,ImgNotesFct,$rootScope,$routeParams, Popup, $scope, Salida)
 	{
 		$rootScope.loading = true;
 		$scope.ipDispositivo = $routeParams.ip;
