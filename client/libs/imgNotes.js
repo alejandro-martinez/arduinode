@@ -17,7 +17,7 @@
 			onAdd: function() {
 				this.options.vAll = "bottom";
 				this.options.hAll = "middle";
-				return  $(document.createElement('span')).addClass("marker black").html(this.noteCount);
+				return  $(document.createElement('span')).addClass("marker").html(this.noteCount);
 			},
 /*
  *	Default callback when the marker is clicked and the widget has canEdit = true
@@ -50,6 +50,11 @@
  *	Default callback when the markers are repainted
  */
 			onUpdateMarker: function(elem) {
+
+				if ($(elem).data("estado") == 'on')
+				{
+					$(elem).addClass('on');
+				}
 				var $elem = $(elem);
 				var $img = $(this.img);
 				var pos = $img.imgViewer("imgToView", $elem.data("relx"), $elem.data("rely"));
@@ -167,13 +172,15 @@
 /*
  *	Add a note
  */
-		addNote: function(id_disp,relx, rely, text,nro_salida,ip) {
+		addNote: function(id_disp,relx, rely, text,nro_salida,ip,estado) {
 			var self = this;
 			this.noteCount++;
 			var elem = this.options.onAdd.call(this);
 			var $elem = $(elem);
 			$(this.img).imgViewer("addElem",elem);
-			$elem.data("id_disp",id_disp).data("nro",nro_salida).data("relx", relx).data("rely", rely).data("note", text).data("ip", ip);
+			$elem.data("id_disp",id_disp).data("nro",nro_salida);
+			$elem.data("relx", relx).data("rely", rely).data("note", text);
+			$elem.data("ip", ip).data("estado",estado);
 
 			switch (this.options.vAll) {
 				case "top": $elem.data("yOffset", 0); break;
@@ -236,7 +243,7 @@
 			var self = this;
 			$.each(notes, function() {
 				var nro = this.nro_salida || this.nro;
-				self.addNote(this.id_disp,this.x, this.y, this.note,nro, this.ip);
+				self.addNote(this.id_disp,this.x, this.y, this.note,nro, this.ip, this.estado);
 			});
 			$(this.img).imgViewer("update");
 		},
@@ -253,7 +260,8 @@
 						x: $elem.data("relx"),
 						y: $elem.data("rely"),
 						note: $elem.data("note"),
-						ip: $elem.data("ip")
+						ip: $elem.data("ip"),
+						estado:  $elem.data("estado")
 				});
 			});
 			return notes;

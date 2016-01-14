@@ -7,16 +7,19 @@ module.exports = function()
 		//Consulta el estado de una salida en particular
 		getEstadoSalida: function(params, callback)
 		{
-			console.log(params);
 			var This = this;
 			this.data = "";
 			params.decorator = function(_data)
 			{
 				This.data+= _data;
 			}
+
 			params.command = 'S'+params.salida.nro_salida;
 			socket.send(params, function(response, err)
 			{
+				console.log(response)
+				console.log(err)
+				console.log(This.data)
 				delete params.decorator;
 				if (err)
 				{
@@ -39,9 +42,10 @@ module.exports = function()
 				if (i < params.salidas.length)
 				{
 					params.salida = params.salidas[i];
+					params.ip = params.ip || params.salida.ip;
 					This.getEstadoSalida(params, function(e)
 					{
-						console.log("Estado",e);
+						console.log(e);
 						params.salidas[i].estado = (e == 1) ? 'on' : 'off';
 						params.salidas[i].id_disp = params.id_disp;
 						loop(i++);

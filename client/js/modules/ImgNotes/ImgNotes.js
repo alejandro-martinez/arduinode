@@ -30,10 +30,15 @@ angular.module('ImgNotes',[])
 				y: data.y,
 				nro: data.nro_salida,
 				note: data.note,
-			    ip: data.ip
+			    ip: data.ip,
+				estado: data.estado
 			});
 			this.tag.imgNotes("clear");
 			this.setMarkers(models);
+		},
+		clearMarkers: function()
+		{
+			this.tag.imgNotes("clear");
 		},
 		setMarkers: function(data)
 		{

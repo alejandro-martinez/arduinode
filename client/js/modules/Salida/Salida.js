@@ -76,13 +76,12 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				callback(error)
 			});
 		},
-		//Consulta los estados de las salidas del dispositivo
-		getEstados: function( id_disp, callback )
+		//Consulta los estados de las salidas de los dispositivos
+		getEstados: function( salidas, callback )
 		{
-			Socket.send('S'+id_disp);
+			Socket.send('getEstados',salidas);
 			Socket.listen('estados', function(estados)
 			{
-				console.log("Estados",estados);
 				callback(estados);
 			});
 		},
@@ -151,14 +150,12 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			$scope.tag = $('#image').imgNotes();
 			ImgNotes.init( $scope );
 			ImgNotes.setMarkers( $scope.models );
-			angular.forEach($scope.models, function(x)
+			Salida.getEstados($scope.models, function(models)
 			{
-				Salida.getEstados(x.id_disp, function(estados)
-				{
-					console.log(estados);
-				});
+				ImgNotes.clearMarkers();
+				$scope.models = models;
+				ImgNotes.setMarkers( $scope.models );
 			});
-
 		});
 
 		Dispositivo.getAll(function(dispositivos)
@@ -267,7 +264,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			Salida.toggleLuces($scope.ipDispositivo,nro_salida, function(_estado)
 			{
-				console.log(_estado);
 				$scope.salidas.filter(function(s)
 				{
 					if (s.nro_salida == nro_salida)

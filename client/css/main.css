@@ -279,24 +279,25 @@ button,.button
 }
 /*Estados salidas*/
 /*Marcador de dispositivos*/
-.marker{
-  width: 27px;
-  height: 40px;
-  position: absolute;
-  left: -13px;
-  top: -35px;
+.marker
+{
+  width: 38px;
+  color: black !important;
+  height: 61px;
   font-size: 12px;
   font-weight: bold;
   line-height: 25px;
   letter-spacing: -1px;
   text-align: center;
   color: #fff;
+  background: url(lamps.png);
 }
 
-.marker.black
+.marker.on
 {
-  background: url(marker_black.png);
+  background-position: 38px 0px;
 }
+
 #header {
     background-color: #03ae74;
     width: 96%;
@@ -304,7 +305,7 @@ button,.button
     padding: 0 2%
 }
 #header a {
-    float: left;
+    float: right;
     width: 29px;
     height: 28px;
     margin-top: 12px;

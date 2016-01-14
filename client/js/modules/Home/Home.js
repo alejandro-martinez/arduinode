@@ -12,3 +12,6 @@ angular.module('Arduinode.Home',[])
 			redirectTo: '/'
 		});
 }])
+.controller('HomeCtrl', ['$scope',function ($scope )
+{
+}])
