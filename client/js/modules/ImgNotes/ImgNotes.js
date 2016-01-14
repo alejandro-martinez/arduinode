@@ -23,6 +23,7 @@ angular.module('ImgNotes',[])
 		},
 		addMarker: function(data)
 		{
+			console.log("Adding",data);
 			var models = this.getMarkers();
 			models.push({
 				id_disp: data.id_disp,
@@ -31,7 +32,9 @@ angular.module('ImgNotes',[])
 				nro: data.nro_salida,
 				note: data.note,
 			    ip: data.ip,
-				estado: data.estado
+				estado: data.estado,
+			    id_planta: data.id_planta,
+				tipo: data.tipo
 			});
 			this.tag.imgNotes("clear");
 			this.setMarkers(models);

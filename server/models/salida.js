@@ -13,6 +13,11 @@ module.exports = function(sequelize, DataTypes)
 			type: DataTypes.TEXT,
 			allowNull: false
 		},
+		id_planta:
+		{
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
 		id_disp:
 		{
 			type: DataTypes.INTEGER,
@@ -43,7 +48,7 @@ module.exports = function(sequelize, DataTypes)
 			getAll: function(id_planta,callback)
 			{
 				console.log(id_planta);
-				var sql = "SELECT ip,nro_salida,s.note, s.y,s.x from salidas s, dispositivos d";
+				var sql = "SELECT id_planta,tipo,ip,nro_salida,s.note, s.y,s.x from salidas s, dispositivos d";
 				sql+= " WHERE d.id_disp = s.id_disp AND id_planta = " + id_planta;
 				sequelize.query(sql).then(function(salidas)
 				{
@@ -69,6 +74,7 @@ module.exports = function(sequelize, DataTypes)
 				})
 				.spread(function(salida, created)
 				{
+					console.log("salida",salida);
 					if (created)
 					{
 						callback({

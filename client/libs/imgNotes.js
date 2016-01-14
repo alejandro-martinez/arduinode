@@ -80,6 +80,7 @@
 
 
 		_create: function() {
+			
 			var self = this;
 			if (!this.element.is("img")) {
 				$.error('imgNotes plugin can only be applied to img elements');
@@ -102,7 +103,8 @@
 									{
 										$(document).trigger('ImgNotesClick',[{
 											x: rpos.x,
-											y: rpos.y
+											y: rpos.y,
+											tipo: 'P'
 										}])
 										//var elem = self.addNote(id_disp,);
 										//self._trigger("onEdit", ev, elem);
@@ -173,7 +175,7 @@
 /*
  *	Add a note
  */
-		addNote: function(id_disp,relx, rely, text,nro_salida,ip,estado) {
+		addNote: function(id_disp,relx, rely, text,nro_salida,ip,estado,tipo,id_planta) {
 			var self = this;
 			this.noteCount++;
 			var elem = this.options.onAdd.call(this);
@@ -181,7 +183,9 @@
 			$(this.img).imgViewer("addElem",elem);
 			$elem.data("id_disp",id_disp).data("nro",nro_salida);
 			$elem.data("relx", relx).data("rely", rely).data("note", text);
-			$elem.data("ip", ip).data("estado",estado);
+			$elem.data("ip", ip).data("estado",estado).data("tipo",tipo);
+			$elem.data("id_planta", id_planta);
+
 
 			switch (this.options.vAll) {
 				case "top": $elem.data("yOffset", 0); break;
@@ -244,7 +248,7 @@
 			var self = this;
 			$.each(notes, function() {
 				var nro = this.nro_salida || this.nro;
-				self.addNote(this.id_disp,this.x, this.y, this.note,nro, this.ip, this.estado);
+				self.addNote(this.id_disp,this.x, this.y, this.note,nro, this.ip, this.estado,this.tipo,this.id_planta);
 			});
 			$(this.img).imgViewer("update");
 		},
@@ -262,7 +266,9 @@
 						y: $elem.data("rely"),
 						note: $elem.data("note"),
 						ip: $elem.data("ip"),
-						estado:  $elem.data("estado")
+						estado:  $elem.data("estado"),
+						tipo:  $elem.data("tipo"),
+						id_planta:  $elem.data("id_planta"),
 				});
 			});
 			return notes;

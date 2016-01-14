@@ -408,7 +408,8 @@ button,.button
 }
 /*Boton switch window*/
 /* Plano popup salida */
-#viewSalida .switch
+#viewSalida .switch,
+.persianaView .containerSwitchWindow
 {
 	float:right;
 	margin-right:30px;

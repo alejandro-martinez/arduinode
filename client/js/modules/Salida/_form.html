@@ -2,6 +2,8 @@
 	<form novalidate class="simple-form" name="salidaForm" ng-model="salida">
 		<input type="hidden" name="x" ng-model="ngDialogData.x" />
 		<input type="hidden" name="y" ng-model="ngDialogData.y" />
+		<input type="hidden" name="id_planta" ng-model="ngDialogData.id_planta" />
+		<input type="hidden" name="tipo" ng-model="ngDialogData.tipo" />
 		<h3>{{(editing) ? "Modificar salida" : "Nueva salida" }}</h3>
 	    <label>Dispositivo<br>
 	    <select required id="dispositivo_slt"
@@ -24,7 +26,7 @@
 			</li>
 			<li>
 			<input class="button" ng-disabled="!salidaForm.$valid"
-			type="submit" ng-click="save(salidaForm)" value="Guardar" />
+			type="submit" ng-click="save(salida)" value="Guardar" />
 			</li>
 		</ul>
 	    </div>

@@ -181,39 +181,40 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 		$(document).off('ImgNotesShow').on('ImgNotesShow', function(e, note)
 		{
-			console.log(note);
-			Salida.toggleLuces(note.ip, note.nro, function(_estado)
+			if (note.tipo == 'P')
 			{
-				var state = (_estado == 1) ? 'on' : 'off';
-				$scope.models.filter(function(s)
-				{
-					if (s.nro_salida == note.nro)
-						 return s.estado = state;
-				});
-				note.estado = state;
-				ImgNotes.clearMarkers();
-				ImgNotes.setMarkers( $scope.models);
 				Popup.open(
+					{
+						template: config.rootFolder+'_viewPersiana.html',
+						data: note,
+						scope: $scope
+					});
+			}
+			else
+			{
+				Salida.toggleLuces(note.ip, note.nro, function(_estado)
 				{
-					template: config.rootFolder+'_view.html',
-					data: note
+					var state = (_estado == 1) ? 'on' : 'off';
+					$scope.models.filter(function(s)
+					{
+						if (s.nro_salida == note.nro)
+							return s.estado = state;
+					});
+					note.estado = state;
+					ImgNotes.clearMarkers();
+					ImgNotes.setMarkers( $scope.models);
+					Popup.open(
+					{
+						template: config.rootFolder+'_view.html',
+						data: note
+					});
 				});
-			});
-			/*note.dispositivo = $scope.dispositivos.filter(function(e)
-			{
-				if (e.id_disp == note.id_disp)
-					return e;
-			});
-			Popup.open(
-			{
-				template: config.rootFolder+'_view.html',
-				data: note,
-				scope: $scope
-			});*/
+			}
 		});
 
 		$(document).off('ImgNotesClick').on('ImgNotesClick', function(e,note)
 		{
+			console.log(e,note);
 			if ($scope.canEdit)
 			{
 				$scope.salida = note;
@@ -235,10 +236,13 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				}
 			})
 		}
-
-		$scope.save = function()
+		$scope.save = function(form)
 		{
+
 			$scope.salida.id_disp = $scope.disp.id_disp;
+			$scope.salida.id_planta = parseInt( $routeParams.id_planta );
+			$scope.salida.tipo = form.tipo;
+			console.log($scope.salida);
 			Salida.save($scope.salida, function(r)
 			{
 				Popup.close();
