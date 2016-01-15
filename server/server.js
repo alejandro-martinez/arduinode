@@ -13,7 +13,7 @@ var express = require('express'),
 	require('./controllers')(app);								// Controladores
 
 //Server HTTP
-http.listen(app.get('port'), function()
+http.listen(9500, function()
 {
 	console.log('Servidor corriendo en: ' + app.get('port'));
 	//Socket.IO CLIENTE
@@ -63,7 +63,18 @@ http.listen(app.get('port'), function()
 					arduino.getEstados(params, function(data)
 					{
 						console.log(data);
-						socket.emit('salidas', data);
+						if (params.estado == 'lucesOn')
+						{
+							var lucesEncendidas = data.filter(function(s)
+							{
+								return s.estado == 'on';
+							})
+							socket.emit('salidas', lucesEncendidas);
+						}
+						else
+						{
+							socket.emit('salidas', data);
+						}
 					});
 				}
 			});

@@ -415,3 +415,10 @@ button,.button
 	margin-right:30px;
 }
 /* Plano popup salida */
+@media (max-width:1025px)
+{
+	#actionsPage li:last-child
+	{
+		display:none;
+	}
+}

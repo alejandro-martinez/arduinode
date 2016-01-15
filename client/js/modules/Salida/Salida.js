@@ -9,6 +9,10 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			templateUrl: config.rootFolder+'_estados.html',
 			controller: 'EstadosCtrl'
 		})
+		.when('/salida/:estadoLuces', {
+			templateUrl: config.rootFolder+'_estados.html',
+			controller: 'EstadosCtrl'
+		})
 		.when('/salida/:id_planta/:plano', {
 			templateUrl: config.rootFolder+'_salidas.html',
 			controller: 'SalidaCtrl'
@@ -159,6 +163,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.models = models;
 				ImgNotes.setMarkers( $scope.models );
 			});
+			console.log($scope.models);
 		});
 
 		Dispositivo.getAll(function(dispositivos)
@@ -181,6 +186,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 		$(document).off('ImgNotesShow').on('ImgNotesShow', function(e, note)
 		{
+			console.log(note);
 			if (note.tipo == 'P')
 			{
 				Popup.open(
@@ -325,7 +331,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		Salida.getSalidasArduino(
 		{
 			ip		: $scope.ipDispositivo,
-			id_disp : $routeParams.id_disp
+			id_disp : $routeParams.id_disp,
+			estado: $routeParams.estadoLuces || null
 		},
 		function(salidas)
 		{
