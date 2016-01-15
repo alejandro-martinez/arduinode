@@ -42,7 +42,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 			Socket.listen('toggleResponse', function(estado)
 			{
-				console.log(estado);
 				callback(estado);
 				Socket.listen('toggleResponse',function(){});
 			});
@@ -104,7 +103,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 			var salidasDisponibles = todas.filter(function(s)
 			{
-
 				var found = salidasOcupadas(s.id_disp,s.nro_salida);
 				if (found.length === 0)
 				{
@@ -149,10 +147,9 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 
 		$('#image').attr('src',"/image/" + $routeParams.plano + ".jpg");
-		console.log($routeParams);
+
 		Salida.getAll($routeParams.id_planta,function(models)
 		{
-			console.log(models);
 			$scope.models = models.data;
 			$scope.tag = $('#image').imgNotes();
 			ImgNotes.init( $scope );
@@ -163,7 +160,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.models = models;
 				ImgNotes.setMarkers( $scope.models );
 			});
-			console.log($scope.models);
+			console.log("markers inicio",ImgNotes.getMarkers());
 		});
 
 		Dispositivo.getAll(function(dispositivos)
@@ -220,7 +217,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 		$(document).off('ImgNotesClick').on('ImgNotesClick', function(e,note)
 		{
-			console.log(e,note);
 			if ($scope.canEdit)
 			{
 				$scope.salida = note;
@@ -242,13 +238,12 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				}
 			})
 		}
-		$scope.save = function(form)
+		$scope.save = function(salida, select)
 		{
-
 			$scope.salida.id_disp = $scope.disp.id_disp;
 			$scope.salida.id_planta = parseInt( $routeParams.id_planta );
-			$scope.salida.tipo = form.tipo;
-			console.log($scope.salida);
+			$scope.salida.tipo = select.tipo;
+			$scope.salida.nro_salida = select.nro_salida;
 			Salida.save($scope.salida, function(r)
 			{
 				Popup.close();
@@ -278,7 +273,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$rootScope.loading = false;
 				//Actualiza combo de salidas
 				//para quitar las que ya fueron agregadas
-				$scope.salidas = Salida.getSalidasDisponibles(salidas, $scope.models);
+				$scope.salidas = Salida.getSalidasDisponibles(salidas, ImgNotes.getMarkers());
 				$scope.$apply();
 			});
 
@@ -297,12 +292,10 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		//Funcionamiento Luces
 		$scope.toggle = function(nro_salida, estado)
 		{
-			console.log("paso",nro_salida);
 			Salida.toggleLuces($scope.ipDispositivo,nro_salida, function(_estado)
 			{
 				$scope.salidas.filter(function(s)
 				{
-					console.log(s.nro_salida== nro_salida)
 					if (s.nro_salida == nro_salida)
 						 return s.estado = (_estado == 1) ? 'on' : 'off';
 				});

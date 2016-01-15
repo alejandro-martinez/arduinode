@@ -59,10 +59,14 @@ http.listen(9500, function()
 					});
 					params.salidas = response;
 
+					params.salidas .forEach(function(s, i)
+					{
+						s.id_disp = params.id_disp;
+					});
+
 					//Consulto los estados(ON/OFF) de cada salida
 					arduino.getEstados(params, function(data)
 					{
-						console.log(data);
 						if (params.estado == 'lucesOn')
 						{
 							var lucesEncendidas = data.filter(function(s)
@@ -105,7 +109,6 @@ http.listen(9500, function()
 				}
 				else
 				{
-					console.log("EEEE",response);
 					if (response == 1 || response == 0)
 					{
 						socket.emit('toggleResponse', response);

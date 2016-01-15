@@ -42,8 +42,6 @@ module.exports = function()
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
 		{
-			console.log("Comando",params.command);
-			console.log(params);
 			var This = this;
 			if (params.ip)
 			{
@@ -55,11 +53,9 @@ module.exports = function()
 					}
 					else
 					{
-						console.log("Enviando");
 						This.client.write(params.command);
 						This.client.on('data', function(_data)
 						{
-							console.log("Respuesta:", _data.toString());
 							if (params.decorator)
 							{
 								params.decorator(_data.toString())

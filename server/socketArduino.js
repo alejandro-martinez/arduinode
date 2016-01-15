@@ -17,9 +17,6 @@ module.exports = function()
 			params.command = 'S'+params.salida.nro_salida;
 			socket.send(params, function(response, err)
 			{
-				console.log(response)
-				console.log(err)
-				console.log(This.data)
 				delete params.decorator;
 				if (err)
 				{
@@ -34,6 +31,7 @@ module.exports = function()
 		//Devuelve estados de cada salida del array pasado por parametro
 		getEstados: function(params, callback)
 		{
+			console.log("params",params);
 			var This = this;
 			//Por cada salida, consulto su estado
 			var i = 0;
@@ -45,9 +43,8 @@ module.exports = function()
 					params.ip = params.ip || params.salida.ip;
 					This.getEstadoSalida(params, function(e)
 					{
-						console.log(e);
 						params.salidas[i].estado = (e == 1) ? 'on' : 'off';
-						params.salidas[i].id_disp = params.id_disp;
+						params.salidas[i].id_disp = params.salida.id_disp;
 						loop(i++);
 					});
 				}

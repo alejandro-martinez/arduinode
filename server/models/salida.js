@@ -48,7 +48,7 @@ module.exports = function(sequelize, DataTypes)
 			getAll: function(id_planta,callback)
 			{
 				console.log(id_planta);
-				var sql = "SELECT id_planta,tipo,ip,nro_salida,s.note, s.y,s.x";
+				var sql = "SELECT s.id_disp,id_planta,tipo,ip,nro_salida,s.note, s.y,s.x";
 				sql+= " FROM salidas s, dispositivos d";
 				sql+= " WHERE d.id_disp = s.id_disp AND id_planta = " + id_planta;
 				sequelize.query(sql).then(function(salidas)
@@ -75,9 +75,11 @@ module.exports = function(sequelize, DataTypes)
 				})
 				.spread(function(salida, created)
 				{
+
 					console.log("salida",salida);
 					if (created)
 					{
+						console.log(salida)
 						callback({
 							res: 'created',
 							model: salida

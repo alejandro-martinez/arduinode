@@ -43,7 +43,6 @@
  *	See examples for alternatives such as using tooltips.
  */
 			onShow: function(ev, elem) {
-				console.log("paso");
 				var $elem = $(elem);
 				$(document).trigger('ImgNotesShow', [$elem.data()]);
 			},
@@ -80,7 +79,7 @@
 
 
 		_create: function() {
-			
+
 			var self = this;
 			if (!this.element.is("img")) {
 				$.error('imgNotes plugin can only be applied to img elements');
@@ -103,8 +102,7 @@
 									{
 										$(document).trigger('ImgNotesClick',[{
 											x: rpos.x,
-											y: rpos.y,
-											tipo: 'P'
+											y: rpos.y
 										}])
 										//var elem = self.addNote(id_disp,);
 										//self._trigger("onEdit", ev, elem);
@@ -185,7 +183,6 @@
 			$elem.data("relx", relx).data("rely", rely).data("note", text);
 			$elem.data("ip", ip).data("estado",estado).data("tipo",tipo);
 			$elem.data("id_planta", id_planta);
-
 
 			switch (this.options.vAll) {
 				case "top": $elem.data("yOffset", 0); break;

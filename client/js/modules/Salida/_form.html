@@ -13,8 +13,8 @@
 	    </select>
 	    </label>
 	    <label>Salidas<br>
-	     <select ng-options="salida.nro_salida as salida.note for salida in salidas"
-	     ng-model="salida.nro_salida"></select>
+	     <select ng-options="salida as salida.note for salida in salidas"
+	     ng-model="salidaData"></select>
 	    </label>
 	    <label>Descripción<br>
 	    	<textarea required ng-model="salida.note"></textarea>
@@ -26,7 +26,7 @@
 			</li>
 			<li>
 			<input class="button" ng-disabled="!salidaForm.$valid"
-			type="submit" ng-click="save(salida)" value="Guardar" />
+			type="submit" ng-click="save(salida, salidaData)" value="Guardar" />
 			</li>
 		</ul>
 	    </div>
