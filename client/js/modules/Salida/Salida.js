@@ -9,7 +9,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			templateUrl: config.rootFolder+'_estados.html',
 			controller: 'EstadosCtrl'
 		})
-		.when('/salida/:estadoLuces', {
+		.when('/salida/:salidasActivas', {
 			templateUrl: config.rootFolder+'_estados.html',
 			controller: 'EstadosCtrl'
 		})
@@ -89,6 +89,14 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.listen('estados', function(estados)
 			{
 				callback(estados);
+			});
+		},
+		getLucesEncendidas: function(dispositivos,callback )
+		{
+			Socket.send('getLucesEncendidas',dispositivos);
+			Socket.listen('lucesEncendidas', function(salidas)
+			{
+				callback(salidas);
 			});
 		},
 		getSalidasDisponibles: function(todas, ocupadas)
@@ -281,8 +289,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 	}
 ])
-.controller('EstadosCtrl', ['SalidaConfig','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
-	function (config,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
+.controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton','$rootScope','$routeParams','ngDialog','$scope', 'SalidaFct',
+	function (config,Dispositivo,SwitchButton,$rootScope,$routeParams, Popup, $scope, Salida)
 	{
 		$rootScope.loading = true;
 		$scope.ipDispositivo = $routeParams.ip;
@@ -321,18 +329,33 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 			});
 		}
-		Salida.getSalidasArduino(
-		{
-			ip		: $scope.ipDispositivo,
-			id_disp : $routeParams.id_disp,
-			estado: $routeParams.estadoLuces || null
-		},
-		function(salidas)
-		{
-			$rootScope.loading = false;
-			$scope.salidas = salidas;
-			$scope.$apply();
-		});
 
+		if ($routeParams.salidasActivas)
+		{
+			Dispositivo.getAll(function(dispositivos)
+			{
+				Salida.getSalidasActivas(dispositivos,function(salidas)
+				{
+					console.log(salidas);
+					$rootScope.loading = false;
+					$scope.salidas = salidas;
+					$scope.$apply();
+				});
+			});
+		}
+		else
+		{
+			Salida.getSalidasArduino(
+			{
+				ip		: $scope.ipDispositivo,
+				id_disp : $routeParams.id_disp
+			},
+			function(salidas)
+			{
+				$rootScope.loading = false;
+				$scope.salidas = salidas;
+				$scope.$apply();
+			});
+		}
 	}
 ])

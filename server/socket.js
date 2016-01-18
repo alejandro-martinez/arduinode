@@ -9,6 +9,7 @@ module.exports = function()
 		//Conexion al socket arduino
 		connect: function(params, callback)
 		{
+			console.log("Connect",params);
 			var timer;
 			timeout = 2000;
 			console.log("[INFO] Conectando al socket: " + params.ip + ":8000");
@@ -23,18 +24,42 @@ module.exports = function()
 			});
 			timer = setTimeout(function()
 			{
-				callback(null, "Se alcanzó el tiempo de espera límite para la conexión!");
+				if (!params.noError)
+				{
+					callback(null, "Se alcanzó el tiempo de espera límite para la conexión!");
+				}
+				else
+				{
+					callback(null, "inactive");
+				}
 			}, timeout);
 
-			this.client.on('error', function(err) {
+			this.client.on('error', function(err)
+			{
 				clearTimeout(timer);
-				if (err.code == "ENOTFOUND") {
-					callback(null, "No se encontró dispositivo en el socket solicitado: " + err);
+				if (err.code == "ENOTFOUND")
+				{
+					if (!params.noError)
+					{
+						callback(null, "No se encontró dispositivo en el socket solicitado: " + err);
+					}
+					else
+					{
+						callback(null, "inactive");
+					}
 					return;
 				}
 
-				if (err.code == "ECONNREFUSED") {
-					callback(null, "Conexión rechazada: Chequea la IP y puerto ");
+				if (err.code == "ECONNREFUSED")
+				{
+					if (!params.noError)
+					{
+						callback(null, "Conexión rechazada: Chequea la IP y puerto ");
+					}
+					else
+					{
+						callback(null, "inactive");
+					}
 					return;
 				}
 			})
@@ -45,6 +70,7 @@ module.exports = function()
 			var This = this;
 			if (params.ip)
 			{
+				console.log("paramsSend",params);
 				this.connect(params, function(response, err)
 				{
 					if (err)
@@ -53,6 +79,7 @@ module.exports = function()
 					}
 					else
 					{
+
 						This.client.write(params.command);
 						This.client.on('data', function(_data)
 						{

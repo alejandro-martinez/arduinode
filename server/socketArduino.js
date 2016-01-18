@@ -28,10 +28,59 @@ module.exports = function()
 				}
 			});
 		},
+		getSalidasActivas: function(params, callback)
+		{
+			var This = this;
+			This.salidasActivas = [];
+			var i = 0;
+			exit = 0;
+			var cant_dispositivos = params.length
+			var loop = function(i)
+			{
+				console.log("I",i);
+				if ( i < cant_dispositivos)
+				{
+					This.getSalidas({
+						noError: true,
+						ip: params[i].ip,
+						id_disp:  params[i].id_disp
+					},
+					function(e)
+					{
+
+						i++;
+						console.log("pidoactivas",e);
+						params.salidas = e;
+						params.noError= true;
+						params.ip = params[i].ip;
+						This.getLucesActivas(params, function(estados)
+						{
+							This.salidasActivas.push(estados);
+							console.log("traigo")
+
+							loop(i);
+						});
+
+					});
+				}
+			}
+			if (i ==0)
+				loop(i);
+			if (i > cant_dispositivos)
+			{
+				console.log("ASDASD");
+				callback(This.salidasActivas);
+			}
+
+		},
+		getSalidasActivas: function(params, callback)
+		{
+			var This = this;
+
+		},
 		//Devuelve estados de cada salida del array pasado por parametro
 		getEstados: function(params, callback)
 		{
-			console.log("params",params);
 			var This = this;
 			//Por cada salida, consulto su estado
 			var i = 0;
@@ -98,7 +147,11 @@ module.exports = function()
 			socket.send(params, function(response, err)
 			{
 				delete params.decorator;
-				if (err)
+				if (err == "inactive")
+				{
+					callback(null);
+				}
+				else if (err)
 				{
 					callback(null, err);
 				}

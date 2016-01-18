@@ -13,7 +13,7 @@ var express = require('express'),
 	require('./controllers')(app);								// Controladores
 
 //Server HTTP
-http.listen(9500, function()
+http.listen(app.get('port'), function()
 {
 	console.log('Servidor corriendo en: ' + app.get('port'));
 	//Socket.IO CLIENTE
@@ -21,7 +21,7 @@ http.listen(9500, function()
 	{
 		process.on('uncaughtException', function (err)
 		{
-			socket.emit('Error', err)
+			//socket.emit('Error', err)
 		});
 		socket.on('getEstados', function(_salidas)
 		{
@@ -29,6 +29,13 @@ http.listen(9500, function()
 			arduino.getEstados({salidas: _salidas}, function(data)
 			{
 				socket.emit('estados', data);
+			});
+		});
+		socket.on('getSalidasActivas', function(params)
+		{
+			arduino.getSalidasActivas(params,function(data)
+			{
+				socket.emit('salidasActivas', data);
 			});
 		});
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
@@ -62,23 +69,6 @@ http.listen(9500, function()
 					params.salidas .forEach(function(s, i)
 					{
 						s.id_disp = params.id_disp;
-					});
-
-					//Consulto los estados(ON/OFF) de cada salida
-					arduino.getEstados(params, function(data)
-					{
-						if (params.estado == 'lucesOn')
-						{
-							var lucesEncendidas = data.filter(function(s)
-							{
-								return s.estado == 'on';
-							})
-							socket.emit('salidas', lucesEncendidas);
-						}
-						else
-						{
-							socket.emit('salidas', data);
-						}
 					});
 				}
 			});

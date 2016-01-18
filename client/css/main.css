@@ -300,10 +300,9 @@ button,.button
 
 #header {
     background-color: #03ae74;
-    width: 96%;
+    width: 100%;
     height: 50px;
-    padding: 0 2%
-}
+    padding: 0 2%}
 #header a {
     float: right;
     width: 29px;
@@ -313,11 +312,12 @@ button,.button
     padding: 0;
     border: 0;
     border-radius: 0;
+    margin-right: 15px;
 }
 #header h1 {
-    float: left;
+    /* float: left; */
     display: block;
-    width: 90%;
+    /* width: 90%; */
     text-align: center;
     color: #fff;
     line-height: 50px;
