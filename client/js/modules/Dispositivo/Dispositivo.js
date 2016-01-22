@@ -3,9 +3,10 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .constant('DispositivoConfig',{
 		rootFolder: 'js/modules/Dispositivo/'
 })
+/*
 .config(['$routeProvider','DispositivoConfig', function ($routeProvider,config)
 {
-	$routeProvider
+	/*$routeProvider
 		.when('/dispositivo/',
 		{
 			templateUrl: config.rootFolder+'_dispositivos.html',
@@ -25,8 +26,32 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 		{
 			redirectTo: '/'
 		});
-}])
-.factory('DispositivoFct', ['$http','ngDialog', function($http, Popup)
+}])*/
+.config(function( $stateProvider, $urlRouterProvider )
+{
+
+	$stateProvider
+		.state('dispositivos',
+		{
+			templateUrl: "js/modules/Dispositivo/_dispositivos.html",
+			controller: 'DispositivoCtrl'
+		})
+		.state('update',
+		{
+			params: {
+				params: null
+			},
+			templateUrl: "js/modules/Dispositivo/_form.html",
+			controller: 'FormCtrl'
+		})
+		.state('create',
+		{
+			templateUrl: "js/modules/Dispositivo/_form.html",
+			controller: 'FormCtrl'
+		})
+
+})
+.factory('DispositivoFct', ['$http','$state','ngDialog', function($http,$state, Popup)
 {
 	var Dispositivo = {
 		getAll: function(callback)
@@ -49,7 +74,7 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 				callback(error)
 			});
 		},
-		delete: function(id)
+		remove: function(id)
 		{
 			$http.get('/dispositivo/delete/'+id).then(function(response)
 			{
@@ -59,7 +84,7 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 						template:'<h1>Se eliminó el dispositivo</h1>',
 						plain:true
 					});
-					window.location.href = '/#/dispositivo';
+					$state.go('dispositivos');
 				}
 			}, function(error)
 			{
@@ -85,7 +110,7 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 				}
 				else
 				{
-					window.location.href = '/#/dispositivo';
+					$state.go('dispositivos');
 				}
 			}, function(error)
 			{
@@ -108,16 +133,18 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 		})
 	}
 ])
-.controller('FormCtrl', ['$routeParams','$scope','SocketIO','DispositivoFct',
-	function ($routeParams, $scope, Socket, Dispositivo)
+.controller('FormCtrl', ['$stateParams','$scope','SocketIO','DispositivoFct',
+	function (params, $scope, Socket, Dispositivo)
 	{
+		console.log(params.params);
+		var params = params.params;
 		$scope.model = {};
 
-		if ($routeParams.id_disp)
+		if (params && params.id_disp)
 		{
-			Dispositivo.get($routeParams.id_disp, function(model)
+			Dispositivo.get(params.id_disp, function(model)
 			{
-				$scope.model = model;
+				$scope.model = model[0];
 			});
 		}
 
@@ -129,7 +156,7 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 
 		$scope.delete = function(id)
 		{
-			Dispositivo.delete(id);
+			Dispositivo.remove(id);
 		}
 	}
 ])

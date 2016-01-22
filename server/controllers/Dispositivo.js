@@ -1,7 +1,8 @@
 module.exports = function(app)
 {
 	//Devuelve todos los dispositivos
-	app.get('/dispositivo', function(req, res){
+	app.get('/dispositivo', function(req, res)
+	{
 		sequelize.models.dispositivos.findAll().then(function(models)
 		{
 			res.json(models);
@@ -10,9 +11,8 @@ module.exports = function(app)
 
 	//Devuelve dispositivo por ID
 	app.get('/dispositivo/id/:id_disp', function(req, res){
-		console.log(req.body)
-		sequelize.models.dispositivos
-						.findOne({'id_disp': req.body.id_disp})
+		console.log(req.params);
+		sequelize.models.dispositivos.findAll({where:{'id_disp': parseInt(req.params.id_disp)}})
 						.then(function(model)
 						{
 							res.json(model);

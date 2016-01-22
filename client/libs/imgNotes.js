@@ -17,7 +17,11 @@
 			onAdd: function() {
 				this.options.vAll = "bottom";
 				this.options.hAll = "middle";
-				return  $(document.createElement('span')).addClass("marker").html(this.noteCount);
+
+				return  $(document.createElement('span'))
+								  .attr("id",String(this.id_disp) + String(this.nro_salida))
+								  .addClass("marker " + this.tipo)
+								  .html(this.estado);
 			},
 /*
  *	Default callback when the marker is clicked and the widget has canEdit = true
@@ -27,10 +31,7 @@
 			onEdit: function(ev, elem) {
 
 				var $elem = $(elem);
-				$(document).on('UpdateImgNotesMarker', function(e, note)
-				{
-					$elem.data("note", note);
-				});
+
 				$(document).off('RemoveImgNotesMarker').on('RemoveImgNotesMarker', function()
 				{
 					$elem.trigger("remove");
@@ -44,6 +45,24 @@
  */
 			onShow: function(ev, elem) {
 				var $elem = $(elem);
+				$(document).on('UpdateImgNotesMarker', function(e, note)
+				{
+
+					var idMarker = "#".concat(note.id_disp,note.nro_salida);
+
+					console.log("set state",idMarker);
+					if (note.estado == "on")
+					{
+						$(idMarker).addClass("on");
+					}
+					else
+					{
+						$(idMarker).removeClass("on");
+					}
+					$(idMarker).html(note.estado);
+					$elem.data("note", note.note);
+				});
+
 				$(document).trigger('ImgNotesShow', [$elem.data()]);
 			},
 /*
@@ -176,10 +195,14 @@
 		addNote: function(id_disp,relx, rely, text,nro_salida,ip,estado,tipo,id_planta) {
 			var self = this;
 			this.noteCount++;
+			this.tipo = tipo;
+			this.estado = estado;
+			this.nro_salida = nro_salida;
+			this.id_disp = id_disp;
 			var elem = this.options.onAdd.call(this);
 			var $elem = $(elem);
 			$(this.img).imgViewer("addElem",elem);
-			$elem.data("id_disp",id_disp).data("nro",nro_salida);
+			$elem.data("id_disp",id_disp).data("nro_salida",nro_salida);
 			$elem.data("relx", relx).data("rely", rely).data("note", text);
 			$elem.data("ip", ip).data("estado",estado).data("tipo",tipo);
 			$elem.data("id_planta", id_planta);
@@ -243,9 +266,9 @@
  */
 		import: function(notes) {
 			var self = this;
-			$.each(notes, function() {
-				var nro = this.nro_salida || this.nro;
-				self.addNote(this.id_disp,this.x, this.y, this.note,nro, this.ip, this.estado,this.tipo,this.id_planta);
+			$.each(notes, function()
+			{
+				self.addNote(this.id_disp,this.x, this.y, this.note, this.nro_salida, this.ip, this.estado,this.tipo,this.id_planta);
 			});
 			$(this.img).imgViewer("update");
 		},
@@ -258,7 +281,7 @@
 				var $elem = $(this);
 				notes.push({
 						id_disp: $elem.data("id_disp"),
-						nro_salida: $elem.data("nro"),
+						nro_salida: $elem.data("nro_salida"),
 						x: $elem.data("relx"),
 						y: $elem.data("rely"),
 						note: $elem.data("note"),

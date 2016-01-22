@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes)
 		note:
 		{
 			type: DataTypes.TEXT,
-			allowNull: false
+			allowNull: true
 		},
 		id_planta:
 		{
@@ -34,11 +34,6 @@ module.exports = function(sequelize, DataTypes)
 		{
 			type: DataTypes.FLOAT,
 			allowNull: false
-		},
-		tipo:
-		{
-			type: DataTypes.STRING,
-			allowNull: false
 		}
 	},
 	{
@@ -47,7 +42,6 @@ module.exports = function(sequelize, DataTypes)
 		classMethods: {
 			getAll: function(id_planta,callback)
 			{
-				console.log(id_planta);
 				var sql = "SELECT s.id_disp,id_planta,tipo,ip,nro_salida,s.note, s.y,s.x";
 				sql+= " FROM salidas s, dispositivos d";
 				sql+= " WHERE d.id_disp = s.id_disp AND id_planta = " + id_planta;
@@ -56,27 +50,58 @@ module.exports = function(sequelize, DataTypes)
 					callback(salidas[0]);
 				})
 			},
+			addNotes: function(_params)
+			{
+				console.log("Adding");
+				_params.salidasDB.forEach(function(x, i)
+				{
+					_params.salidasArduino.filter(function(s, j)
+					{
+						s.id_disp = _params.id_disp;
+						if (s.nro_salida == x.nro_salida)
+						{
+							s.note = x.note;
+						}
+					});
+				});
+				return _params.salidasArduino;
+			},
+			getByPlanta: function( id ,callback)
+			{
+				console.log(id);
+				var sql = "SELECT s.*,d.id_disp,d.ip,d.note as noteDispositivo";
+				sql+= " FROM salidas s, dispositivos d";
+				sql+= " WHERE id_planta = " + id;
+				sql+= " AND d.id_disp = s.id_disp ";
+				sql+= " ORDER BY s.id_disp";
+				sequelize.query(sql).then(function(salidas)
+				{
+					callback(salidas);
+				})
+			},
 		    createOrUpdate: function(model, callback)
 			{
-				var id = model.nro || model.nro_salida;
+				delete model.ngDialogId;
 				sequelize.models.salidas
 				.findOrCreate(
 				{
 					where:
 					{
-						nro_salida: id,
-						id_disp: model.id_disp
+						nro_salida: model.nro_salida,
+						id_disp: parseInt(model.id_disp)
 					},
 					defaults: model
 				})
 				.catch(function(err)
 				{
+					console.log(err);
 					callback({error: err.name})
 				})
 				.spread(function(salida, created)
 				{
+					console.log("existe",salida)
 
-					console.log("salida",salida);
+
 					if (created)
 					{
 						console.log(salida)
@@ -88,8 +113,11 @@ module.exports = function(sequelize, DataTypes)
 					else
 					{
 						salida.note = model.note;
-						salida.x = model.x;
-						salida.y = model.y;
+						if (model.x || model.y)
+						{
+							salida.x = model.x;
+							salida.y = model.y;
+						}
 						salida.save().then(function()
 						{
 							callback({

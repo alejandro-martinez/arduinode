@@ -1,12 +1,12 @@
 <table>
 	<tr ng-repeat="d in dispositivos">
-		<td><a href="/#/dispositivo/update/{{d.id_disp}}">{{d.ip}}</a></td>
-		<td><a href="/#/dispositivo/update/{{d.id_disp}}">{{d.note}}</a></td>
-		<td><a class="button" href="/#/salida/estados/{{d.id_disp}}/{{d.ip}}">Salidas</a></td>
+		<td><a ui-sref="update({params: {{d}} })">{{d.ip}}</a></td>
+		<td><a ui-sref="update({params: {{d}} })">{{d.note}}</a></td>
+		<td><a class="button" ui-sref="estados({params: {{d}} })">Salidas</a></td>
 	</tr>
 </table>
 <ul class="inlineButtons" id="actionsPage">
 	<li>
-		<a class="button" href="/#/dispositivo/create">Nuevo</a>
+		<a class="button" ui-sref="create">Nuevo</a>
 	</li>
 </ul>

@@ -1,5 +1,5 @@
 var socket = require('./socket')();
-
+var async = require('async');
 module.exports = function()
 {
 	var Arduino =
@@ -28,74 +28,21 @@ module.exports = function()
 				}
 			});
 		},
-		getSalidasActivas: function(params, callback)
-		{
-			var This = this;
-			This.salidasActivas = [];
-			var i = 0;
-			exit = 0;
-			var cant_dispositivos = params.length
-			var loop = function(i)
-			{
-				console.log("I",i);
-				if ( i < cant_dispositivos)
-				{
-					This.getSalidas({
-						noError: true,
-						ip: params[i].ip,
-						id_disp:  params[i].id_disp
-					},
-					function(e)
-					{
-
-						i++;
-						console.log("pidoactivas",e);
-						params.salidas = e;
-						params.noError= true;
-						params.ip = params[i].ip;
-						This.getLucesActivas(params, function(estados)
-						{
-							This.salidasActivas.push(estados);
-							console.log("traigo")
-
-							loop(i);
-						});
-
-					});
-				}
-			}
-			if (i ==0)
-				loop(i);
-			if (i > cant_dispositivos)
-			{
-				console.log("ASDASD");
-				callback(This.salidasActivas);
-			}
-
-		},
-		getSalidasActivas: function(params, callback)
-		{
-			var This = this;
-
-		},
-		//Devuelve estados de cada salida del array pasado por parametro
 		getEstados: function(params, callback)
 		{
 			var This = this;
-			//Por cada salida, consulto su estado
 			var i = 0;
-			var loop = function(nro_salida)
+			var salidas = [];
+			var loop = function()
 			{
 				if (i < params.salidas.length)
 				{
-					params.salida = params.salidas[i];
-					params.ip = params.ip || params.salida.ip;
-					This.getEstadoSalida(params, function(e)
+					This.getSalidas({ ip: params[i].ip }, function(salidas)
 					{
-						params.salidas[i].estado = (e == 1) ? 'on' : 'off';
-						params.salidas[i].id_disp = params.salida.id_disp;
+						salidas.id_disp = params[i].id_disp;
+						salidas.push(salidas);
 						loop(i++);
-					});
+					})
 				}
 				else
 				{
@@ -104,13 +51,12 @@ module.exports = function()
 			}
 			loop(i);
 		},
-		// Intercambia el estado de una salida
-		// (Si está en ON, la pasa a OFF y viceversa)
-		toggleSalida: function(params, callback)
+		// Setea el estado de una salida en ON u OFF
+		switchSalida: function(params, callback)
 		{
 			var This = this;
 			this.data = "";
-			params.command = 'T'+params.salida;
+			params.command = 'T' + params.nro_salida + params.estado;
 			params.decorator = function(_data)
 			{
 				This.data+= _data;
@@ -127,12 +73,30 @@ module.exports = function()
 				}
 			});
 		},
-		buscarSalida: function(salidas, nro)
+		buscarSalida: function(params, found)
 		{
-			return salidas.filter(function(s)
+			if (params.salidas.length > 0)
 			{
-				return s.nro_salida == nro;
-			})
+				async.forEach(params.salidas, function iterator(s, callback)
+				{
+					if (parseInt(s.nro_salida) == params.nro_salida)
+					{
+						if (s.ip == params.ip)
+						{
+							return found(true);
+						}
+					}
+					callback(null, s);
+
+				}, function done()
+				{
+					return found(false);
+				});
+			}
+			else
+			{
+				return found(false);
+			}
 		},
 		//Devuelve listado de salidas de una placa
 		getSalidas: function(params,callback)
@@ -158,37 +122,58 @@ module.exports = function()
 				else
 				{
 					var salidasRaw = This.data.match(/[^\r\n]+/g);
-
+					This.found;
 					var salidas = [];
 					salidasRaw.forEach(function(s)
 					{
-						var posGuion = s.indexOf("-") + 1;
+						var posGuion = s.indexOf("-");
+						var posDospuntos = s.indexOf(":");
 						switch (s[0])
 						{
+							case 'B':
 							case 'L':
-								for (var i = posGuion; i < s.length; i+=2)
-								{
-									var nro = s[i].concat(s[i + 1]);
-								}
-								break;
-
 							case 'P':
-								var nro = s[posGuion].concat(s[posGuion + 1])
+								var nro_salida = s[posGuion+1] + s[posGuion+2];
+								var estado = s[posDospuntos+1];
+								var tipo = s[0];
 								break;
+							default:
+								return;
 						}
-						var found = This.buscarSalida(salidas, nro);
-						if (found.length == 0 )
+						var uniques = [];
+						var _params =
+						{
+							salidas: salidas,
+							nro_salida: parseInt(nro_salida),
+							ip: params.ip,
+							tipo: tipo
+						}
+						This.buscarSalida(_params, function(_found)
+						{
+							This.found = _found;
+						});
+						if (!This.found)
 						{
 							salidas.push({
-								nro_salida: nro,
-								note: s[0] + "-" +  nro,
-								tipo: s[0],
-								estado: "",
-								id_disp: ""
+								nro_salida: nro_salida,
+								note: params.ip.concat("-",tipo,nro_salida),
+								tipo: tipo,
+								estado: (estado == 0) ? "on" : "off",
+								id_disp: "",
+								ip: params.ip
 							});
 						}
+
 					});
-					callback( salidas );
+					if (typeof params.filterByEstado != 'undefined' )
+					{
+						var salidasA = salidas.filter(function(s)
+						{
+
+							return s.estado == params.filterByEstado;
+						})
+					}
+					callback( salidasA || salidas);
 				}
 			});
 		},

@@ -3,6 +3,7 @@
 var express = require('express'),
 	app 	= express(),
 	fs		= require('fs'),
+	async	= require('async'),
 	http 	= require('http').Server(app),
 	config 	= require('./config/config').config(app, express),	// Configuración
 	io 		= require('socket.io')(http),						// Socket IO
@@ -23,23 +24,35 @@ http.listen(app.get('port'), function()
 		{
 			//socket.emit('Error', err)
 		});
-		socket.on('getEstados', function(_salidas)
+
+		socket.on('getSalidasActivas', function()
 		{
-			//Consulto los estados(ON/OFF) de cada salida
-			arduino.getEstados({salidas: _salidas}, function(data)
+			console.log("hey");
+			var salidas = [];
+			sequelize.models.dispositivos.findAll().then(function(models)
 			{
-				socket.emit('estados', data);
-			});
+				async.eachSeries(models, function iterator(item, callback)
+				{
+					getSalidas({
+						ip: item.ip,
+						id_disp: item.id_disp,
+						filterByEstado: 'on'
+					},
+					function(response)
+					{
+						salidas = salidas.concat(response);
+						callback(null, item);
+					});
+
+				}, function done()
+				{
+					socket.emit('salidasActivas', salidas);
+				});
+			})
 		});
-		socket.on('getSalidasActivas', function(params)
-		{
-			arduino.getSalidasActivas(params,function(data)
-			{
-				socket.emit('salidasActivas', data);
-			});
-		});
-		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
-		socket.on('getSalidas', function(params)
+
+		//Devuelve las salidas de un dispositivo con notas
+		var getSalidas = function(params, callback)
 		{
 			arduino.getSalidas(params, function(response, err)
 			{
@@ -49,30 +62,86 @@ http.listen(app.get('port'), function()
 				}
 				else
 				{
-					//Traigo las descripciones de las salidas, (si existen)
 					sequelize.models.dispositivos.getSalidas(params.id_disp,
 					function(models)
 					{
-						models.forEach(function(x, i)
-						{
-							response.filter(function(s, j)
-							{
-								if (s.nro_salida == x.nro_salida)
-								{
-									s.note = x.note;
-								}
-							});
-						});
-					});
-					params.salidas = response;
-
-					params.salidas .forEach(function(s, i)
-					{
-						s.id_disp = params.id_disp;
+						params.salidasDB = models;
+						params.salidasArduino = response;
+						callback( sequelize.models.salidas.addNotes(params) );
 					});
 				}
 			});
+		}
+
+		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
+		socket.on('getSalidas', function(params)
+		{
+			getSalidas(params, function(response)
+			{
+				socket.emit('salidas', response);
+			});
 		});
+
+		//Devuelve el listado de salidas de una planta específica
+		socket.on('getSalidasPlanta', function(id_planta)
+		{
+			var salidasPlanta = [];
+
+			sequelize.models.salidas.getByPlanta(id_planta,
+			function(models)
+			{
+				var dispositivosUnique = [];
+
+				models[0].forEach(function(d)
+				{
+					if (dispositivosUnique.indexOf(d.ip) == -1)
+					{
+						dispositivosUnique.push(d.ip);
+					}
+				});
+				async.eachSeries(dispositivosUnique, function iterator(ip, callback)
+				{
+					arduino.getSalidas({ip: ip}, function(salidasDisp, err)
+					{
+						if (err)
+						{
+							socket.emit('Error', err);
+						}
+						else
+						{
+							salidasDisp.forEach(function(s,i)
+							{
+								models[0].filter(function(m,j)
+								{
+									if (m.ip == ip)
+									{
+										if (s.nro_salida == m.nro_salida)
+										{
+											m.estado = s.estado;
+											m.tipo = s.tipo;
+										}
+									}
+								});
+							})
+							console.log(models[0])
+							callback(null, ip);
+						}
+					})
+				},
+				function done()
+				{
+					models[0].filter(function(s)
+					{
+						if (typeof s.estado == "undefined")
+						{
+							s.estado = "error";
+						}
+					});
+					socket.emit('salidasPlanta', models[0]);
+				});
+			});
+		});
+
 		//Sube,baja o detiene las persianas
 		socket.on('movePersiana', function(params)
 		{
@@ -84,14 +153,15 @@ http.listen(app.get('port'), function()
 				}
 				else
 				{
+					console.log("resp persiana",response);
 					socket.emit('moveResponse', response);
 				}
 			});
 		});
 		//Intercambia el estado de una salida, ON/OFF
-		socket.on('toggleSalida', function(params)
+		socket.on('switchSalida', function(params)
 		{
-			arduino.toggleSalida(params, function(response, err)
+			arduino.switchSalida(params, function(response, err)
 			{
 				if (err)
 				{
@@ -101,7 +171,7 @@ http.listen(app.get('port'), function()
 				{
 					if (response == 1 || response == 0)
 					{
-						socket.emit('toggleResponse', response);
+						socket.emit('switchResponse', response);
 					}
 				}
 

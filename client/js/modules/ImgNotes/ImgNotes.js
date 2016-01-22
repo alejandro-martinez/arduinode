@@ -9,6 +9,7 @@ angular.module('ImgNotes',[])
 			$scope.btEditText = 'Editar';
 			$scope.toggleEdit = function()
 			{
+				console.log("to");
 				var $this = $(this);
 				$scope.btEditText = ($scope.btEditText == 'Ver') ? 'Editar' : 'Ver';
 				$scope.canEdit = ($scope.btEditText == 'Ver');
@@ -23,13 +24,12 @@ angular.module('ImgNotes',[])
 		},
 		addMarker: function(data)
 		{
-			console.log("Adding",data);
 			var models = this.getMarkers();
 			models.push({
 				id_disp: data.id_disp,
 				x: data.x,
 				y: data.y,
-				nro: data.nro_salida,
+				nro_salida: data.nro_salida,
 				note: data.note,
 			    ip: data.ip,
 				estado: data.estado,

@@ -4,7 +4,7 @@
 	<ul class="inlineButtons" id="actionsPage">
 		<li><button ng-click="zoom(0)">-</button></li>
 		<li><button ng-click="zoom(1)">+</button></li>
-		<li><button ng-click="toggleEdit()">{{btEditText}}</button></li>
+		<li><button ng-click="toggleEdit()">{{btEditText || 'Editar'}}</button></li>
 	</ul>
 	<img id="image" />
 </div>

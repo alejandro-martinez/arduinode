@@ -1,17 +1,16 @@
 angular.module('Arduinode.Home',[])
-.config(['$routeProvider', function ($routeProvider)
+.config(function( $stateProvider, $urlRouterProvider )
 {
-	$routeProvider
-		.when('/',
+
+	$urlRouterProvider.otherwise("/");
+
+	$stateProvider
+		.state('home',
 		{
-			templateUrl: 'js/modules/Home/home.html',
-			controller: 'HomeCtrl'
+				url: "/",
+				templateUrl: "js/modules/Home/home.html"
 		})
-		.otherwise(
-		{
-			redirectTo: '/'
-		});
-}])
+})
 .controller('HomeCtrl', ['$scope',function ($scope )
 {
 }])

@@ -24,6 +24,10 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
+a
+{
+	cursor: pointer;
+}
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
@@ -91,15 +95,15 @@ input[type="text"],textarea,select
 .simple-form input, textarea
 {
 }
-#home ul
+.page ul
 {
 	margin: 0 auto;
 }
-#home ul li
+.page ul li
 {
 	list-style: none
 }
-#home ul li a
+.page ul:first-child li a
 {
 	background: #039e74;
 	color: #fff;
@@ -111,6 +115,11 @@ input[type="text"],textarea,select
 	text-align: center;
 }
 /*GENERAL*/
+ul.actions li
+{
+	float: left;
+	margin-right: 10px;
+}
 ul.actionsPopup
 {
 	/* position:absolute; */
@@ -281,7 +290,7 @@ button,.button
 /*Marcador de dispositivos*/
 .marker
 {
-  width: 38px;
+  width: 51px;
   color: black !important;
   height: 61px;
   font-size: 12px;
@@ -290,19 +299,38 @@ button,.button
   letter-spacing: -1px;
   text-align: center;
   color: #fff;
-  background: url(lamps.png);
+  background: url(sprite.png);
 }
-
-.marker.on
+/* Tipos de marcadores en el plano*/
+.marker.L
 {
-  background-position: 38px 0px;
+  background-position: 8px 0px;
 }
 
-#header {
+.marker.L.on
+{
+  background-position: 238px 0px;
+}
+.marker.B
+{
+	background-position: 184px 9px;
+}
+.marker.on.B
+{
+	background-position: 62px 7px;
+}
+.marker.P
+{
+	background-position: 125px 0px;
+
+}
+#header
+{
     background-color: #03ae74;
     width: 100%;
     height: 50px;
-    padding: 0 2%}
+    padding: 0 2%
+}
 #header a {
     float: right;
     width: 29px;
@@ -336,7 +364,7 @@ button,.button
   background-image:url('loader.gif');
   background-repeat:no-repeat;
   background-position:center;
-  z-index: -1;
+  z-index: 99999;
   opacity: 0.4;
   filter: alpha(opacity=40); /* For IE8 and earlier */
 }
@@ -354,7 +382,7 @@ button,.button
 .containerSwitchWindow ul,
 .containerSwitchWindow li
 {
-    margin: 0;
+    margin: 13px 3px;
     padding: 0;
     list-style: none;
     display: inline-block;
@@ -401,12 +429,17 @@ button,.button
     border-radius: 0;
     box-shadow: 0 0 0 0px gray, inset 3px 35px 0 27px white;
 }
-
+.moveUp:before
+{
+    transform: rotate(180deg);
+}
 .containerSwitchWindow .active
 {
    background:green !important;
 }
 /*Boton switch window*/
+/*PLANTAS*/
+/*PLANTAS*/
 /* Plano popup salida */
 #viewSalida .switch,
 .persianaView .containerSwitchWindow

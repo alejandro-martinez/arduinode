@@ -1,0 +1,13 @@
+<div class="page" id="plantas">
+	<ul>
+		<li ng-repeat="p in plantas">
+			<a ui-sref="salidas({params: {{p}} })">{{p.descripcion}}</a>
+		</li>
+	</ul>
+	<ul class="inlineButtons" id="actionsPage">
+		<li>
+			<a class="button" ui-sref="nuevaPlanta">Nueva</a>
+		</li>
+	</ul>
+
+</div>

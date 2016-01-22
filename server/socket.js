@@ -9,9 +9,8 @@ module.exports = function()
 		//Conexion al socket arduino
 		connect: function(params, callback)
 		{
-			console.log("Connect",params);
 			var timer;
-			timeout = 2000;
+			timeout = 1000;
 			console.log("[INFO] Conectando al socket: " + params.ip + ":8000");
 			this.client = net.connect(
 			{
@@ -70,7 +69,6 @@ module.exports = function()
 			var This = this;
 			if (params.ip)
 			{
-				console.log("paramsSend",params);
 				this.connect(params, function(response, err)
 				{
 					if (err)
@@ -79,7 +77,6 @@ module.exports = function()
 					}
 					else
 					{
-
 						This.client.write(params.command);
 						This.client.on('data', function(_data)
 						{
@@ -94,7 +91,6 @@ module.exports = function()
 						});
 						This.client.on('end', function()
 						{
-							console.log("cierra");
 							callback(This.data);
 						});
 					}

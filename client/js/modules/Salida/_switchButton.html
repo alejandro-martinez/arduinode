@@ -1,24 +1,7 @@
 <label class="switch">
-	<input data-ip="{{ngDialogData.ip}}"
-	data-nro="{{ngDialogData.nro}}" class="switch-input" type="checkbox"
-	id="s{{s.nro_salida || ngDialogData.nro_salida}}"
-	ng-checked="{{(s.estado || ngDialogData.estado) == 'on'}}"
-/>
+	<input data-ip="{{s.ip}}"
+	data-nro="{{ s.nro_salida}}" class="switch-input" type="checkbox"
+	id="s{{s.nro_salida}}" ng-click="switch(s)" ng-checked="{{(s.estado) == 'on'}}"/>
 	<span class="switch-label" data-on="Encendida" data-off="Apagada"></span>
 	<span class="switch-handle"></span>
 </label>
-
-<script>
-	$(document).ready(function()
-	{
-		$(':checkbox').change(function(e)
-		{
-			$(document).trigger('switchEvent',
-			{
-				checked: e.currentTarget.checked,
-				ip: $(this).attr('data-ip'),
-				nro: $(this).attr('data-nro')
-			});
-		});
-	})
-</script>

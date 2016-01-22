@@ -2,8 +2,7 @@
 //Dependencias
 //Factories y Services comunes a la aplicacion
 angular.module('Arduinode',
-[
-	'ngRoute',
+[	'ui.router',
 	'ngDialog',
 	'ngTouch',
 	'Arduinode.Salida',
@@ -11,9 +10,9 @@ angular.module('Arduinode',
 	'Arduinode.Home',
 	'Arduinode.Dispositivo'
 ])
-.controller('MainCtrl', ['$scope', function ($scope )
+.controller('MainCtrl', ['$rootScope', function ($rootScope )
 {
-	$scope.currentMenu = 'Home';
+	$rootScope.currentMenu = 'Home';
 }])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 
