@@ -123,7 +123,7 @@ http.listen(app.get('port'), function()
 									}
 								});
 							})
-							console.log(models[0])
+
 							callback(null, ip);
 						}
 					})
@@ -137,6 +137,7 @@ http.listen(app.get('port'), function()
 							s.estado = "error";
 						}
 					});
+					console.log(models[0]);
 					socket.emit('salidasPlanta', models[0]);
 				});
 			});

@@ -99,6 +99,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidasPlanta', id);
 			Socket.listen('salidasPlanta', function(salidas)
 			{
+				console.log(salidas);
 				callback(salidas);
 			});
 		},
@@ -257,13 +258,11 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			{
 				Popup.close();
 				$scope.toggleEdit();
-				if (r.res == 'created')
-				{
-					r.model.estado = select.estado;
-					r.model.ip =  select.ip;
-					r.model.tipo =  select.tipo;
-					ImgNotes.addMarker(r.model);
-				}
+				r.model.estado = select.estado;
+				r.model.ip =  select.ip;
+				r.model.tipo =  select.tipo;
+				ImgNotes.addMarker(r.model);
+
 				//ImgNotes.refreshMarker($scope.salida.note);
 				//Actualiza combo de salidas
 				//para quitar las que ya fueron agregadas

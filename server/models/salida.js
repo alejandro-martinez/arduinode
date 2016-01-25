@@ -99,12 +99,8 @@ module.exports = function(sequelize, DataTypes)
 				})
 				.spread(function(salida, created)
 				{
-					console.log("existe",salida)
-
-
 					if (created)
 					{
-						console.log(salida)
 						callback({
 							res: 'created',
 							model: salida
@@ -115,13 +111,15 @@ module.exports = function(sequelize, DataTypes)
 						salida.note = model.note;
 						if (model.x || model.y)
 						{
+							salida.id_planta = model.id_planta;
 							salida.x = model.x;
 							salida.y = model.y;
 						}
 						salida.save().then(function()
 						{
 							callback({
-								res: 'updated'
+								res: 'updated',
+								model: salida
 							});
 						});
 					}
