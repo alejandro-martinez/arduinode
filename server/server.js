@@ -27,13 +27,13 @@ http.listen(app.get('port'), function()
 
 		socket.on('getSalidasActivas', function()
 		{
-			console.log("hey");
 			var salidas = [];
 			sequelize.models.dispositivos.findAll().then(function(models)
 			{
 				async.eachSeries(models, function iterator(item, callback)
 				{
 					getSalidas({
+						noError: true,
 						ip: item.ip,
 						id_disp: item.id_disp,
 						filterByEstado: 'on'
@@ -46,6 +46,7 @@ http.listen(app.get('port'), function()
 
 				}, function done()
 				{
+					console.log("fin");
 					socket.emit('salidasActivas', salidas);
 				});
 			})
@@ -54,11 +55,12 @@ http.listen(app.get('port'), function()
 		//Devuelve las salidas de un dispositivo con notas
 		var getSalidas = function(params, callback)
 		{
+			console.log(params);
 			arduino.getSalidas(params, function(response, err)
 			{
 				if (err)
 				{
-					socket.emit('Error', err);
+					(params.noError) ? callback() : socket.emit('Error', err);
 				}
 				else
 				{

@@ -71,6 +71,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidasActivas');
 			Socket.listen('salidasActivas', function(salidas)
 			{
+				console.log("salidas activas",salidas);
 				callback(salidas);
 			});
 		},
@@ -364,6 +365,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			$rootScope.currentMenu = "Luces encendidas";
 			Salida.getSalidasActivas(function(salidas)
 			{
+				console.log(salidas);
+				console.log("salidas existentes",$scope.salidas)
 				$rootScope.loading = false;
 				$scope.salidas = salidas;
 				$scope.$apply();
