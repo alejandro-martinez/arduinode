@@ -4,6 +4,11 @@ module.exports = function()
 {
 	var Arduino =
 	{
+		socketClient: {},
+		init: function()
+		{
+			socket.socketClient = this.socketClient;
+		},
 		//Consulta el estado de una salida en particular
 		getEstadoSalida: function(params, callback)
 		{
@@ -15,17 +20,10 @@ module.exports = function()
 			}
 
 			params.command = 'S'+params.salida.nro_salida;
-			socket.send(params, function(response, err)
+			socket.send(params, function(response)
 			{
 				delete params.decorator;
-				if (err)
-				{
-					callback(null, err);
-				}
-				else
-				{
-					callback( This.data );
-				}
+				callback( This.data );
 			});
 		},
 		getEstados: function(params, callback)
@@ -61,16 +59,9 @@ module.exports = function()
 			{
 				This.data+= _data;
 			}
-			socket.send(params, function( response, err )
+			socket.send(params, function( response )
 			{
-				if (err)
-				{
-					callback(null, err);
-				}
-				else
- 				{
-					callback( This.data );
-				}
+				callback( This.data );
 			});
 		},
 		buscarSalida: function(params, found)
@@ -108,19 +99,12 @@ module.exports = function()
 			{
 				This.data+= _data;
 			}
-			socket.send(params, function(response, err)
+			socket.send(params, function(response)
 			{
-				delete params.decorator;
-				if (err == "inactive")
+				if (This.data.length > 0)
 				{
-					callback(null);
-				}
-				else if (err)
-				{
-					callback(null, err);
-				}
-				else
-				{
+					delete params.decorator;
+
 					var salidasRaw = This.data.match(/[^\r\n]+/g);
 					This.found;
 					var salidas = [];
@@ -175,6 +159,10 @@ module.exports = function()
 					}
 					callback( salidasA || salidas);
 				}
+				else
+				{
+					callback([]);
+				}
 			});
 		},
 		//Sube, baja o detiene la persiana.. params.action = 0, 1 o 2
@@ -187,17 +175,10 @@ module.exports = function()
 			{
 				This.data+= _data;
 			}
-			socket.send(params, function( response, err )
+			socket.send(params, function( response )
 			{
 				delete params.decorator;
-				if (err)
-				{
-					callback(null, err);
-				}
-				else
-				{
-					callback( This.data );
-				}
+				callback( This.data );
 			});
 		}
 	}

@@ -1,15 +1,15 @@
 var net = require('net');
 
-
 module.exports = function()
 {
 	var Socket =
 	{
+		socketClient: {},
 		client: {},
 		//Conexion al socket arduino
 		connect: function(params, callback)
 		{
-			var timer;
+			var timer, This = this;
 			timeout = 1000;
 			console.log("[INFO] Conectando al socket: " + params.ip + ":8000");
 			this.client = net.connect(
@@ -23,13 +23,14 @@ module.exports = function()
 			});
 			timer = setTimeout(function()
 			{
+				console.log("TimeOUT");
 				if (!params.noError)
 				{
-					callback(null, "Se alcanzó el tiempo de espera límite para la conexión!");
+					This.socketClient.emit('Error', "Se alcanzó el tiempo de espera límite para la conexión!");
 				}
 				else
 				{
-					callback(null, "inactive");
+					callback(0);
 				}
 			}, timeout);
 
@@ -40,11 +41,11 @@ module.exports = function()
 				{
 					if (!params.noError)
 					{
-						callback(null, "No se encontró dispositivo en el socket solicitado: " + err);
+						This.socketClient.emit('Error', "No se encontró dispositivo en el socket solicitado: " + err);
 					}
 					else
 					{
-						callback(null, "inactive");
+						callback();
 					}
 					return;
 				}
@@ -53,11 +54,11 @@ module.exports = function()
 				{
 					if (!params.noError)
 					{
-						callback(null, "Conexión rechazada: Chequea la IP y puerto ");
+						This.socketClient.emit('Error', "Conexión rechazada: Chequea la IP y puerto ");
 					}
 					else
 					{
-						callback(null, "inactive");
+						callback();
 					}
 					return;
 				}
@@ -69,13 +70,9 @@ module.exports = function()
 			var This = this;
 			if (params.ip)
 			{
-				this.connect(params, function(response, err)
+				this.connect(params, function(response)
 				{
-					if (err)
-					{
-						callback(null, err);
-					}
-					else
+					if (response == 1)
 					{
 						This.client.write(params.command);
 						This.client.on('data', function(_data)
@@ -93,6 +90,10 @@ module.exports = function()
 						{
 							callback(This.data);
 						});
+					}
+					else
+					{
+						callback("");
 					}
 				})
 			}
