@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes)
 		id_planta:
 		{
 			type: DataTypes.INTEGER,
-			allowNull: false,
+			allowNull: true
 		},
 		id_disp:
 		{
@@ -28,12 +28,12 @@ module.exports = function(sequelize, DataTypes)
 		x:
 		{
 			type: DataTypes.FLOAT,
-			allowNull: false
+			allowNull: true
 		},
 		y:
 		{
 			type: DataTypes.FLOAT,
-			allowNull: false
+			allowNull: true
 		}
 	},
 	{

@@ -41,7 +41,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		},
 		switchSalida: function(params, callback)
 		{
-			console.log(params);
 			//Seteo el estado al que quiero cambiar la salida
 			params.estado = (params.estado == 'off') ? 0 : 1;
 			Socket.send('switchSalida',params);
@@ -53,7 +52,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		},
 		movePersiana: function(params, callback)
 		{
-			console.log(params);
 			Socket.send('movePersiana',params);
 			Socket.listen('moveResponse', function(response)
 			{
@@ -65,7 +63,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidas',params);
 			Socket.listen('salidas', function(salidas)
 			{
-				console.log(salidas);
 				callback(salidas);
 			});
 		},
@@ -74,7 +71,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidasActivas');
 			Socket.listen('salidasActivas', function(salidas)
 			{
-				console.log("A",salidas);
 				callback(salidas);
 			});
 		},
@@ -103,7 +99,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidasPlanta', id);
 			Socket.listen('salidasPlanta', function(salidas)
 			{
-				console.log(salidas);
 				callback(salidas);
 			});
 		},
@@ -185,7 +180,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			$scope.salida.x = note.relx;
 			$scope.salida.y = note.rely;
 			$scope.showDescripcion = $scope.showSalidas = false;
-			console.log("voy a et");
 			Popup.open(
 			{
 				template: config.rootFolder+'_form.html',
@@ -256,7 +250,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		}
 		$scope.save = function(salida, select)
 		{
-			console.log(select);
 			$scope.salida.id_disp = $scope.disp.id_disp;
 			$scope.salida.id_planta = parseInt( params.id_planta );
 			$scope.salida.nro_salida = select.nro_salida;
@@ -271,7 +264,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 					r.model.tipo =  select.tipo;
 					ImgNotes.addMarker(r.model);
 				}
-				console.log(r.model);
 				//ImgNotes.refreshMarker($scope.salida.note);
 				//Actualiza combo de salidas
 				//para quitar las que ya fueron agregadas
@@ -329,6 +321,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		}
 		$scope.save = function(salida)
 		{
+			$scope.salida.id_disp = params.id_disp;
 			Salida.save( $scope.salida, function(response)
 			{
 				Popup.close();
@@ -386,6 +379,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			},
 			function(salidas)
 			{
+				console.log(salidas);
 				$rootScope.loading = false;
 				$scope.salidas = salidas;
 				$scope.$apply();

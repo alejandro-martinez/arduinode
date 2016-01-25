@@ -28,7 +28,7 @@ module.exports = function(sequelize, DataTypes)
 		{
 			getSalidas: function(id,callback)
 			{
-				var sql = "SELECT salidas.nro_salida,salidas.note FROM salidas, dispositivos ";
+				var sql = "SELECT salidas.id_disp,salidas.nro_salida,salidas.note FROM salidas, dispositivos ";
 				sql+= " WHERE dispositivos.id_disp = '" + id + "'";
 				sql+= "  AND salidas.id_disp = dispositivos.id_disp";
 				sql+= "  ORDER BY nro_salida ASC";
