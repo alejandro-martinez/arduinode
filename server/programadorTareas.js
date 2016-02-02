@@ -21,23 +21,29 @@ module.exports = function()
 		reprogramarTarea: function(tarea)
 		{
 			//Busco la tarea, y ejecuto la accion de apagado
-		
+			console.log("buscar tarea:",tarea.id_tarea);
 			var _tarea = this.getTarea(tarea.id_tarea);
 
-			console.log("Tarea",_tarea)
+			//Extraigo la tarea final (0 = inicial, 1 = final)
+			var tareaFinal = _tarea.tareaEnEjecucion[1];
 
 
 		},
 		getTarea: function(id)
 		{
-			return this.tareas.filter(function(t)
+			var tarea = this.tareas.filter(function(t)
 			{
-				return t.id_tarea == id;
+				if (t.id_tarea == id)
+				{
+					return t;
+				}
 			})
+			return tarea;
 		},
 		parseConfig: function(t)
 		{
 			var config = {
+				id_tarea: t.id_tarea,
 				accion: t.accion,
 				ip_dispositivo: t.ip_dispositivo,
 				nro_salida: t.nro_salida,
@@ -52,6 +58,13 @@ module.exports = function()
 				min_fin	: t.hora_fin.substr(-2)
 			}
 			return config;
+		},
+		registerTareaActiva: function(config, tareaEnEjecucion)
+		{
+
+			var tarea = this.getTarea(config.id_tarea)[0];
+			tarea.tareaEnEjecucion.push(tareaEnEjecucion);
+			console.log(this.tareas[0]);
 		},
 		nuevaTarea: function(config)
 		{
@@ -76,7 +89,7 @@ module.exports = function()
 								" a las ",config.hora_ini,":",config.min_ini);*/
 				rule.hour = parseInt(config.hora_ini);
 				rule.minute = parseInt(config.min_ini);
-				schedule.scheduleJob(rule, function()
+				var tareaEnEjecucion = schedule.scheduleJob(rule, function()
 				{
 					console.log('Ejecutando tarea inicial');
 					socketArduino.switchSalida(paramsDispositivo, function(response)
@@ -84,6 +97,7 @@ module.exports = function()
 						console.log("Switch response", response);
 					})
 				});
+				this.registerTareaActiva(config, tareaEnEjecucion);
 			}
 			/*else
 			{
@@ -123,7 +137,13 @@ module.exports = function()
 			var This = this;
 			_tareas.forEach(function(t)
 			{
-				This.tareas.push({data: t.dataValues, tarea: []})
+				This.tareas.push({
+					id_tarea: t.dataValues.id_tarea,
+					data: t.dataValues,
+					/*Aca guardo referencias a las tareas del Scheduler
+					(inicial + final)*/
+					tareaEnEjecucion: []
+				})
 			})
 		},
 		checkValidez: function(config)

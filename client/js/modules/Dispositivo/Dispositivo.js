@@ -102,7 +102,6 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .controller('DispositivoCtrl', ['$rootScope','$scope','ImgNotesFct', 'SocketIO','DispositivoFct',
 	function ($rootScope,$scope,ImgNotes, Socket, Dispositivo)
 	{
-		console.log("por aca");
 		$rootScope.currentMenu = 'Dispositivos';
 		Dispositivo.getAll(function(dispositivos)
 		{
@@ -113,7 +112,6 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .controller('DispositivoFormCtrl', ['$stateParams','$scope','SocketIO','DispositivoFct',
 	function ($params, $scope, Socket, Dispositivo)
 	{
-		console.log("Form ctrl");
 		var params = $params.params;
 		$scope.model = {};
 
