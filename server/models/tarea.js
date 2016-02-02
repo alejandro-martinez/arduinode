@@ -1,3 +1,5 @@
+var programadorTareas = require('../programadorTareas')();
+
 module.exports = function(sequelize, DataTypes)
 {
 	return sequelize.define('tareas',
@@ -91,9 +93,14 @@ module.exports = function(sequelize, DataTypes)
 					console.log(err);
 					callback({error: err.name});
 				})
-				.spread(function(tarea, created) {
+				.spread(function(tarea, created)
+				{
+
 					if (created)
+					{
+						programadorTareas.reprogramarTarea(created.dataValues)
 						callback(1);
+					}
 					else
 					{
 						tarea.hora_inicio	= model.hora_inicio;
@@ -106,6 +113,7 @@ module.exports = function(sequelize, DataTypes)
 
 						tarea.save().then(function()
 						{
+							programadorTareas.reprogramarTarea(tarea.dataValues)
 							callback(0);
 						});
 					}

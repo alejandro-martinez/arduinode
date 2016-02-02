@@ -1,5 +1,6 @@
-var socket = require('./socket')();
-var async = require('async');
+var socket = require('./socket')(),
+	async = require('async');
+
 module.exports = function()
 {
 	var Arduino =

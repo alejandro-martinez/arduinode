@@ -12,18 +12,18 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 			templateUrl: "js/modules/Dispositivo/_dispositivos.html",
 			controller: 'DispositivoCtrl'
 		})
-		.state('update',
+		.state('updateDispositivo',
 		{
 			params: {
 				params: null
 			},
 			templateUrl: "js/modules/Dispositivo/_form.html",
-			controller: 'FormCtrl'
+			controller: 'DispositivoFormCtrl'
 		})
 		.state('create',
 		{
 			templateUrl: "js/modules/Dispositivo/_form.html",
-			controller: 'FormCtrl'
+			controller: 'DispositivoFormCtrl'
 		})
 
 })
@@ -102,6 +102,7 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .controller('DispositivoCtrl', ['$rootScope','$scope','ImgNotesFct', 'SocketIO','DispositivoFct',
 	function ($rootScope,$scope,ImgNotes, Socket, Dispositivo)
 	{
+		console.log("por aca");
 		$rootScope.currentMenu = 'Dispositivos';
 		Dispositivo.getAll(function(dispositivos)
 		{
@@ -109,11 +110,11 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 		})
 	}
 ])
-.controller('FormCtrl', ['$stateParams','$scope','SocketIO','DispositivoFct',
-	function (params, $scope, Socket, Dispositivo)
+.controller('DispositivoFormCtrl', ['$stateParams','$scope','SocketIO','DispositivoFct',
+	function ($params, $scope, Socket, Dispositivo)
 	{
-		console.log(params.params);
-		var params = params.params;
+		console.log("Form ctrl");
+		var params = $params.params;
 		$scope.model = {};
 
 		if (params && params.id_disp)

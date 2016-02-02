@@ -1,6 +1,7 @@
 // Tarea programadas
 schedule = require('node-schedule');
 var socketArduino = require('./socketArduino')();
+
 /* API
  * JOB
   invoke()
@@ -17,6 +18,23 @@ module.exports = function()
 {
 	var Programador = {
 		tareas: [],
+		reprogramarTarea: function(tarea)
+		{
+			//Busco la tarea, y ejecuto la accion de apagado
+		
+			var _tarea = this.getTarea(tarea.id_tarea);
+
+			console.log("Tarea",_tarea)
+
+
+		},
+		getTarea: function(id)
+		{
+			return this.tareas.filter(function(t)
+			{
+				return t.id_tarea == id;
+			})
+		},
 		parseConfig: function(t)
 		{
 			var config = {
@@ -32,7 +50,6 @@ module.exports = function()
 				mes_fin	: t.fecha_fin.substr(0,2),
 				hora_fin: t.hora_fin.substr(0,2),
 				min_fin	: t.hora_fin.substr(-2)
-				//second: [0,5,10,15,20,25,30,35,40,45,50,55]
 			}
 			return config;
 		},
@@ -106,7 +123,7 @@ module.exports = function()
 			var This = this;
 			_tareas.forEach(function(t)
 			{
-				This.tareas.push({data: t.dataValues})
+				This.tareas.push({data: t.dataValues, tarea: []})
 			})
 		},
 		checkValidez: function(config)
@@ -115,9 +132,9 @@ module.exports = function()
 			{
 				return true;
 				//Tarea activa o desactivada
-				if (config.estado)
+				if (config.activa)
 				{
-					console.log("Estado tarea inicial:",config.estado);
+					console.log("Estado tarea inicial:",config.activa);
 					//Tarea en rango de fecha valido?
 					return checkRangoFecha(config);
 				}
