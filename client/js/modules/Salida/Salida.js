@@ -100,7 +100,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidasPlanta', id);
 			Socket.listen('salidasPlanta', function(salidas)
 			{
-				console.log(salidas);
+				console.log("Get by planta",salidas);
 				callback(salidas);
 			});
 		},
@@ -150,14 +150,122 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	}
 	return Factory;
 }])
+.factory('CombineRequestsFct', ['$http', function($http)
+{
+	var Request =
+	{
+		getDispositivoAndSalida: function(params, callback){
+			$http.post('/mediator/dispositivoAndSalida/',params).then(function(response)
+			{
+				callback(response.data || response);
+			}, function(error)
+			{
+				callback(error)
+			});
+		}
+	}
+	return Request;
+}])
+.directive('selectdispositivos', function() {
+  return {
+    restrict: 'A',
+    replace: true,
+	//require:'ngModel',
+	scope: {
+	  selected: '=selected',
+	  salida: '=salida',
+      dispositivo: '=dispositivo'
+    },
+    templateUrl: 'js/modules/Salida/_select.html',
+	controller: 'SelectCtrl'
+  };
+})
+.controller('SelectCtrl', ['$rootScope','$scope','CombineRequestsFct','DispositivoFct','SalidaFct',
+	function ($rootScope, $scope, CombineRequests, Dispositivo,Salida)
+	{
+		//Creando nuevo
+		if ($scope.selected.id_disp == 0)
+		{
+
+			Dispositivo.getAll(function(dispositivos)
+			{
+				$scope.dispositivos = dispositivos;
+				var dispositivo = getDispositivoSelected()[0];
+
+				if (dispositivo)
+				{
+					console.log("dispo selected",dispositivo);
+					$scope.selected.id_disp = dispositivo.id_disp;
+					$scope.selected.ip_dispositivo = dispositivo.ip;
+					$scope.apply();
+					getSalidas(dispositivo);
+				}
+				else
+				{
+					console.log("dispo selected",dispositivo);
+				}
+			})
+		}
+		//Modo edicion (Solo lectura)
+		else
+		{
+			CombineRequests.getDispositivoAndSalida($scope.selected, function(data)
+			{
+				$scope.dispositivos = [data.dispositivo];
+				$scope.selected.id_disp = data.dispositivo.id_disp;
+				$scope.selected.ip_dispositivo = data.dispositivo.ip;
+				$scope.salidas = [data.salida];
+				$scope.selected.nro_salida = data.salida.nro_salida;
+			})
+		}
+		var getSalidas = function(dispositivo)
+		{
+			Salida.getSalidasArduino( dispositivo, function(salidas)
+			{
+				$rootScope.loading = false;
+				//Actualiza combo de salidas
+				//para quitar las que ya fueron agregadas
+				if (typeof ImgNotes != 'undefined')
+				{
+					$scope.salidas = Salida.getSalidasDisponibles(salidas, ImgNotes.getMarkers());
+				}
+				else
+				{
+					$scope.salidas = salidas;
+				}
+			});
+		}
+		var getDispositivoSelected = function()
+		{
+			var disp = $scope.dispositivos.filter(function(e)
+			{
+				if (e.id_disp == $scope.selected.id_disp)
+				{
+					return e;
+				}
+			});
+			return disp;
+		}
+		$scope.changeDispositivo = function()
+		{
+			$rootScope.loading = true;
+			var disp = getDispositivoSelected()[0];
+			console.log("changeD",disp);
+			$scope.selected.ip_dispositivo = disp.ip;
+			$scope.selected.id_disp = disp.id_disp;
+			getSalidas(disp);
+		}
+	}
+])
+
 .controller('SalidaCtrl', ['$stateParams','SwitchButton','SalidaConfig','$rootScope',
 			'ngDialog','DispositivoFct','$scope','ImgNotesFct','SalidaFct',
 	function (params,SwitchButton,config,$rootScope, Popup,Dispositivo,
 			  $scope,ImgNotes, Salida)
 	{
-		var params = params.params;
+		var params = params.params || {};
 		$scope.models = {};
-		$rootScope.currentMenu = params.descripcion;
+		$rootScope.currentMenu = params.descripcion || '';
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$scope.showDispositivos = $scope.showSalidas = true;
 		$('#image').attr('src',"/image/" + params.plano + ".jpg");
@@ -290,7 +398,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			});
 
 		}
-
 	}
 ])
 .controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton','$rootScope','$stateParams','ngDialog','$scope', 'SalidaFct',

@@ -1,0 +1,17 @@
+<div>
+	<div>
+		<label>Dispositivo<br>
+			<select required ng-options="disp.id_disp as disp.note for disp in dispositivos"
+			ng-change="changeDispositivo()"
+			ng-model="selected.id_disp">
+			</select>
+		</label>
+	</div>
+
+	<div>
+		<label>Salidas<br>
+		<select ng-options="salida.nro_salida as salida.note for salida in salidas"
+		ng-model="selected.nro_salida"></select>
+		</label>
+	</div>
+</div>

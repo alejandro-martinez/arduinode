@@ -8,7 +8,8 @@ angular.module('Arduinode',
 	'Arduinode.Salida',
 	'Arduinode.Planta',
 	'Arduinode.Home',
-	'Arduinode.Dispositivo'
+	'Arduinode.Dispositivo',
+	'Arduinode.Tarea'
 ])
 .controller('MainCtrl', ['$rootScope', function ($rootScope )
 {

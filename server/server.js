@@ -4,7 +4,10 @@ var express = require('express'),
 	app 	= express(),
 	fs		= require('fs'),
 	async	= require('async'),
-	http 	= require('http').Server(app),
+	compress = require('compression');
+	app.use(compress());
+	var http 	= require('http').Server(app),
+	programadorTareas = require('./programadorTareas')(),
 	config 	= require('./config/config').config(app, express),	// Configuración
 	io 		= require('socket.io')(http),						// Socket IO
 	net 	= require('net'),									// Socket Arduino
@@ -17,6 +20,43 @@ var express = require('express'),
 http.listen(app.get('port'), function()
 {
 	console.log('Servidor corriendo en: ' + app.get('port'));
+
+
+	sequelize.models.tareas.findAll().then(function(_tareas)
+	{
+		programadorTareas.importar(_tareas);
+		programadorTareas.iniciarTodas();
+		/*
+		var tareaTest = [{
+			accion: 1,
+			activa: null,
+			descripcion: "asfasdfsadf",
+			dias_ejecucion: "1,2,3,4,0,5,6",
+			fecha_fin: " *: *",
+			fecha_inicio: " *: *",
+			hora_fin: "*",
+			hora_inicio: " *: *",
+			id_disp: 29,
+			id_tarea: "0",
+			nro_salida: 25
+		}];
+		var config = {
+				dia_ini	: "*",
+				mes_ini	: "*",
+				hora_ini: "*",
+				min_ini: "*",
+				dia_fin	: "*",
+				mes_fin	: "*",
+				hora_fin: "*",
+				min_fin	: "*",
+				rangoDiasTarea: [1,2,3,4,5,6],
+				diaFinal: Math.max.apply(Math, [1,2,3,4,5,6]),
+				diaComienzo: Math.min.apply(Math, [1,2,3,4,5,6]),
+				second: [0,5,10,15,20,25,30,35,40,45,50,55]
+			}
+		programadorTareas.test(config);*/
+	})
+
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)
 	{
@@ -103,7 +143,7 @@ http.listen(app.get('port'), function()
 				});
 				async.eachSeries(dispositivosUnique, function iterator(ip, callback)
 				{
-					arduino.getSalidas({ip: ip}, function(salidasDisp)
+					arduino.getSalidas({noError:true, ip: ip}, function(salidasDisp)
 					{
 						salidasDisp.forEach(function(s,i)
 						{

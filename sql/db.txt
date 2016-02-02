@@ -1,0 +1,367 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'LATIN1';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: dispositivos; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE dispositivos (
+    id_disp bigint NOT NULL,
+    note character varying(100),
+    ip character varying
+);
+
+
+ALTER TABLE public.dispositivos OWNER TO postgres;
+
+--
+-- Name: TABLE dispositivos; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE dispositivos IS 'Listado de dispositivos';
+
+
+--
+-- Name: dispositivo_id_disp_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE dispositivo_id_disp_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.dispositivo_id_disp_seq OWNER TO postgres;
+
+--
+-- Name: dispositivo_id_disp_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE dispositivo_id_disp_seq OWNED BY dispositivos.id_disp;
+
+
+--
+-- Name: plantas; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE plantas (
+    id_planta bigint NOT NULL,
+    descripcion character varying(100),
+    plano character varying(50)
+);
+
+
+ALTER TABLE public.plantas OWNER TO postgres;
+
+--
+-- Name: plantas_id_planta_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE plantas_id_planta_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.plantas_id_planta_seq OWNER TO postgres;
+
+--
+-- Name: plantas_id_planta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE plantas_id_planta_seq OWNED BY plantas.id_planta;
+
+
+--
+-- Name: salidas; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE salidas (
+    id_disp integer NOT NULL,
+    note text,
+    y numeric,
+    x numeric,
+    nro_salida integer NOT NULL,
+    id_planta integer
+);
+
+
+ALTER TABLE public.salidas OWNER TO postgres;
+
+--
+-- Name: sectores; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE sectores (
+    descripcion character varying(100),
+    nro_salida integer NOT NULL,
+    id_disp integer NOT NULL
+);
+
+
+ALTER TABLE public.sectores OWNER TO postgres;
+
+--
+-- Name: tareas; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE tareas (
+    id_tarea bigint NOT NULL,
+    descripcion text,
+    id_disp integer,
+    nro_salida integer,
+    hora_inicio character varying(8),
+    hora_fin character varying(8),
+    dias_ejecucion character varying(15),
+    activa boolean,
+    accion integer,
+    fecha_inicio character(5),
+    fecha_fin character(5),
+    estado boolean,
+    ip_dispositivo character varying
+);
+
+
+ALTER TABLE public.tareas OWNER TO postgres;
+
+--
+-- Name: COLUMN tareas.hora_inicio; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN tareas.hora_inicio IS 'formato 16:11:00';
+
+
+--
+-- Name: COLUMN tareas.hora_fin; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN tareas.hora_fin IS 'formato igual que hora_inicio';
+
+
+--
+-- Name: tareas_id_tarea_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE tareas_id_tarea_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tareas_id_tarea_seq OWNER TO postgres;
+
+--
+-- Name: tareas_id_tarea_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE tareas_id_tarea_seq OWNED BY tareas.id_tarea;
+
+
+--
+-- Name: id_disp; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY dispositivos ALTER COLUMN id_disp SET DEFAULT nextval('dispositivo_id_disp_seq'::regclass);
+
+
+--
+-- Name: id_planta; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY plantas ALTER COLUMN id_planta SET DEFAULT nextval('plantas_id_planta_seq'::regclass);
+
+
+--
+-- Name: id_tarea; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY tareas ALTER COLUMN id_tarea SET DEFAULT nextval('tareas_id_tarea_seq'::regclass);
+
+
+--
+-- Name: dispositivo_id_disp_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('dispositivo_id_disp_seq', 31, true);
+
+
+--
+-- Data for Name: dispositivos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY dispositivos (id_disp, note, ip) FROM stdin;
+29	oaispodiasd	192.168.20.7
+31	asdf	192.168.20.6
+\.
+
+
+--
+-- Data for Name: plantas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY plantas (id_planta, descripcion, plano) FROM stdin;
+1	Planta Alta	planos_pa
+2	Planta Baja	planos_pb
+\.
+
+
+--
+-- Name: plantas_id_planta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('plantas_id_planta_seq', 2, true);
+
+
+--
+-- Data for Name: salidas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY salidas (id_disp, note, y, x, nro_salida, id_planta) FROM stdin;
+29	nueva	0.19851576994434136	0.7087087087087087	25	2
+29	\N	0.17439703153988867	0.1891891891891892	22	2
+29	\N	0.4321266968325792	0.4668040293040293	23	2
+31	\N	0.45475113122171945	0.23786630036630033	27	2
+31	\N	0.4194004524886878	0.41872710622710624	22	2
+29	\N	0.2916666666666667	0.5582191780821918	27	1
+29	\N	0.33541666666666664	0.339041095890411	36	1
+29	asdasdasdasasdasdasd	0.15625	0.1780821917808219	24	1
+\.
+
+
+--
+-- Data for Name: sectores; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY sectores (descripcion, nro_salida, id_disp) FROM stdin;
+\.
+
+
+--
+-- Data for Name: tareas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY tareas (id_tarea, descripcion, id_disp, nro_salida, hora_inicio, hora_fin, dias_ejecucion, activa, accion, fecha_inicio, fecha_fin, estado, ip_dispositivo) FROM stdin;
+0	asfasdfsadf	29	25	14:56	14:57	1,2,3,4,0,5,6	t	1	02-02	02-02	\N	192.168.20.7
+1	dsfsadfasdf	29	29	16:00	16:05	,1,2	t	0	02-02	02-02	\N	192.168.20.7
+\.
+
+
+--
+-- Name: tareas_id_tarea_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('tareas_id_tarea_seq', 1, true);
+
+
+--
+-- Name: dispositivo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY dispositivos
+    ADD CONSTRAINT dispositivo_pkey PRIMARY KEY (id_disp);
+
+
+--
+-- Name: plantas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY plantas
+    ADD CONSTRAINT plantas_pkey PRIMARY KEY (id_planta);
+
+
+--
+-- Name: salidas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY salidas
+    ADD CONSTRAINT salidas_pkey PRIMARY KEY (id_disp, nro_salida);
+
+
+--
+-- Name: sectores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY sectores
+    ADD CONSTRAINT sectores_pkey PRIMARY KEY (id_disp, nro_salida);
+
+
+--
+-- Name: tareas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY tareas
+    ADD CONSTRAINT tareas_pkey PRIMARY KEY (id_tarea);
+
+
+--
+-- Name: unique_ip; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY dispositivos
+    ADD CONSTRAINT unique_ip UNIQUE (ip);
+
+
+--
+-- Name: salidas_id_disp_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY salidas
+    ADD CONSTRAINT salidas_id_disp_fkey1 FOREIGN KEY (id_disp) REFERENCES dispositivos(id_disp) ON DELETE CASCADE;
+
+
+--
+-- Name: tareas_id_disp_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY tareas
+    ADD CONSTRAINT tareas_id_disp_fkey FOREIGN KEY (id_disp) REFERENCES dispositivos(id_disp) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

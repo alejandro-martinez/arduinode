@@ -5,7 +5,11 @@ module.exports = function(config)
 	{
 		host: db.hostname,
 		port: db.port || 5432,
-		dialect: db.databaseVendor
+		dialect: db.databaseVendor,
+		log: console.log,
+		logging: function (str) {
+			console.log(str);
+		}
 	}
 	this.Sequelize = require('sequelize');
 	this.sequelize = new this.Sequelize( db.name, db.username, db.password, params );

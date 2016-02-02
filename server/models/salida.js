@@ -52,7 +52,6 @@ module.exports = function(sequelize, DataTypes)
 			},
 			addNotes: function(_params)
 			{
-				console.log("Adding");
 				_params.salidasDB.forEach(function(x, i)
 				{
 					_params.salidasArduino.filter(function(s, j)

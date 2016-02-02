@@ -8,6 +8,15 @@ module.exports = function(app)
 		})
 	});
 
+	app.get('/salida/id/:nro_salida', function(req, res)
+	{
+		sequelize.models.salidas.findOne({nro_salida: req.params.nro_salida})
+								.then(function(models)
+		{
+			res.json(models);
+		})
+	});
+
 	//Devuelve todos los salidas filtrados por id planta
 	app.get('/salida/planta/:id_planta', function(req, res)
 	{

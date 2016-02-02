@@ -3,6 +3,7 @@ module.exports = function(app)
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
+		console.log(req);
 		sequelize.models.dispositivos.findAll().then(function(models)
 		{
 			res.json(models);
@@ -32,9 +33,9 @@ module.exports = function(app)
 	//Eliminar
 	app.get('/dispositivo/delete/:id', function(req, res)
 	{
-		sequelize.models.dispositivos.findOne({id_disp: req.params.id }).then(function(salida)
+		sequelize.models.dispositivos.findOne({id_disp: req.params.id }).then(function(dispositivo)
 		{
-			return salida.destroy();
+			return dispositivo.destroy();
 		}).then(function(){
 			res.json({'res': 1});
 		});

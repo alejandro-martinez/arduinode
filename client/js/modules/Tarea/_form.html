@@ -1,0 +1,69 @@
+<div ng-controller="FormCtrl">
+	<form novalidate class="simple-form" name="tareaForm" ng-model="tarea">
+		<h3>{{(editing) ? "Modificar tarea" : "Nueva tarea" }}</h3>
+		<div class="left">
+			<div selectdispositivos data="data" selected="tarea" info="dispositivo"></div>
+			<div>
+				<label>Descripción de la Tarea<br>
+					<textarea ng-model="tarea.descripcion"></textarea>
+				</label>
+			</div>
+			<label>Activa<br>
+				<input type="checkbox" ng-checked="tarea.activa" ng-model="tarea.activa" />
+			</label>
+		</div>
+		<div class="right">
+			<div class="tarea">
+				<label>Fecha inicio<br>
+					<datepicker date-format="yyyy-MM-dd">
+						<input readonly type="text" ng-model="tarea.fecha_inicio" name="fechainicio" />
+					</datepicker>
+				</label>
+				<label>Hora inicio<br>
+					<input type="text" class="clockpicker" id="horainicio" readonly value="{{hora_inicio}}" readonly />
+				</label>
+				<label class="switcher"> Acción inicial: <br>
+					<label class="switch">
+						<input class="switch-input" ng-click="switch()" type="checkbox"
+						ng-model="tarea.accion" ng-checked="{{tarea.accion == 0}}" />
+						<span class="switch-label" data-on="Encender"
+						data-off="Apagar"></span>
+						<span class="switch-handle"></span>
+					</label>
+				</label>
+				<div class="dias_ejecucion">
+					<label ng-repeat="(key, value) in diasSemana">{{value | limitTo:1}}<br>
+					<input
+						type="checkbox"
+						value="{{key}}"
+						ng-checked="tarea.dias_ejecucion.indexOf(key) > -1"
+						ng-click="checkear_dia(key)">
+					</label>
+				</div>
+				<label>Fecha fin<br>
+					<datepicker date-format="yyyy-MM-dd">
+						<input readonly type="text" ng-model="tarea.fecha_fin" name="fechafin" />
+					</datepicker>
+				</label>
+				<label>Hora fin<br>
+					<input type="text" class="clockpicker" id="horafin"	readonly value="{{hora_fin}}" />
+				</label>
+			</div>
+		</div>
+	    <ul class="inlineButtons actionsPopup">
+			<li><input class="button" ng-show="editing"
+			type="button" ng-click="deleteTarea(tarea.id_tarea)"
+			value="Eliminar" />
+			</li>
+			<li>
+			<input class="button" type="submit" ng-click="save()" value="Guardar" />
+			</li>
+		</ul>
+	    </div>
+	</form>
+	<ul class="inlineButtons" id="actionsPage">
+		<li>
+			<a class="button" ui-sref="eliminar">Eliminar</a>
+		</li>
+	</ul>
+</div>

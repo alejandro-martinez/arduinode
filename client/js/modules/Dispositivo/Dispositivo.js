@@ -3,30 +3,6 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 .constant('DispositivoConfig',{
 		rootFolder: 'js/modules/Dispositivo/'
 })
-/*
-.config(['$routeProvider','DispositivoConfig', function ($routeProvider,config)
-{
-	/*$routeProvider
-		.when('/dispositivo/',
-		{
-			templateUrl: config.rootFolder+'_dispositivos.html',
-			controller: 'DispositivoCtrl'
-		})
-		.when('/dispositivo/create',
-		{
-			templateUrl: config.rootFolder+'_form.html',
-			controller: 'FormCtrl'
-		})
-		.when('/dispositivo/update/:id_disp',
-		{
-			templateUrl: config.rootFolder+'_form.html',
-			controller: 'FormCtrl'
-		})
-		.otherwise(
-		{
-			redirectTo: '/'
-		});
-}])*/
 .config(function( $stateProvider, $urlRouterProvider )
 {
 
