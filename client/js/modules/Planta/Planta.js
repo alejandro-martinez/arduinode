@@ -78,8 +78,10 @@ angular.module('Arduinode.Planta',[])
 	}
 	return Planta;
 }])
-.controller('PlantaCtrl', ['$scope','PlantaFct',function ($scope, Planta)
+.controller('PlantaCtrl', ['$rootScope','$scope','PlantaFct',
+			function ($rootScope,$scope, Planta)
 {
+	$rootScope.currentMenu = "Plantas";
 	$scope.plantas = [];
 	Planta.getAll(function(plantas)
 	{

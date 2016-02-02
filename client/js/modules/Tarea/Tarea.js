@@ -92,8 +92,10 @@ angular.module('Arduinode.Tarea',['Arduinode.Salida','720kb.datepicker'])
 	}
 	return Tarea;
 }])
-.controller('TareaCtrl', ['$scope','TareaFct', function ($scope, Tarea )
+.controller('TareaCtrl', ['$rootScope','$scope','TareaFct',
+		function ($rootScope,$scope, Tarea )
 {
+	$rootScope.currentMenu = "Tareas programadas";
 	$scope.tareas = []
 	Tarea.getAll(function(tareas)
 	{
@@ -109,7 +111,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Salida','720kb.datepicker'])
 	var defaultModel = { id_disp:0, nro_salida:0, dias_ejecucion:"" },
 		params = $params.params || defaultModel;
 
-	$rootScope.currentMenu = (params.length > 0) ? 'Edición de tareas' : 'Nueva tarea';
+	$rootScope.currentMenu = 'Edición de tareas';
 	$scope.tarea = params;
 
 	$('.clockpicker').clockpicker({ autoclose: true });

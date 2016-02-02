@@ -8,7 +8,8 @@ angular.module('Arduinode.Home',[])
 		.state('home',
 		{
 				url: "/",
-				templateUrl: "js/modules/Home/home.html"
+				templateUrl: "js/modules/Home/home.html",
+				controller: 'MainCtrl'
 		})
 })
 .controller('HomeCtrl', ['$scope',function ($scope )
