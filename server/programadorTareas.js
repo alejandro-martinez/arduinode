@@ -27,12 +27,11 @@ module.exports = function()
 				mes_ini	: t.fecha_inicio.substr(0,2),
 				hora_ini: t.hora_inicio.substr(0,2),
 				min_ini: t.hora_inicio.substr(-2),
+				dias_ejecucion: t.dias_ejecucion.replace(/, +/g, ",").split(",").map(Number),
 				dia_fin	: t.fecha_fin.substr(-2),
 				mes_fin	: t.fecha_fin.substr(0,2),
 				hora_fin: t.hora_fin.substr(0,2),
-				min_fin	: t.hora_fin.substr(-2),
-				diaFinal: Math.max.apply(Math, t.dias_ejecucion.split(",")),
-				diaComienzo: Math.min.apply(Math, t.dias_ejecucion.split(",")),
+				min_fin	: t.hora_fin.substr(-2)
 				//second: [0,5,10,15,20,25,30,35,40,45,50,55]
 			}
 			return config;
@@ -40,7 +39,7 @@ module.exports = function()
 		nuevaTarea: function(config)
 		{
 			var rule = new schedule.RecurrenceRule();
-			rule.dayOfWeek = [0, new schedule.Range(config.diaComienzo, config.diaFinal)];
+			rule.dayOfWeek = config.dias_ejecucion;
 			rule.second = 0;
 			var paramsDispositivo =
 			{
