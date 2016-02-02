@@ -407,7 +407,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		$rootScope.loading = true;
 		$scope.ipDispositivo = params.ip;
 
-		$rootScope.currentMenu = 'Salidas del dispositivo: ' + params.ip;
+		$rootScope.currentMenu = 'Salidas de: ' + params.note;
 
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 
