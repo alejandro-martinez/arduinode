@@ -1,5 +1,5 @@
 <ul id="estados">
-	<li ng-repeat="s in salidas">
+	<li ng-repeat="s in salidas | orderBy: -s.note">
 		<span ng-repeat="(key, val) in s">
 			<h4 ng-click="edit(s)" ng-show="{{key == 'note'}}">{{val || s.nro_salida}}</h4>
 			<div ng-include="(key=='estado') ? getSwitchButton(s.tipo) : null"></div>

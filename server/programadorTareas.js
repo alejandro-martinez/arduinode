@@ -23,11 +23,8 @@ module.exports = function()
 			//Busco la tarea, y ejecuto la accion de apagado
 			console.log("buscar tarea:",tarea.id_tarea);
 			var _tarea = this.getTarea(tarea.id_tarea);
-
 			//Extraigo la tarea final (0 = inicial, 1 = final)
 			var tareaFinal = _tarea.tareaEnEjecucion[1];
-
-
 		},
 		getTarea: function(id)
 		{
@@ -61,10 +58,9 @@ module.exports = function()
 		},
 		registerTareaActiva: function(config, tareaEnEjecucion)
 		{
-
 			var tarea = this.getTarea(config.id_tarea)[0];
 			tarea.tareaEnEjecucion.push(tareaEnEjecucion);
-			console.log(this.tareas[0]);
+			console.log(this.tareas)
 		},
 		nuevaTarea: function(config)
 		{
