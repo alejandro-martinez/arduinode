@@ -185,6 +185,15 @@ button,.button
 /* ABM Dispositivos */
 
 /*Estados salidas*/
+.refresh
+{
+  display: block;
+  background: url('../image/refresh.png');
+  width: 30px;
+  height: 30px;
+  position: fixed;
+  top: 11px;
+}
 .switch {
 	position: relative;
 	display: block;

@@ -174,6 +174,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	scope: {
 	  selected: '=selected',
 	  salida: '=salida',
+	  data: '=data',
       dispositivo: '=dispositivo'
     },
     templateUrl: 'js/modules/Salida/_select.html',
@@ -183,10 +184,11 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .controller('SelectCtrl', ['$rootScope','$scope','CombineRequestsFct','DispositivoFct','SalidaFct',
 	function ($rootScope, $scope, CombineRequests, Dispositivo,Salida)
 	{
+		console.log("SElected",$scope.data);
+
 		//Creando nuevo
 		if ($scope.selected.id_disp == 0)
 		{
-
 			Dispositivo.getAll(function(dispositivos)
 			{
 				$scope.dispositivos = dispositivos;
@@ -211,10 +213,12 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			CombineRequests.getDispositivoAndSalida($scope.selected, function(data)
 			{
+				console.log("selected",$scope.selected);
 				$scope.dispositivos = [data.dispositivo];
 				$scope.selected.id_disp = data.dispositivo.id_disp;
 				$scope.selected.ip_dispositivo = data.dispositivo.ip;
 				$scope.salidas = [data.salida];
+				console.log(data);
 				$scope.selected.nro_salida = data.salida.nro_salida;
 			})
 		}
@@ -250,7 +254,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		{
 			$rootScope.loading = true;
 			var disp = getDispositivoSelected()[0];
-			console.log("changeD",disp);
 			$scope.selected.ip_dispositivo = disp.ip;
 			$scope.selected.id_disp = disp.id_disp;
 			getSalidas(disp);
@@ -403,6 +406,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton','$rootScope','$stateParams','ngDialog','$scope', 'SalidaFct',
 	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup, $scope, Salida)
 	{
+
 		var params = params.params;
 		$rootScope.loading = true;
 		$scope.ipDispositivo = params.ip;
@@ -467,17 +471,22 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			});
 		}
 
-		if (params.estado == 'on')
+
+		$scope.refreshLucesEncendidas = function()
 		{
+			$rootScope.loading = true;
 			$rootScope.currentMenu = "Luces encendidas";
 			Salida.getSalidasActivas(function(salidas)
 			{
-				console.log(salidas);
-				console.log("salidas existentes",$scope.salidas)
 				$rootScope.loading = false;
 				$scope.salidas = salidas;
 				$scope.$apply();
 			});
+		}
+
+		if (params.estado == 'on')
+		{
+			$scope.refreshLucesEncendidas();
 		}
 		else
 		{
