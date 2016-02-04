@@ -2,9 +2,10 @@
 	<input data-ip="{{s.ip}}"
 	data-nro="{{ s.nro_salida}}" class="switch-input" type="checkbox"
 	id="s{{s.nro_salida}}" ng-click="switch(s)" ng-checked="{{(s.estado) == 'on'}}"/>
-	<span class="switch-label" data-on="Encendida" data-off="Apagada"></span>
+	<span class="switch-label" ng-class="s.temporizada ? 'temporizada' : ''"
+	data-on="{{ s.temporizada || 'Encendida'}}"	data-off="Apagada"></span>
 	<span class="switch-handle"></span>
 </label>
-<div ng-if="{{s.temporizada}}" class="timeIcon">
+<div ng-show="{{s.temporizada > 0}}" class="timeIcon temporizada">
 	<a>Tarea</a>
 </div>

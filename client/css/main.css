@@ -185,6 +185,10 @@ button,.button
 /* ABM Dispositivos */
 
 /*Estados salidas*/
+ul#estados
+{
+	margin-top:10px;
+}
 .refresh
 {
   display: block;
@@ -222,7 +226,7 @@ button,.button
 	text-transform: uppercase;
 	background: #eceeef;
 	border-radius: inherit;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
+	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15); */
 }
 .switch-label:before, .switch-label:after {
 	position: absolute;
@@ -249,7 +253,7 @@ button,.button
 }
 .switch-input:checked ~ .switch-label {
 	background: #E1B42B;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
+	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2); */
 }
 .switch-input:checked ~ .switch-label:before {
 	opacity: 0;
@@ -617,7 +621,7 @@ table {
 	padding:10px;
 }
 th, td {
-    padding: 15px;
+    padding: 9px;
     text-align: left;
     border:1px solid black;
 }
@@ -736,10 +740,10 @@ button,.button
 	position: relative;
 	display: block;
 	vertical-align: top;
-	width: 100px;
+	width: 110px;
 	height: 30px;
 	padding: 3px;
-	margin: 0 10px 10px 0;
+	/* margin: 0 10px 10px 0; */
 	background: linear-gradient(to bottom, #eeeeee, #FFFFFF 25px);
 	background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF 25px);
 	border-radius: 18px;
@@ -756,11 +760,11 @@ button,.button
 	position: relative;
 	display: block;
 	height: inherit;
-	font-size: 10px;
+	font-size: 11px;
 	text-transform: uppercase;
 	background: #eceeef;
 	border-radius: inherit;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
+	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15); */
 }
 .switch-label:before, .switch-label:after {
 	position: absolute;
@@ -787,14 +791,21 @@ button,.button
 }
 .switch-input:checked ~ .switch-label {
 	background: #E1B42B;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
+	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2); */
+	font-weight: bold;
 }
 .switch-input:checked ~ .switch-label:before {
 	opacity: 0;
 }
 .switch-input:checked ~ .switch-label:after {
 	opacity: 1;
+	color: #fff;
 }
+.temporizada:after {
+	font-weight: bold;
+	font-size: 1.6em;
+}
+
 .switch-handle {
 	position: absolute;
 	top: 4px;
@@ -820,7 +831,7 @@ button,.button
 	box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
 }
 .switch-input:checked ~ .switch-handle {
-	left: 74px;
+	left: 84px;
 	box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -828,7 +839,7 @@ button,.button
 ========================== */
 .switch-label, .switch-handle {
 	transition: All 0.3s ease;
-	-webkit-transition: All 0.3s ease;
+	/* -webkit-transition: All 0.3s ease; */
 	-moz-transition: All 0.3s ease;
 	-o-transition: All 0.3s ease;
 }
@@ -836,12 +847,16 @@ button,.button
 {
 	position:relative;
 	height: 4em;
+	margin: 0;
+	padding: 0;
+	width: 100%;
 }
 #estados > li .switch
 {
 	position:absolute;
 	right:0;
-	top: 0;
+	top: -8px;
+	margin-right: -10px;
 }
 /*Estados salidas*/
 /*Marcador de dispositivos*/

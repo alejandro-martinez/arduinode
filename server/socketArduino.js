@@ -1,6 +1,6 @@
 var socket = require('./socket')(),
-	async = require('async');
-
+	async = require('async'),
+	DateConvert = require('./utils/DateConvert')();
 module.exports = function()
 {
 	var Arduino =
@@ -9,46 +9,6 @@ module.exports = function()
 		init: function()
 		{
 			socket.socketClient = this.socketClient;
-		},
-		//Consulta el estado de una salida en particular
-		getEstadoSalida: function(params, callback)
-		{
-			var This = this;
-			this.data = "";
-			params.decorator = function(_data)
-			{
-				This.data+= _data;
-			}
-
-			params.command = 'S'+params.salida.nro_salida;
-			socket.send(params, function(response)
-			{
-				delete params.decorator;
-				callback( This.data );
-			});
-		},
-		getEstados: function(params, callback)
-		{
-			var This = this;
-			var i = 0;
-			var salidas = [];
-			var loop = function()
-			{
-				if (i < params.salidas.length)
-				{
-					This.getSalidas({ ip: params[i].ip }, function(salidas)
-					{
-						salidas.id_disp = params[i].id_disp;
-						salidas.push(salidas);
-						loop(i++);
-					})
-				}
-				else
-				{
-					callback(params.salidas);
-				}
-			}
-			loop(i);
 		},
 		// Setea el estado de una salida en ON u OFF
 		switchSalida: function(params, callback)
@@ -112,8 +72,9 @@ module.exports = function()
 					var salidas = [];
 					salidasRaw.forEach(function(s)
 					{
-						var posGuion = s.indexOf("-");
-						var posDospuntos = s.indexOf(":");
+						var posGuion = s.indexOf("-"),
+							posDospuntos = s.indexOf(":"),
+							posPunto = s.indexOf(".");
 						switch (s[0])
 						{
 							case 'B':
@@ -121,7 +82,8 @@ module.exports = function()
 							case 'P':
 								var nro_salida = s[posGuion+1] + s[posGuion+2],
 									estado = s[posDospuntos+1],
-									tipo = s[0];
+									tipo = s[0],
+									temporizada = DateConvert.min_a_horario(s.substr( posPunto + 1));
 								break;
 							default:
 								return;
@@ -146,7 +108,8 @@ module.exports = function()
 								tipo: tipo,
 								estado: (estado == 0) ? "on" : "off",
 								id_disp: "",
-								ip: params.ip
+								ip: params.ip,
+								temporizada: temporizada
 							});
 						}
 
@@ -155,7 +118,6 @@ module.exports = function()
 					{
 						var salidasA = salidas.filter(function(s)
 						{
-
 							return s.estado == params.filterByEstado;
 						})
 					}
