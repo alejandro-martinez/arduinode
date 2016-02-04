@@ -4,7 +4,7 @@ module.exports = function(app)
 	app.get('/tareas', function(req, res)
 	{
 		sequelize.models.tareas.getAll(function(models)
-		{
+		{	
 			res.json(models);
 		});
 	});

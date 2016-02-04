@@ -7,7 +7,7 @@ var express = require('express'),
 	compress = require('compression');
 	app.use(compress());
 	var http 	= require('http').Server(app),
-	programadorTareas = require('./programadorTareas')(),
+	programadorTareas = require('./programadorTareas'),
 	config 	= require('./config/config').config(app, express),	// Configuración
 	io 		= require('socket.io')(http),						// Socket IO
 	net 	= require('net'),									// Socket Arduino
@@ -20,12 +20,10 @@ var express = require('express'),
 http.listen(app.get('port'), function()
 {
 	console.log('Servidor corriendo en: ' + app.get('port'));
+	//Carga tareas en scheduler
+	programadorTareas.importar();
 
 
-	sequelize.models.tareas.findAll().then(function(_tareas)
-	{
-		programadorTareas.importar(_tareas);
-		programadorTareas.iniciarTodas();
 		/*
 		var tareaTest = [{
 			accion: 1,
@@ -55,7 +53,6 @@ http.listen(app.get('port'), function()
 				second: [0,5,10,15,20,25,30,35,40,45,50,55]
 			}
 		programadorTareas.test(config);*/
-	})
 
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)

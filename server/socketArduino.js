@@ -53,9 +53,10 @@ module.exports = function()
 		// Setea el estado de una salida en ON u OFF
 		switchSalida: function(params, callback)
 		{
+			console.log("params ardu",params);
 			var This = this;
 			this.data = "";
-			params.command = 'T' + params.nro_salida + params.estado;
+			params.command = 'T'.concat(params.nro_salida, params.estado, params.timeout || "");
 			params.decorator = function(_data)
 			{
 				This.data+= _data;
@@ -118,9 +119,9 @@ module.exports = function()
 							case 'B':
 							case 'L':
 							case 'P':
-								var nro_salida = s[posGuion+1] + s[posGuion+2];
-								var estado = s[posDospuntos+1];
-								var tipo = s[0];
+								var nro_salida = s[posGuion+1] + s[posGuion+2],
+									estado = s[posDospuntos+1],
+									tipo = s[0];
 								break;
 							default:
 								return;

@@ -1,4 +1,4 @@
-angular.module('Arduinode.Tarea',['Arduinode.Salida','720kb.datepicker'])
+angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','720kb.datepicker'])
 .config(function( $stateProvider, $urlRouterProvider )
 {
 
@@ -15,7 +15,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Salida','720kb.datepicker'])
 			params: {
 				params: null
 			},
-			controller: 'FormCtrl',
+			controller: 'TareaFormCtrl',
 			templateUrl: "js/modules/Tarea/_form.html"
 		})
 })
@@ -99,32 +99,78 @@ angular.module('Arduinode.Tarea',['Arduinode.Salida','720kb.datepicker'])
 	$scope.tareas = []
 	Tarea.getAll(function(tareas)
 	{
+		console.log("tareas",tareas);
 		$scope.tareas = tareas;
 	})
 }])
-.controller('FormCtrl', ['$scope','$rootScope','$stateParams','TareaFct','SwitchButton','ngDialog',
-			function ( $scope, $rootScope, $params, Tarea, SwitchButton, Popup )
+.controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',
+			'DispositivoFct','CombineRequestsFct','SalidaFct','TareaFct','SwitchButton','ngDialog',
+			function ( $scope, $rootScope, $params, Dispositivo, CombineReq, Salida,
+					   Tarea, SwitchButton, Popup )
 {
+	console.log("params",$params.params);
+
 	$scope.getSwitchButton = function() { return SwitchButton.getTemplate() }
 	$scope.diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves',
 							'Viernes','Sabado','Domingo'];
+
 	var defaultModel = { id_disp:0, nro_salida:0, dias_ejecucion:"" },
 		params = $params.params || defaultModel;
+	$scope.dispositivoSelected = {};
+	console.log($scope.dispositivoSelected);
+	if (params.id_disp == 0)
+	{
+		Dispositivo.getAll(function(dispositivos)
+		{
+			$scope.dispositivos = dispositivos;
+		});
+	}
+	else
+	{
+		CombineReq.getDispositivoAndSalida(params, function(models)
+		{
+			 //Setting first option as selected in configuration select
 
-	$rootScope.currentMenu = 'Edición de tareas';
+			$scope.dispositivos = [models.dispositivo];
+			$scope.dispositivoSelected = models.dispositivo;
+			var defaultSalida = {
+				nro_salida: $scope.tarea.nro_salida,
+				note: $scope.tarea.ip_dispositivo + ":" + $scope.tarea.nro_salida
+			}
+			$scope.salidas = [models.salida	|| defaultSalida];
+		});
+	}
+	$scope.changeDispositivo = function()
+	{
+		$rootScope.loading = true;
+		var disp = $scope.dispositivos.filter(function(e)
+		{
+			if (e.id_disp == $scope.dispositivoSelected.id_disp)
+			{
+				return e;
+			}
+		});
+		console.log("Pidiendo",disp[0]);
+		Salida.getSalidasArduino( disp[0], function(salidas)
+		{
+			$rootScope.loading = false;
+			$scope.salidas = salidas;
+			$scope.$apply();
+		});
+	}
 	$scope.tarea = params;
-
+	$rootScope.currentMenu = 'Edición de tareas';
 	$('.clockpicker').clockpicker({ autoclose: true });
 	$('#horainicio').val($scope.tarea.hora_inicio)
-	$('#horafin').val($scope.tarea.hora_fin)
-	params.dias_ejecucion = params.dias_ejecucion || "";
-	$scope.tarea = params;
+	$('#duracion').val($scope.tarea.duracion)
 
 	$scope.save = function()
 	{
-		console.log($scope.tarea);
+		console.log("form",$scope.tarea);
+		$scope.tarea.id_disp = $scope.dispositivoSelected.id_disp;
+		$scope.tarea.ip_dispositivo = $scope.dispositivoSelected.ip;
 		$scope.tarea.hora_inicio = $('#horainicio').val();
-		$scope.tarea.hora_fin = $('#horafin').val();
+		$scope.tarea.duracion = $('#duracion').val();
 		Tarea.save( $scope.tarea, function(response){});
 	}
 

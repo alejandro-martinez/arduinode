@@ -23,7 +23,6 @@ module.exports = function()
 			});
 			timer = setTimeout(function()
 			{
-				console.log("TimeOUT");
 				if (!params.noError)
 				{
 					This.socketClient.emit('Error', "Se alcanzó el tiempo de espera límite para la conexión!");
@@ -67,7 +66,9 @@ module.exports = function()
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
 		{
+			console.log("Ejecutando",params.command);
 			var This = this;
+			params.ip = params.ip || params.ip_dispositivo;
 			if (params.ip)
 			{
 				this.connect(params, function(response)

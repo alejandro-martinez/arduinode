@@ -1,5 +1,4 @@
-var programadorTareas = require('../programadorTareas')();
-
+var programadorTareas = require('../programadorTareas');
 module.exports = function(sequelize, DataTypes)
 {
 	return sequelize.define('tareas',
@@ -30,12 +29,17 @@ module.exports = function(sequelize, DataTypes)
 			type: DataTypes.INTEGER,
 			allowNull: false
 		},
-		hora_inicio:
+		duracion:
 		{
 			type: DataTypes.STRING,
 			allowNull: false
 		},
-		hora_fin:
+		fecha_fin:
+		{
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		hora_inicio:
 		{
 			type: DataTypes.STRING,
 			allowNull: false
@@ -85,7 +89,7 @@ module.exports = function(sequelize, DataTypes)
 				model.fecha_fin = model.fecha_fin.substr(-5);
 				sequelize.models.tareas
 				.findOrCreate({
-					where: {id_tarea: model.id_tarea},
+					where: { id_tarea: model.id_tarea },
 					defaults: model
 				})
 				.catch(function(err)
@@ -95,22 +99,24 @@ module.exports = function(sequelize, DataTypes)
 				})
 				.spread(function(tarea, created)
 				{
-
 					if (created)
 					{
-						programadorTareas.reprogramarTarea(created.dataValues)
+						//programadorTareas.nuevaTarea(tarea.dataValues)
+						programadorTareas.importar();
 						callback(1);
 					}
 					else
 					{
 						tarea.hora_inicio	= model.hora_inicio;
 						tarea.hora_fin 		= model.hora_fin;
+						tarea.fecha_inicio	= model.fecha_inicio;
+						tarea.fecha_fin 	= model.fecha_fin;
 						tarea.dias_ejecucion= model.dias_ejecucion;
 						tarea.id_disp= model.id_disp;
 						tarea.accion = model.accion;
 						tarea.ip_dispositivo = model.ip_dispositivo;
 						tarea.activa = model.activa || 0;
-
+						tarea.duracion = model.duracion;
 						tarea.save().then(function()
 						{
 							programadorTareas.reprogramarTarea(tarea.dataValues)
@@ -122,3 +128,4 @@ module.exports = function(sequelize, DataTypes)
 		}
 	});
 };
+

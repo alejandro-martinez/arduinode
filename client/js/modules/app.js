@@ -14,6 +14,12 @@ angular.module('Arduinode',
 .controller('MainCtrl', ['$rootScope', function ($rootScope )
 {
 	$rootScope.currentMenu = 'Home';
+	$rootScope.previousState;
+	$rootScope.currentState;
+	$rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
+		$rootScope.previousState = from.name;
+		$rootScope.currentState = to.name;
+	});
 }])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 

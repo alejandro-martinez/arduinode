@@ -1,217 +1,176 @@
 // Tarea programadas
 schedule = require('node-schedule');
-var socketArduino = require('./socketArduino')();
+var socketArduino = require('./socketArduino')(),
+DateConvert = require('./utils/DateConvert')();
 
-/* API
- * JOB
-  invoke()
-  runOnDate(date)
-  schedule(date || recurrenceRule || cronstring)
-  cancel(reschedule = false)
-  cancelNext(reschedule = true)
-
-   Property constraints
-  name: readonly
-  job: readwrite*/
-
-module.exports = function()
+var Programador = function()
 {
-	var Programador = {
-		tareas: [],
-		reprogramarTarea: function(tarea)
+		this.tareas = [];
+		this.reprogramarTarea = function(_tarea)
 		{
-			//Busco la tarea, y ejecuto la accion de apagado
-			console.log("buscar tarea:",tarea.id_tarea);
-			var _tarea = this.getTarea(tarea.id_tarea);
-			//Extraigo la tarea final (0 = inicial, 1 = final)
-			var tareaFinal = _tarea.tareaEnEjecucion[1];
+			console.log("Reprogramando tarea", _tarea.id_tarea)
+			//Busco la tarea,
+			this.quitarTarea(_tarea.id_tarea);
+			console.log("Apagando");
+			//y ejecuto la accion de apagado
+			_tarea.estado = 1;
+			this.ejecutarTarea(_tarea);
+			console.log("Reimportando");
+			this.importar();
+		};
+		this.quitarTarea = function(id_tarea)
+		{
+			console.log("Quitando tarea");
+			var tarea = this.getTarea(id_tarea)[0];
+			tarea.enEjecucion.job = null;
 		},
-		getTarea: function(id)
+		this.getTarea = function(id)
 		{
 			var tarea = this.tareas.filter(function(t)
 			{
-				if (t.id_tarea == id)
+				if (parseInt(t.id_tarea) == parseInt(id))
 				{
 					return t;
 				}
 			})
 			return tarea;
-		},
-		parseConfig: function(t)
+		};
+		this.parseConfig = function(t)
 		{
 			var config = {
-				id_tarea: t.id_tarea,
-				accion: t.accion,
+				id_tarea: 		t.id_tarea,
+				activa: 		t.activa,
+				accion: 		t.accion,
 				ip_dispositivo: t.ip_dispositivo,
-				nro_salida: t.nro_salida,
-				dia_ini	: t.fecha_inicio.substr(-2),
-				mes_ini	: t.fecha_inicio.substr(0,2),
-				hora_ini: t.hora_inicio.substr(0,2),
-				min_ini: t.hora_inicio.substr(-2),
-				dias_ejecucion: t.dias_ejecucion.replace(/, +/g, ",").split(",").map(Number),
-				dia_fin	: t.fecha_fin.substr(-2),
-				mes_fin	: t.fecha_fin.substr(0,2),
-				hora_fin: t.hora_fin.substr(0,2),
-				min_fin	: t.hora_fin.substr(-2)
+				nro_salida: 	t.nro_salida,
+				dia_ini	: 		DateConvert.fechaADia( t.fecha_inicio ),
+				mes_ini	: 		DateConvert.fechaAMes( t.fecha_inicio ),
+				hora_ini: 		t.hora_inicio.substr(0,2),
+				min_ini: 		t.hora_inicio.substr(-2),
+				raw_hora_inicio:t.hora_inicio,
+				dias_ejecucion: DateConvert.strToArray(t.dias_ejecucion),
+				dia_fin	: 		DateConvert.fechaADia( t.fecha_fin ),
+				mes_fin	: 		DateConvert.fechaAMes( t.fecha_fin ),
+				duracion: 		DateConvert.horario_a_min( t.duracion ),
+				raw_duracion: 	t.duracion
 			}
 			return config;
-		},
-		registerTareaActiva: function(config, tareaEnEjecucion)
+		};
+		this.registerTareaActiva = function(config, _tarea)
 		{
+			console.log("Registrando tarea");
 			var tarea = this.getTarea(config.id_tarea)[0];
-			tarea.tareaEnEjecucion.push(tareaEnEjecucion);
-			console.log(this.tareas)
-		},
-		nuevaTarea: function(config)
+			tarea.enEjecucion = _tarea;
+		};
+		this.nuevaTarea = function(config)
 		{
+			var This = this;
 			var rule = new schedule.RecurrenceRule();
-			rule.dayOfWeek = config.dias_ejecucion;
-			rule.second = 0;
+				rule.dayOfWeek = config.dias_ejecucion;
+				rule.second = 0;
+				rule.hour = parseInt(config.hora_ini);
+				rule.minute = parseInt(config.min_ini);
+
 			var paramsDispositivo =
 			{
 				ip: config.ip_dispositivo,
 				estado: config.accion,
-				nro_salida: config.nro_salida
-			}
+				nro_salida: config.nro_salida,
+				timeout: ":" + config.duracion
+			}/*
+			console.log("tarea inicio es valida");
+			console.log("Deberia ejecutarse la accion",config.accion,
+						" sobre la salida:",config.nro_salida,
+						" del dispositivo: ",config.ip_dispositivo,
+						" a las ",config.hora_ini,":",config.min_ini);*/
+			console.log("Forzando ejecucion de tarea",config.raw_hora_inicio);
 
-			//Tarea inicial
-			config.tarea = "inicial";
 			if (this.checkValidez(config))
 			{
-				/*console.log("tarea inicio es valida");
-				console.log("Deberia ejecutarse la accion",config.accion,
-								" sobre la salida:",config.nro_salida,
-								" del dispositivo: ",config.ip_dispositivo,
-								" a las ",config.hora_ini,":",config.min_ini);*/
-				rule.hour = parseInt(config.hora_ini);
-				rule.minute = parseInt(config.min_ini);
-				var tareaEnEjecucion = schedule.scheduleJob(rule, function()
-				{
-					console.log('Ejecutando tarea inicial');
-					socketArduino.switchSalida(paramsDispositivo, function(response)
-					{
-						console.log("Switch response", response);
-					})
-				});
-				this.registerTareaActiva(config, tareaEnEjecucion);
+				this.forzarEjecucion(config);
 			}
-			/*else
-			{
-				console.log("tarea inicial no valida");
-			}*/
 
-			//Tarea final
-			config.tarea = "final";
-			if (this.checkValidez(config))
+			var job = schedule.scheduleJob(rule, function()
 			{
-				/*console.log("tarea fin es valida");
-				console.log("Deberia ejecutarse la accion",((config.accion == 1) ? 0 : 1),
-								" sobre la salida:",config.nro_salida,
-								" del dispositivo: ",config.ip_dispositivo,
-								" a las ",config.hora_fin,":",config.min_fin);*/
-				rule.hour = parseInt(config.hora_fin);
-				rule.minute = parseInt(config.min_fin);
-				schedule.scheduleJob(rule, function()
+				if (This.checkValidez(config))
 				{
-					//La tarea final lleva accion opuesta a la inicial
-					paramsDispositivo.estado = ((config.accion == 1) ? 0 : 1);
-					console.log('Ejecutando tarea final');
-
-					socketArduino.switchSalida(paramsDispositivo, function(response)
-					{
-						console.log("Switch response", response);
-					})
-				});
-			}
-			/*else
-			{
-				console.log("tarea final no valida");
-			}*/
-		},
-		importar: function(_tareas)
+					console.log("Ejecutando Tarea");
+					This.ejecutarTarea(paramsDispositivo);
+				}
+				else
+				{
+					console.log("no valida");
+				}
+			});
+			console.log("registrando tarea");
+			this.registerTareaActiva(config, job);
+		};
+		this.importar = function()
 		{
 			var This = this;
-			_tareas.forEach(function(t)
+			sequelize.models.tareas.findAll().then(function(_tareas)
 			{
-				This.tareas.push({
-					id_tarea: t.dataValues.id_tarea,
-					data: t.dataValues,
-					/*Aca guardo referencias a las tareas del Scheduler
-					(inicial + final)*/
-					tareaEnEjecucion: []
-				})
-			})
-		},
-		checkValidez: function(config)
+				This.tareas = _tareas;
+				console.log("Cantidad de tareas",This.tareas.length);
+				This.cargarTodas();
+			});
+		};
+		this.checkValidez = function(config)
 		{
-			var checkTareaInicial = function()
+			//Tarea activa o desactivada
+			if (config.activa)
 			{
-				return true;
-				//Tarea activa o desactivada
-				if (config.activa)
+				return DateConvert.fechaBetween(config);
+			}
+			return false;
+		};
+		this.forzarEjecucion = function(config)
+		{
+// 			console.log("raw inicio",config.raw_hora_inicio);
+			var hora_fin_min =
+					DateConvert.sumarHoras(config.raw_hora_inicio, config.raw_duracion),
+				tiempo_ejecutada = DateConvert.difHoraConActual(config.raw_hora_inicio);
+
+			var hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
+
+			console.log("Pasaron ",tiempo_ejecutada," min desde: ",config.raw_hora_inicio)
+
+			//Si Hora actual > hora_inicio de tarea
+			if (tiempo_ejecutada  > 0 )
+			{
+				console.log("Deberia ejecutarse si horaActual < hora_fin_tarea");
+				if ( DateConvert.mayorAHoraActual(hora_fin_min) )
 				{
-					console.log("Estado tarea inicial:",config.activa);
-					//Tarea en rango de fecha valido?
-					return checkRangoFecha(config);
+// 					console.log("Hora actual es < a hora_fin tarea");
+// 					console.log("Significa que deberia estar ejecutandose");
+					var tiempo_restante = DateConvert.difHoraConActual( hora_fin_HHMM );
+//  					console.log("Tiempo restante",tiempo_restante);
+					//Ejecuto la tarea con tiempo_restante
+					config.estado = 0;
+					config.duracion = tiempo_restante;
+					this.ejecutarTarea(config);
 				}
-				return false;
 			}
-			var checkTareaFinal = function()
+		};
+		this.ejecutarTarea = function(params)
+		{
+			socketArduino.switchSalida(params, function(response)
 			{
-				return true;
-			}
-
-			switch (config.tarea)
-			{
-				case "inicial":
-					return checkTareaInicial();
-					break;
-				case "final":
-					return checkTareaFinal();
-					break;
-			}
-
-			var checkRangoFecha = function(config)
-			{
-				var fechaActual = new Date(),
-					diaActual = parseInt(fechaActual.getDate()),
-					mesActual = parseInt(fechaActual.getMonth());
-
-				if (config.dia_ini >= diaActual && config.mes_ini >= mesActual)
-				{
-					if (config.dia_fin >= diaActual && config.mes_fin >= mesActual)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-		},
-		iniciarTodas: function()
+				console.log("Switch response", response);
+			})
+		};
+		this.cargarTodas = function()
 		{
 			var This = this;
 			this.tareas.forEach(function(t)
 			{
-				//Armo la config de la tarea y Creo la tarea (inicial + final)
-				var configTarea = This.parseConfig(t.data);
+				//Armo la config de la tarea y Creo la tarea
+				var configTarea = This.parseConfig(t.dataValues);
 				This.nuevaTarea(configTarea);
 			})
-		},
-		/*iniciar: function(id_tarea)
-		{
-			//Busco la tarea
-			var tarea = this.tareas.filter(function(t)
-			{
-				return t.tarea.id_tarea == id_tarea;
-			});
-
-			if (tarea.length > 0)
-			{
-
-			}
-		},*/
+		};
 		//Detiene las tareas pasadas por param
-		detener: function(tareas)
+		this.detener = function(tareas)
 		{
 			var This = this;
 			tareas.forEach(function(t)
@@ -224,7 +183,28 @@ module.exports = function()
 					}
 				});
 			})
+		};
+		if(Programador.caller != Programador.getInstance)
+		{
+			console.log("This object cannot be instanciated");
 		}
-	}
-	return Programador;
 }
+
+
+/* ************************************************************************
+SINGLETON CLASS DEFINITION
+************************************************************************ */
+Programador.instance = null;
+
+/**
+ * Singleton getInstance definition
+ * @return singleton class
+ */
+Programador.getInstance = function(){
+    if(this.instance === null){
+        this.instance = new Programador();
+    }
+    return this.instance;
+}
+
+module.exports = Programador.getInstance();

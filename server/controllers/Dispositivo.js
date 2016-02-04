@@ -3,7 +3,6 @@ module.exports = function(app)
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		console.log(req);
 		sequelize.models.dispositivos.findAll().then(function(models)
 		{
 			res.json(models);
