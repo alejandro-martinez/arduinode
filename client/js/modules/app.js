@@ -25,6 +25,11 @@ angular.module('Arduinode',
 	{
 		$state.go($rootScope.previousState);
 	}
+
+	//Config Lib Fastclick para eliminar delay botones en mobile
+	$(function() {
+		FastClick.attach(document.body);
+	});
 }])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 

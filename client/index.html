@@ -33,10 +33,6 @@
 		<script src="js/modules/Planta/Planta.js"></script>
 		<script src="js/modules/ImgNotes/ImgNotes.js"></script>
 		<script src="js/modules/Tarea/Tarea.js"></script>
-		<script src="bower_components/angularjs-datepicker/dist/angular-datepicker.min.js"></script>
-		<script src="bower_components/angular-touch/angular-touch.min.js"></script>
-		<script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
-
 	</head>
 	<body ng-controller="MainCtrl">
 		<div id="all" ng-class="{hide:showmenu,slide:!showmenu}">
@@ -50,5 +46,9 @@
 		</div>
 		<div id="content" ui-view></div>
 		<div ng-if="loading" id="loadingDiv"></div>
+		<script src="bower_components/angularjs-datepicker/dist/angular-datepicker.min.js"></script>
+		<script src="bower_components/angular-touch/angular-touch.min.js"></script>
+		<script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
+		<script src='bower_components/fastclick/lib/fastclick.js'></script>
 	</body>
 </html>
