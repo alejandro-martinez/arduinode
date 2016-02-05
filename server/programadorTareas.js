@@ -76,7 +76,7 @@ var Programador = function()
 				ip: config.ip_dispositivo,
 				estado: config.accion,
 				nro_salida: config.nro_salida,
-				timeout: "." + config.duracion
+				duracion: config.duracion
 			}/*
 			console.log("tarea inicio es valida");
 			console.log("Deberia ejecutarse la accion",config.accion,

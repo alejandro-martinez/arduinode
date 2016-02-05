@@ -14,9 +14,13 @@ module.exports = function()
 		switchSalida: function(params, callback)
 		{
 			console.log("params ardu",params);
+			if (params.duracion && params.duracion.indexOf(":") > -1)
+			{
+				params.duracion = DateConvert.horario_a_min(params.duracion);
+			}
 			var This = this;
 			this.data = "";
-			params.command = 'T'.concat(params.nro_salida, params.estado, params.timeout || "");
+			params.command = 'T'.concat(params.nro_salida, params.estado, ".", params.duracion || "");
 			params.decorator = function(_data)
 			{
 				This.data+= _data;

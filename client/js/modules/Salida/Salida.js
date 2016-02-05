@@ -41,6 +41,8 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		},
 		switchSalida: function(params, callback)
 		{
+			console.log("params",params.estado);
+
 			//Seteo el estado al que quiero cambiar la salida
 			params.estado = (params.estado == 'off') ? 0 : 1;
 			Socket.send('switchSalida',params);
@@ -403,21 +405,32 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		}
 	}
 ])
+.directive('onFinishRender', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attr) {
+            if (scope.$last === true) {
+                $timeout(function () {
+                    scope.$emit('ngRepeatFinished');
+                });
+            }
+        }
+	}
+})
 .controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton','$rootScope','$stateParams','ngDialog','$scope', 'SalidaFct',
 	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup, $scope, Salida)
 	{
+		$('.clockpicker').clockpicker();
 
 		var params = params.params || {};
+		$scope.salida = {};
 		$rootScope.loading = true;
-		$scope.ipDispositivo = params.ip;
 		$rootScope.currentMenu = 'Salidas de: ' + params.note;
 
+		$scope.ipDispositivo = params.ip;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
-
 		$scope.showDescripcion = $scope.editing = true;
 		$scope.showDispositivos = $scope.showSalidas = false;
-
-		$scope.salida = {};
 
 		$scope.edit = function(salida)
 		{
@@ -439,14 +452,15 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		}
 		$scope.switch = function(data)
 		{
-			//var ip = $scope.ipDispositivo || data.ip;
+			var tiempo = $('.clockpicker').val();
+			if (tiempo != '')
+			{
+				data.duracion = tiempo;
+				data.estado = 'off';
+			}
 			Salida.switchSalida( data, function(_estado)
 			{
-				$scope.salidas.filter(function(s)
-				{
-					if (s.nro_salida == data.nro_salida)
-						 return s.estado = (_estado == 0) ? 'on' : 'off';
-				});
+				$scope.refreshEstados();
 			});
 		}
 		//Funcionamiento Persianas
@@ -470,7 +484,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			});
 		}
 
-
 		$scope.refreshLucesEncendidas = function()
 		{
 			$rootScope.loading = true;
@@ -482,13 +495,9 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.$apply();
 			});
 		}
-
-		if (params.estado == 'on')
+		$scope.refreshEstados = function()
 		{
-			$scope.refreshLucesEncendidas();
-		}
-		else
-		{
+			$('.clockpicker').val("");
 			Salida.getSalidasArduino(
 			{
 				ip		: $scope.ipDispositivo,
@@ -504,6 +513,14 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.salidas = salidas;
 				$scope.$apply();
 			});
+		}
+		if (params.estado == 'on')
+		{
+			$scope.refreshLucesEncendidas();
+		}
+		else
+		{
+			$scope.refreshEstados();
 		}
 	}
 ])

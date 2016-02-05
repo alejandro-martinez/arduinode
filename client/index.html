@@ -51,4 +51,12 @@
 		<script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
 		<script src='bower_components/fastclick/lib/fastclick.js'></script>
 	</body>
+	<script>
+		mostrar = function()
+		{
+		console.log("m");
+			$('.clockpicker').trigger('click');
+			$('.clockpicker').clockpicker('show');
+		}
+	</script>
 </html>

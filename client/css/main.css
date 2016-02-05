@@ -143,6 +143,7 @@ table {
 
 #content {
     padding: 10px;
+    text-align: center;
 }
 th,
 td {
@@ -242,9 +243,17 @@ ul.inlineButtons .button {
 /* ABM Dispositivos */
 /* ABM Dispositivos */
 /*Estados salidas*/
-
+input.clockpicker.estados
+{
+    background: url(sprite.png) no-repeat scroll -294px -17px;
+    border: 0;
+    margin: 0 auto;
+    text-align: center;
+    width: 83px;
+}
 ul#estados {
-    margin-top: 10px;
+    margin-top: 41px;
+    text-align: left;
 }
 #back,
 a#home,
@@ -731,67 +740,7 @@ ul#tareas li {
     float: right;
     margin-right: 30px;
 }
-/* Vista Estados, icono Programacion Salida */
 
-.timeIcon {
-    z-index: 1;
-    overflow: hidden;
-    list-style: none;
-    padding: 0;
-    position: absolute;
-    margin: 0 0 0.25em;
-    right: -19px;
-    top: 0px;
-}
-.timeIcon a {
-    display: inline-block;
-    color: transparent;
-    width: 24px;
-    height: 24px;
-}
-.timeIcon:before,
-.timeIcon:after,
-.timeIcon a:before,
-.timeIcon a:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-}
-.timeIcon a:before,
-.timeIcon a:after {
-    left: 1px;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #c55500;
-    margin-top: -11px;
-    background: transparent;
-}
-.timeIcon a:before {
-    /* css3 */
-
-    -webkit-border-radius: 18px;
-    -moz-border-radius: 18px;
-    border-radius: 19px;
-}
-.timeIcon a:after {
-    left: 10px;
-    width: 7px;
-    height: 8px;
-    border-width: 0 0 2px 2px;
-    margin-top: -7px;
-    background: transparent;
-}
-.timeIcon a:hover:before,
-.timeIcon a:focus:before,
-.timeIcon a:active:before,
-.timeIcon a:hover:after,
-.timeIcon a:focus:after,
-.timeIcon a:active:after {
-    border-color: #730800;
-    background: transparent;
-}
-/* Vista Estados, icono Programacion Salida */
 /*TAREAS*/
 
 ul#tareas li {
