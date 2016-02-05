@@ -20,39 +20,9 @@ var express = require('express'),
 http.listen(app.get('port'), function()
 {
 	console.log('Servidor corriendo en: ' + app.get('port'));
+
 	//Carga tareas en scheduler
 	programadorTareas.importar();
-
-
-		/*
-		var tareaTest = [{
-			accion: 1,
-			activa: null,
-			descripcion: "asfasdfsadf",
-			dias_ejecucion: "1,2,3,4,0,5,6",
-			fecha_fin: " *: *",
-			fecha_inicio: " *: *",
-			hora_fin: "*",
-			hora_inicio: " *: *",
-			id_disp: 29,
-			id_tarea: "0",
-			nro_salida: 25
-		}];
-		var config = {
-				dia_ini	: "*",
-				mes_ini	: "*",
-				hora_ini: "*",
-				min_ini: "*",
-				dia_fin	: "*",
-				mes_fin	: "*",
-				hora_fin: "*",
-				min_fin	: "*",
-				rangoDiasTarea: [1,2,3,4,5,6],
-				diaFinal: Math.max.apply(Math, [1,2,3,4,5,6]),
-				diaComienzo: Math.min.apply(Math, [1,2,3,4,5,6]),
-				second: [0,5,10,15,20,25,30,35,40,45,50,55]
-			}
-		programadorTareas.test(config);*/
 
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)
@@ -107,7 +77,7 @@ http.listen(app.get('port'), function()
 					{
 						params.salidasDB = models;
 						params.salidasArduino = response;
-						callback( sequelize.models.salidas.addNotes(params) );
+						callback( sequelize.models.salidas.addNotes(params), models );
 					});
 			});
 		}
@@ -115,9 +85,20 @@ http.listen(app.get('port'), function()
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
-			getSalidas(params, function(response)
+			params.noError = true;
+			getSalidas(params, function(response, models)
 			{
-				socket.emit('salidas', response);
+				var resp;
+				if (response.length == 0)
+				{
+					models.push({error: "Dispositivo sin Conexión"});
+					resp = models
+				}
+				else
+				{
+					resp = response;
+				}
+				socket.emit('salidas', resp);
 			});
 		});
 
