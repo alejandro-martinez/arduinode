@@ -247,6 +247,7 @@ ul#estados {
     margin-top: 10px;
 }
 #back,
+a#home,
 .refresh {
     display: block;
     background: url('../image/back.png');
@@ -254,6 +255,11 @@ ul#estados {
     height: 30px;
     position: absolute;
     top: 11px;
+}
+a#home
+{
+    right:10px;
+    background: url('../image/button.png');
 }
 .refresh {
     background: url('../image/refresh.png');
