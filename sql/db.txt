@@ -143,14 +143,13 @@ CREATE TABLE tareas (
     id_disp integer,
     nro_salida integer,
     hora_inicio character varying(8),
-    hora_fin character varying(8),
     dias_ejecucion character varying(15),
     activa boolean,
     accion integer,
     fecha_inicio character(5),
     fecha_fin character(5),
-    estado boolean,
-    ip_dispositivo character varying
+    ip_dispositivo character varying,
+    duracion character varying
 );
 
 
@@ -161,13 +160,6 @@ ALTER TABLE public.tareas OWNER TO postgres;
 --
 
 COMMENT ON COLUMN tareas.hora_inicio IS 'formato 16:11:00';
-
-
---
--- Name: COLUMN tareas.hora_fin; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN tareas.hora_fin IS 'formato igual que hora_inicio';
 
 
 --
@@ -210,81 +202,6 @@ ALTER TABLE ONLY plantas ALTER COLUMN id_planta SET DEFAULT nextval('plantas_id_
 --
 
 ALTER TABLE ONLY tareas ALTER COLUMN id_tarea SET DEFAULT nextval('tareas_id_tarea_seq'::regclass);
-
-
---
--- Name: dispositivo_id_disp_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('dispositivo_id_disp_seq', 31, true);
-
-
---
--- Data for Name: dispositivos; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY dispositivos (id_disp, note, ip) FROM stdin;
-29	oaispodiasd	192.168.20.7
-31	asdf	192.168.20.6
-\.
-
-
---
--- Data for Name: plantas; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY plantas (id_planta, descripcion, plano) FROM stdin;
-1	Planta Alta	planos_pa
-2	Planta Baja	planos_pb
-\.
-
-
---
--- Name: plantas_id_planta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('plantas_id_planta_seq', 2, true);
-
-
---
--- Data for Name: salidas; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY salidas (id_disp, note, y, x, nro_salida, id_planta) FROM stdin;
-29	nueva	0.19851576994434136	0.7087087087087087	25	2
-29	\N	0.17439703153988867	0.1891891891891892	22	2
-29	\N	0.4321266968325792	0.4668040293040293	23	2
-31	\N	0.45475113122171945	0.23786630036630033	27	2
-31	\N	0.4194004524886878	0.41872710622710624	22	2
-29	\N	0.2916666666666667	0.5582191780821918	27	1
-29	\N	0.33541666666666664	0.339041095890411	36	1
-29	asdasdasdasasdasdasd	0.15625	0.1780821917808219	24	1
-\.
-
-
---
--- Data for Name: sectores; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY sectores (descripcion, nro_salida, id_disp) FROM stdin;
-\.
-
-
---
--- Data for Name: tareas; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY tareas (id_tarea, descripcion, id_disp, nro_salida, hora_inicio, hora_fin, dias_ejecucion, activa, accion, fecha_inicio, fecha_fin, estado, ip_dispositivo) FROM stdin;
-0	asfasdfsadf	29	25	14:56	14:57	1,2,3,4,0,5,6	t	1	02-02	02-02	\N	192.168.20.7
-1	dsfsadfasdf	29	29	16:00	16:05	,1,2	t	0	02-02	02-02	\N	192.168.20.7
-\.
-
-
---
--- Name: tareas_id_tarea_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('tareas_id_tarea_seq', 1, true);
 
 
 --
