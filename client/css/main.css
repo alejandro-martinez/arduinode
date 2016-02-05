@@ -3,921 +3,416 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	text-decoration: none;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
 }
-a
-{
-	cursor: pointer;
+a {
+    cursor: pointer;
 }
-div.left
-{
-	display:inline-block;
-	float:left;
-	width: 50%;
-}
-div.right
-{
-	float:right;
+div.left {
+    float: left;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
 }
 body {
-	line-height: 1;
-	font-family: Arial;
-	overflow-x:hidden;
+    line-height: 1;
+    font-family: Arial;
+    overflow-x: hidden;
 }
-ol, ul {
-	list-style: none;
+ol,
+ul {
+    list-style: none;
 }
-blockquote, q {
-	quotes: none;
+blockquote,
+q {
+    quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
-	width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
 }
 /*FIN RESET*/
-#content
-{
-	padding:10px;
+
+#content {
+    padding: 10px;
 }
-th, td {
+th,
+td {
     padding: 15px;
     text-align: left;
-    border:1px solid black;
-}
-body
-{
-	padding:0 !important;
-}
-html {
-    height: 100%;
-}
-label
-{
-	padding:10px 0;
-}
-input[type="text"],textarea,select
-{
-	margin-top:5px;
-	border-radius:2px;
-	padding:5px;
-}
-.simple-form
-{
-}
-.simple-form .ng-invalid
-{
-	border:1px solid red;
-}
-.simple-form label
-{
-	display:block;
-}
-.simple-form input, textarea
-{
-}
-.page ul
-{
-	margin: 0 auto;
-}
-.page ul li
-{
-	list-style: none
-}
-.page ul:first-child li a
-{
-	background: #039e74;
-	color: #fff;
-	padding:15px;
-	margin-bottom:6px;
-	border-radius:3px;
-	display:block;
-	border:1px solid #fff;
-	text-align: center;
-}
-/*GENERAL*/
-ul.actions li
-{
-	float: left;
-	margin-right: 10px;
-}
-ul.actionsPopup
-{
-	/* position:absolute; */
-	bottom:10px;
-	right:10px;
-}
-/*CasaCtrl HOME*/
-button,.button
-{
-	font-size:1em;
-	background: #333;
-	color:#fff;
-	display: block;
-	border-radius: 5px;
-	font-weight: bold;
-	padding: 13px;
-}
-#actionsPage
-{
-	text-align: right;
-	margin-top: 10px;
-}
-.inlineButtons
-{
-	width:100%;
-	overflow:hidden;
-}
-.inlineButtons li
-{
-	float: left;
-	text-align:right;
-	margin-right: 10px;
-}
-#actions button,ul.inlineButtons .button
-{
-	display:inline-block;
-}
-
-#image
-{
-	border: 30px solid #ccc;
-	padding: 20px;
-	width: 80%;
-}
-#img_div
-{
-	text-align: center;
-}
-/*CasaCtrl HOME*/
-
-/* ABM Dispositivos */
-
-/* ABM Dispositivos */
-
-/*Estados salidas*/
-ul#estados
-{
-	margin-top:10px;
-}
-.refresh
-{
-  display: block;
-  background: url('../image/refresh.png');
-  width: 30px;
-  height: 30px;
-  position: fixed;
-  top: 11px;
-}
-.switch {
-	position: relative;
-	display: block;
-	vertical-align: top;
-	width: 100px;
-	height: 30px;
-	padding: 3px;
-	margin: 0 10px 10px 0;
-	background: linear-gradient(to bottom, #eeeeee, #FFFFFF 25px);
-	background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF 25px);
-	border-radius: 18px;
-	box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, 0.05);
-	cursor: pointer;
-}
-.switch-input {
-	position: absolute;
-	top: 0;
-	left: 0;
-	opacity: 0;
-}
-.switch-label {
-	position: relative;
-	display: block;
-	height: inherit;
-	font-size: 10px;
-	text-transform: uppercase;
-	background: #eceeef;
-	border-radius: inherit;
-	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15); */
-}
-.switch-label:before, .switch-label:after {
-	position: absolute;
-	top: 50%;
-	margin-top: -.5em;
-	line-height: 1;
-	-webkit-transition: inherit;
-	-moz-transition: inherit;
-	-o-transition: inherit;
-	transition: inherit;
-}
-.switch-label:before {
-	content: attr(data-off);
-	right: 11px;
-	color: #aaaaaa;
-	text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-}
-.switch-label:after {
-	content: attr(data-on);
-	left: 11px;
-	color: #FFFFFF;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.2);
-	opacity: 0;
-}
-.switch-input:checked ~ .switch-label {
-	background: #E1B42B;
-	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2); */
-}
-.switch-input:checked ~ .switch-label:before {
-	opacity: 0;
-}
-.switch-input:checked ~ .switch-label:after {
-	opacity: 1;
-}
-.switch-handle {
-	position: absolute;
-	top: 4px;
-	left: 4px;
-	width: 28px;
-	height: 28px;
-	background: linear-gradient(to bottom, #FFFFFF 40%, #f0f0f0);
-	background-image: -webkit-linear-gradient(top, #FFFFFF 40%, #f0f0f0);
-	border-radius: 100%;
-	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-}
-.switch-handle:before {
-	content: "";
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin: -6px 0 0 -6px;
-	width: 12px;
-	height: 12px;
-	background: linear-gradient(to bottom, #eeeeee, #FFFFFF);
-	background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF);
-	border-radius: 6px;
-	box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
-}
-.switch-input:checked ~ .switch-handle {
-	left: 74px;
-	box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Transition
-========================== */
-.switch-label, .switch-handle {
-	transition: All 0.3s ease;
-	-webkit-transition: All 0.3s ease;
-	-moz-transition: All 0.3s ease;
-	-o-transition: All 0.3s ease;
-}
-#estados > li
-{
-	position:relative;
-	height: 4em;
-}
-#estados > li .switch
-{
-	position:absolute;
-	right:0;
-	top: 0;
-}
-/*Estados salidas*/
-/*Marcador de dispositivos*/
-.marker
-{
-  width: 51px;
-  color: black !important;
-  height: 61px;
-  font-size: 12px;
-  font-weight: bold;
-  line-height: 25px;
-  letter-spacing: -1px;
-  text-align: center;
-  color: #fff;
-  background: url(sprite.png);
-}
-/* Tipos de marcadores en el plano*/
-.marker.L
-{
-  background-position: 8px 0px;
-}
-
-.marker.L.on
-{
-  background-position: 238px 0px;
-}
-.marker.B
-{
-	background-position: 184px 9px;
-}
-.marker.on.B
-{
-	background-position: 62px 7px;
-}
-.marker.P
-{
-	background-position: 125px 0px;
-
-}
-#header
-{
-    background-color: #03ae74;
-    width: 100%;
-    height: 50px;
-    padding: 0 2%
-}
-#header a {
-    float: right;
-    width: 29px;
-    height: 28px;
-    margin-top: 12px;
-    background: transparent url('../image/button.png') no-repeat;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    margin-right: 15px;
-}
-#header h1 {
-    /* float: left; */
-    display: block;
-    /* width: 90%; */
-    text-align: center;
-    color: #fff;
-    line-height: 50px;
-    font-size: 1.2em
-}
-/* MENU APLICACION*/
-/*LOADING*/
-#loadingDiv
-{
-  position:fixed;
-  top:0px;
-  right:0px;
-  width:100%;
-  height:100%;
-  background-color:#666;
-  background-image:url('loader.gif');
-  background-repeat:no-repeat;
-  background-position:center;
-  z-index: 99999;
-  opacity: 0.4;
-  filter: alpha(opacity=40); /* For IE8 and earlier */
-}
-
-/*Boton switch window*/
-.containerSwitchWindow
-{
-	background:#eceeef;
-	position: absolute;
-	right: 0;
-	top: 0;
-	border-radius: 10%;
-	padding: 0px 8px -1px 0px;
-}
-.containerSwitchWindow ul,
-.containerSwitchWindow li
-{
-    margin: 13px 3px;
-    padding: 0;
-    list-style: none;
-    display: inline-block;
-    vertical-align:top;
-}
-.containerSwitchWindow li.moveDown,
-.containerSwitchWindow li.stopIcon,
-.containerSwitchWindow li.moveUp
-{
-    width: 25px;
-    height: 25px;
-    cursor: pointer;
-    background: #E1B42B;
-    margin: 5px;
-    border-radius: 2px;
-    border: 1px solid #aaaaaa;
-    box-shadow: 3px 2px 15px #cccccc;
-    text-align:center;
-    line-height: 23px;
-}
-.containerSwitchWindow li.stopIcon
-{
-    cursor: default;
-}
-.containerSwitchWindow li.moveUp:before,.containerSwitchWindow li.moveDown:before
-{
-    content:'';
-    display:inline-block;
-    vertical-align:middle;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 12.7px 8px 0 8px;
-    border-color: #fff transparent transparent transparent;
-}
-
-.stopIcon:before
-{
-    content:'';
-    display:inline-block;
-    vertical-align:middle;
-    height: 12px;
-    width: 12px;
-    border-radius: 0;
-    box-shadow: 0 0 0 0px gray, inset 3px 35px 0 27px white;
-}
-.moveUp:before
-{
-    transform: rotate(180deg);
-}
-.containerSwitchWindow .active
-{
-   background:green !important;
-}
-/*Boton switch window*/
-/*PLANTAS*/
-/*PLANTAS*/
-/* Plano popup salida */
-#viewSalida .switch,
-.persianaView .containerSwitchWindow
-{
-	float:right;
-	margin-right:30px;
-}
-/* Plano popup salida
-@media (max-width:1024px)
-{
-	#actionsPage li:last-child
-	{
-		display:none;
-	}
-}*/
-
-/* Vista Estados, icono Programacion Salida */
-.timeIcon
-{
-	z-index: 1;
-	overflow: hidden;
-	list-style: none;
-	padding: 0;
-	position: absolute;
-	margin: 0 0 0.25em;
-	right: 5px;
-	top: 6px;
-}
-.timeIcon a
-{
-	display: block;
-	color: transparent;
-	width: 24px;
-	height: 24px;
-}
-.timeIcon:before, .timeIcon:after, .timeIcon a:before, .timeIcon a:after
-{
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-}
-.timeIcon a:before,
-.timeIcon a:after {
-    left: 1px;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #c55500;
-    margin-top: -11px;
-    background:transparent;
-}
-
-.timeIcon a:before {
-    /* css3 */
-    -webkit-border-radius:18px;
-    -moz-border-radius:18px;
-    border-radius: 19px;
-}
-
-.timeIcon a:after {
-    left:10px;
-    width: 7px;
-    height: 8px;
-    border-width:0 0 2px 2px;
-    margin-top: -7px;
-    background:transparent;
-}
-
-.timeIcon a:hover:before,
-.timeIcon a:focus:before,
-.timeIcon a:active:before,
-.timeIcon a:hover:after,
-.timeIcon a:focus:after,
-.timeIcon a:active:after {
-    border-color:#730800;
-    background:transparent;
-}
-/* Vista Estados, icono Programacion Salida */
-
-/*TAREAS*/
-ul#tareas li
-{
-	border: 1px solid #ccc;
-	padding:10px;
-	position: relative;
-}
-/*GENERAL*/
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	text-decoration: none;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-a
-{
-	cursor: pointer;
-}
-div.left
-{
-	display:inline-block;
-	float:left;
-	width: 50%;
-}
-div.right
-{
-	float: left;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
+    border: 1px solid black;
 }
 body {
-	line-height: 1;
-	font-family: Arial;
-	overflow-x:hidden;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-	width: 100%;
-}
-/*FIN RESET*/
-#content
-{
-	padding:10px;
-}
-th, td {
-    padding: 9px;
-    text-align: left;
-    border:1px solid black;
-}
-body
-{
-	padding:0 !important;
+    padding: 0 !important;
 }
 html {
     height: 100%;
 }
-label
-{
-	padding:10px 0;
+label {
+    padding: 10px 0;
 }
-input[type="text"],textarea,select
-{
-	margin-top:5px;
-	border-radius:2px;
-	padding:5px;
+input[type="text"],
+textarea,
+select {
+    margin-top: 5px;
+    border-radius: 2px;
+    padding: 5px;
 }
-.simple-form
-{
+.simple-form {} .simple-form .ng-invalid {
+    border: 1px solid red;
 }
-.simple-form .ng-invalid
-{
-	border:1px solid red;
+.simple-form label {
+    display: block;
 }
-.simple-form label
-{
-	display:block;
+.simple-form input,
+textarea {} .page ul {
+    margin: 0 auto;
 }
-.simple-form input, textarea
-{
+.page ul li {
+    list-style: none
 }
-.page ul
-{
-	margin: 0 auto;
-}
-.page ul li
-{
-	list-style: none
-}
-.page ul:first-child li a
-{
-	background: #039e74;
-	color: #fff;
-	padding:15px;
-	margin-bottom:6px;
-	border-radius:3px;
-	display:block;
-	border:1px solid #fff;
-	text-align: center;
+.page ul:first-child li a {
+    background: #039e74;
+    color: #fff;
+    padding: 15px;
+    margin-bottom: 6px;
+    border-radius: 3px;
+    display: block;
+    border: 1px solid #fff;
+    text-align: center;
 }
 /*GENERAL*/
-ul.actions li
-{
-	float: left;
-	margin-right: 10px;
-}
-ul.actionsPopup
-{
-	/* position:absolute; */
-	bottom:10px;
-	right:10px;
-}
-/*CasaCtrl HOME*/
-button,.button
-{
-	font-size:1em;
-	background: #333;
-	color:#fff;
-	display: block;
-	border-radius: 5px;
-	font-weight: bold;
-	padding: 13px;
-}
-#actionsPage
-{
-	text-align: right;
-	margin-top: 10px;
-}
-.inlineButtons
-{
-	width:100%;
-	overflow:hidden;
-}
-.inlineButtons li
-{
-	float: left;
-	text-align:right;
-	margin-right: 10px;
-}
-#actions button,ul.inlineButtons .button
-{
-	display:inline-block;
-}
 
-#image
-{
-	border: 30px solid #ccc;
-	padding: 20px;
-	width: 80%;
+ul.actions li {
+    float: left;
+    margin-right: 10px;
 }
-#img_div
-{
-	text-align: center;
+ul.actionsPopup {
+    /* position:absolute; */
+
+    bottom: 10px;
+    right: 10px;
 }
 /*CasaCtrl HOME*/
 
+button,
+.button {
+    font-size: 1em;
+    background: #333;
+    color: #fff;
+    display: block;
+    border-radius: 5px;
+    font-weight: bold;
+    padding: 13px;
+}
+#actionsPage {
+    text-align: right;
+    margin-top: 10px;
+}
+.inlineButtons {
+    width: 100%;
+    overflow: hidden;
+}
+.inlineButtons li {
+    float: left;
+    text-align: right;
+    margin-right: 10px;
+}
+#actions button,
+ul.inlineButtons .button {
+    display: inline-block;
+}
+#image {
+    border: 30px solid #ccc;
+    padding: 20px;
+    width: 80%;
+}
+#img_div {
+    text-align: center;
+}
+/*CasaCtrl HOME*/
 /* ABM Dispositivos */
-
 /* ABM Dispositivos */
-
 /*Estados salidas*/
+
+ul#estados {
+    margin-top: 10px;
+}
+#back,
+.refresh {
+    display: block;
+    background: url('../image/back.png');
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 11px;
+}
+.refresh {
+    background: url('../image/refresh.png');
+}
 .switch {
-	position: relative;
-	display: block;
-	vertical-align: top;
-	width: 110px;
-	height: 30px;
-	padding: 3px;
-	/* margin: 0 10px 10px 0; */
-	background: linear-gradient(to bottom, #eeeeee, #FFFFFF 25px);
-	background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF 25px);
-	border-radius: 18px;
-	box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, 0.05);
-	cursor: pointer;
+    position: relative;
+    display: block;
+    vertical-align: top;
+    width: 100px;
+    height: 30px;
+    padding: 3px;
+    margin: 0 10px 10px 0;
+    background: linear-gradient(to bottom, #eeeeee, #FFFFFF 25px);
+    background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF 25px);
+    border-radius: 18px;
+    box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
 }
 .switch-input {
-	position: absolute;
-	top: 0;
-	left: 0;
-	opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
 }
 .switch-label {
-	position: relative;
-	display: block;
-	height: inherit;
-	font-size: 11px;
-	text-transform: uppercase;
-	background: #eceeef;
-	border-radius: inherit;
-	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15); */
+    position: relative;
+    display: block;
+    height: inherit;
+    font-size: 10px;
+    text-transform: uppercase;
+    background: #eceeef;
+    border-radius: inherit;
+    /* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15); */
 }
-.switch-label:before, .switch-label:after {
-	position: absolute;
-	top: 50%;
-	margin-top: -.5em;
-	line-height: 1;
-	-webkit-transition: inherit;
-	-moz-transition: inherit;
-	-o-transition: inherit;
-	transition: inherit;
+.switch-label:before,
+.switch-label:after {
+    position: absolute;
+    top: 50%;
+    margin-top: -.5em;
+    line-height: 1;
+    -webkit-transition: inherit;
+    -moz-transition: inherit;
+    -o-transition: inherit;
+    transition: inherit;
 }
 .switch-label:before {
-	content: attr(data-off);
-	right: 11px;
-	color: #aaaaaa;
-	text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+    content: attr(data-off);
+    right: 11px;
+    color: #aaaaaa;
+    text-shadow: 0 1px rgba(255, 255, 255, 0.5);
 }
 .switch-label:after {
-	content: attr(data-on);
-	left: 11px;
-	color: #FFFFFF;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.2);
-	opacity: 0;
+    content: attr(data-on);
+    left: 11px;
+    color: #FFFFFF;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.2);
+    opacity: 0;
 }
 .switch-input:checked ~ .switch-label {
-	background: #E1B42B;
-	/* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2); */
-	font-weight: bold;
+    background: #E1B42B;
+    /* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2); */
 }
 .switch-input:checked ~ .switch-label:before {
-	opacity: 0;
+    opacity: 0;
 }
 .switch-input:checked ~ .switch-label:after {
-	opacity: 1;
-	color: #fff;
+    opacity: 1;
 }
-.temporizada:after {
-	font-weight: bold;
-	font-size: 1.6em;
-}
-
 .switch-handle {
-	position: absolute;
-	top: 4px;
-	left: 4px;
-	width: 28px;
-	height: 28px;
-	background: linear-gradient(to bottom, #FFFFFF 40%, #f0f0f0);
-	background-image: -webkit-linear-gradient(top, #FFFFFF 40%, #f0f0f0);
-	border-radius: 100%;
-	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(to bottom, #FFFFFF 40%, #f0f0f0);
+    background-image: -webkit-linear-gradient(top, #FFFFFF 40%, #f0f0f0);
+    border-radius: 100%;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 .switch-handle:before {
-	content: "";
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin: -6px 0 0 -6px;
-	width: 12px;
-	height: 12px;
-	background: linear-gradient(to bottom, #eeeeee, #FFFFFF);
-	background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF);
-	border-radius: 6px;
-	box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -6px 0 0 -6px;
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(to bottom, #eeeeee, #FFFFFF);
+    background-image: -webkit-linear-gradient(top, #eeeeee, #FFFFFF);
+    border-radius: 6px;
+    box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
 }
 .switch-input:checked ~ .switch-handle {
-	left: 84px;
-	box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
+    left: 74px;
+    box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
 }
-
 /* Transition
 ========================== */
-.switch-label, .switch-handle {
-	transition: All 0.3s ease;
-	/* -webkit-transition: All 0.3s ease; */
-	-moz-transition: All 0.3s ease;
-	-o-transition: All 0.3s ease;
+
+.switch-label,
+.switch-handle {
+    transition: All 0.3s ease;
+    -webkit-transition: All 0.3s ease;
+    -moz-transition: All 0.3s ease;
+    -o-transition: All 0.3s ease;
 }
-#estados > li
-{
-	position:relative;
-	height: 4em;
-	margin: 0;
-	padding: 0;
-	width: 100%;
+#estados > li {
+    position: relative;
+    height: 4em;
 }
-#estados > li .switch
-{
-	position:absolute;
-	right:0;
-	top: -8px;
-	margin-right: -10px;
+#estados > li .switch {
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 /*Estados salidas*/
 /*Marcador de dispositivos*/
-.marker
-{
-  width: 51px;
-  color: black !important;
-  height: 61px;
-  font-size: 12px;
-  font-weight: bold;
-  line-height: 25px;
-  letter-spacing: -1px;
-  text-align: center;
-  color: #fff;
-  background: url(sprite.png);
+
+.marker {
+    width: 51px;
+    color: black !important;
+    height: 61px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 25px;
+    letter-spacing: -1px;
+    text-align: center;
+    color: #fff;
+    background: url(sprite.png);
 }
 /* Tipos de marcadores en el plano*/
-.marker.L
-{
-  background-position: 8px 0px;
-}
 
-.marker.L.on
-{
-  background-position: 238px 0px;
+.marker.L {
+    background-position: 8px 0px;
 }
-.marker.B
-{
-	background-position: 184px 9px;
+.marker.L.on {
+    background-position: 238px 0px;
 }
-.marker.on.B
-{
-	background-position: 62px 7px;
+.marker.B {
+    background-position: 184px 9px;
 }
-.marker.P
-{
-	background-position: 125px 0px;
-
+.marker.on.B {
+    background-position: 62px 7px;
 }
-#header
-{
+.marker.P {
+    background-position: 125px 0px;
+}
+#header {
     background-color: #03ae74;
     width: 100%;
     height: 50px;
     padding: 0 2%
 }
-#header a {
-    float: right;
-    width: 29px;
-    height: 28px;
-    margin-top: 12px;
-    background: transparent url('../image/button.png') no-repeat;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    margin-right: 15px;
-}
 #header h1 {
     /* float: left; */
+
     display: block;
     /* width: 90%; */
+
     text-align: center;
     color: #fff;
     line-height: 50px;
@@ -925,45 +420,43 @@ button,.button
 }
 /* MENU APLICACION*/
 /*LOADING*/
-#loadingDiv
-{
-  position:fixed;
-  top:0px;
-  right:0px;
-  width:100%;
-  height:100%;
-  background-color:#666;
-  background-image:url('loader.gif');
-  background-repeat:no-repeat;
-  background-position:center;
-  z-index: 99999;
-  opacity: 0.4;
-  filter: alpha(opacity=40); /* For IE8 and earlier */
-}
 
+#loadingDiv {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #666;
+    background-image: url('loader.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 99999;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    /* For IE8 and earlier */
+}
 /*Boton switch window*/
-.containerSwitchWindow
-{
-	background:#eceeef;
-	position: absolute;
-	right: 0;
-	top: 0;
-	border-radius: 10%;
-	padding: 0px 8px -1px 0px;
+
+.containerSwitchWindow {
+    background: #eceeef;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 10%;
+    padding: 0px 8px -1px 0px;
 }
 .containerSwitchWindow ul,
-.containerSwitchWindow li
-{
+.containerSwitchWindow li {
     margin: 13px 3px;
     padding: 0;
     list-style: none;
     display: inline-block;
-    vertical-align:top;
+    vertical-align: top;
 }
 .containerSwitchWindow li.moveDown,
 .containerSwitchWindow li.stopIcon,
-.containerSwitchWindow li.moveUp
-{
+.containerSwitchWindow li.moveUp {
     width: 25px;
     height: 25px;
     cursor: pointer;
@@ -972,52 +465,47 @@ button,.button
     border-radius: 2px;
     border: 1px solid #aaaaaa;
     box-shadow: 3px 2px 15px #cccccc;
-    text-align:center;
+    text-align: center;
     line-height: 23px;
 }
-.containerSwitchWindow li.stopIcon
-{
+.containerSwitchWindow li.stopIcon {
     cursor: default;
 }
-.containerSwitchWindow li.moveUp:before,.containerSwitchWindow li.moveDown:before
-{
-    content:'';
-    display:inline-block;
-    vertical-align:middle;
+.containerSwitchWindow li.moveUp:before,
+.containerSwitchWindow li.moveDown:before {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
     width: 0;
     height: 0;
     border-style: solid;
     border-width: 12.7px 8px 0 8px;
     border-color: #fff transparent transparent transparent;
 }
-
-.stopIcon:before
-{
-    content:'';
-    display:inline-block;
-    vertical-align:middle;
+.stopIcon:before {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
     height: 12px;
     width: 12px;
     border-radius: 0;
     box-shadow: 0 0 0 0px gray, inset 3px 35px 0 27px white;
 }
-.moveUp:before
-{
+.moveUp:before {
     transform: rotate(180deg);
 }
-.containerSwitchWindow .active
-{
-   background:green !important;
+.containerSwitchWindow .active {
+    background: green !important;
 }
 /*Boton switch window*/
 /*PLANTAS*/
 /*PLANTAS*/
 /* Plano popup salida */
+
 #viewSalida .switch,
-.persianaView .containerSwitchWindow
-{
-	float:right;
-	margin-right:30px;
+.persianaView .containerSwitchWindow {
+    float: right;
+    margin-right: 30px;
 }
 /* Plano popup salida
 @media (max-width:1024px)
@@ -1027,32 +515,32 @@ button,.button
 		display:none;
 	}
 }*/
-
 /* Vista Estados, icono Programacion Salida */
-.timeIcon
-{
-	z-index: 1;
-	overflow: hidden;
-	list-style: none;
-	padding: 0;
-	position: absolute;
-	margin: 0 0 0.25em;
-	right: -19px;
-	top: 0px;
+
+.timeIcon {
+    z-index: 1;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    position: absolute;
+    margin: 0 0 0.25em;
+    right: 5px;
+    top: 6px;
 }
-.timeIcon a
-{
-	display: inline-block;
-	color: transparent;
-	width: 24px;
-	height: 24px;
+.timeIcon a {
+    display: block;
+    color: transparent;
+    width: 24px;
+    height: 24px;
 }
-.timeIcon:before, .timeIcon:after, .timeIcon a:before, .timeIcon a:after
-{
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
+.timeIcon:before,
+.timeIcon:after,
+.timeIcon a:before,
+.timeIcon a:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
 }
 .timeIcon a:before,
 .timeIcon a:after {
@@ -1061,70 +549,275 @@ button,.button
     height: 18px;
     border: 2px solid #c55500;
     margin-top: -11px;
-    background:transparent;
+    background: transparent;
 }
-
 .timeIcon a:before {
     /* css3 */
-    -webkit-border-radius:18px;
-    -moz-border-radius:18px;
+
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
     border-radius: 19px;
 }
-
 .timeIcon a:after {
-    left:10px;
+    left: 10px;
     width: 7px;
     height: 8px;
-    border-width:0 0 2px 2px;
+    border-width: 0 0 2px 2px;
     margin-top: -7px;
-    background:transparent;
+    background: transparent;
 }
-
 .timeIcon a:hover:before,
 .timeIcon a:focus:before,
 .timeIcon a:active:before,
 .timeIcon a:hover:after,
 .timeIcon a:focus:after,
 .timeIcon a:active:after {
-    border-color:#730800;
-    background:transparent;
+    border-color: #730800;
+    background: transparent;
+}
+/* Vista Estados, icono Programacion Salida */
+/*TAREAS*/
+
+ul#tareas li {
+    border: 1px solid #ccc;
+    padding: 10px;
+    position: relative;
+}
+
+#estados > li {
+    position: relative;
+    height: 4em;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+#estados > li .switch {
+    position: absolute;
+    right: 0;
+    top: -8px;
+    margin-right: -10px;
+}
+/*Estados salidas*/
+/*Marcador de dispositivos*/
+
+.marker {
+    width: 51px;
+    color: black !important;
+    height: 61px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 25px;
+    letter-spacing: -1px;
+    text-align: center;
+    color: #fff;
+    background: url(sprite.png);
+}
+/* Tipos de marcadores en el plano*/
+
+.marker.L {
+    background-position: 8px 0px;
+}
+.marker.L.on {
+    background-position: 238px 0px;
+}
+.marker.B {
+    background-position: 184px 9px;
+}
+.marker.on.B {
+    background-position: 62px 7px;
+}
+.marker.P {
+    background-position: 125px 0px;
+}
+#header h1 {
+    display: block;
+    text-align: center;
+    color: #fff;
+    line-height: 50px;
+    font-size: 1.2em
+}
+/* MENU APLICACION*/
+/*LOADING*/
+
+#loadingDiv {
+    position: fixed;
+    top: 50px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #666;
+    background-image: url('loader.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 99999;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    /* For IE8 and earlier */
+}
+/*Boton switch window*/
+
+.containerSwitchWindow {
+    background: #eceeef;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 10%;
+    padding: 0px 8px -1px 0px;
+}
+.containerSwitchWindow ul,
+.containerSwitchWindow li {
+    margin: 13px 3px;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+    vertical-align: top;
+}
+.containerSwitchWindow li.moveDown,
+.containerSwitchWindow li.stopIcon,
+.containerSwitchWindow li.moveUp {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    background: #E1B42B;
+    margin: 5px;
+    border-radius: 2px;
+    border: 1px solid #aaaaaa;
+    box-shadow: 3px 2px 15px #cccccc;
+    text-align: center;
+    line-height: 23px;
+}
+.containerSwitchWindow li.stopIcon {
+    cursor: default;
+}
+.containerSwitchWindow li.moveUp:before,
+.containerSwitchWindow li.moveDown:before {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 12.7px 8px 0 8px;
+    border-color: #fff transparent transparent transparent;
+}
+.stopIcon:before {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    height: 12px;
+    width: 12px;
+    border-radius: 0;
+    box-shadow: 0 0 0 0px gray, inset 3px 35px 0 27px white;
+}
+.moveUp:before {
+    transform: rotate(180deg);
+}
+.containerSwitchWindow .active {
+    background: green !important;
+}
+/*Boton switch window*/
+/*PLANTAS*/
+/*PLANTAS*/
+/* Plano popup salida */
+
+#viewSalida .switch,
+.persianaView .containerSwitchWindow {
+    float: right;
+    margin-right: 30px;
 }
 /* Vista Estados, icono Programacion Salida */
 
-/*TAREAS*/
-ul#tareas li
-{
-	border: 1px solid #ccc;
-	padding:10px;
-	position: relative;
+.timeIcon {
+    z-index: 1;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    position: absolute;
+    margin: 0 0 0.25em;
+    right: -19px;
+    top: 0px;
 }
+.timeIcon a {
+    display: inline-block;
+    color: transparent;
+    width: 24px;
+    height: 24px;
+}
+.timeIcon:before,
+.timeIcon:after,
+.timeIcon a:before,
+.timeIcon a:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+}
+.timeIcon a:before,
+.timeIcon a:after {
+    left: 1px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #c55500;
+    margin-top: -11px;
+    background: transparent;
+}
+.timeIcon a:before {
+    /* css3 */
 
+    -webkit-border-radius: 18px;
+    -moz-border-radius: 18px;
+    border-radius: 19px;
+}
+.timeIcon a:after {
+    left: 10px;
+    width: 7px;
+    height: 8px;
+    border-width: 0 0 2px 2px;
+    margin-top: -7px;
+    background: transparent;
+}
+.timeIcon a:hover:before,
+.timeIcon a:focus:before,
+.timeIcon a:active:before,
+.timeIcon a:hover:after,
+.timeIcon a:focus:after,
+.timeIcon a:active:after {
+    border-color: #730800;
+    background: transparent;
+}
+/* Vista Estados, icono Programacion Salida */
+/*TAREAS*/
+
+ul#tareas li {
+    border: 1px solid #ccc;
+    padding: 10px;
+    position: relative;
+}
 /*DatePicker fix*/
-._720kb-datepicker-calendar
-{
-	margin: 0 auto 0 -14.5% !important;
+
+._720kb-datepicker-calendar {
+    margin: 0 auto 0 -14.5% !important;
 }
 /*TimePicker posicion center*/
-._720kb-datepicker-calendar._720kb-datepicker-open
-{
-	position: fixed !important;
-	top: 26% !important;
-	width: 100%;
-	left:50% !important;
-	margin-left: -50% !important;
+
+._720kb-datepicker-calendar._720kb-datepicker-open {
+    position: fixed !important;
+    top: 26% !important;
+    width: 100%;
+    left: 50% !important;
+    margin-left: -50% !important;
 }
-.popover
-{
-	position: fixed !important;
-	top: 26% !important;
-	left:50% !important;
-	margin: auto;
-	margin-left:-114px;
+.popover {
+    position: fixed !important;
+    top: 26% !important;
+    left: 50% !important;
+    margin: auto;
+    margin-left: -114px;
 }
 /*Dias ejecucion*/
-.dias_ejecucion label
-{
-	float:left;
-	text-align:center;
-	width: 14%;
+
+.dias_ejecucion label {
+    float: left;
+    text-align: center;
+    width: 14%;
 }

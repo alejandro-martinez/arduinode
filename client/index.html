@@ -41,7 +41,8 @@
 	<body ng-controller="MainCtrl">
 		<div id="all" ng-class="{hide:showmenu,slide:!showmenu}">
 			<div id="header">
-				<a ui-sref="home"></a>
+				<a id="back" ng-show="previousState" ng-click="goBack()"></a>
+				<a ui-sref="home" id="home"></a>
 				<h1>{{currentMenu}}</h1>
 			</div>
 

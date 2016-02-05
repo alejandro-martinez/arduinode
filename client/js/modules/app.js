@@ -11,7 +11,7 @@ angular.module('Arduinode',
 	'Arduinode.Dispositivo',
 	'Arduinode.Tarea'
 ])
-.controller('MainCtrl', ['$rootScope', function ($rootScope )
+.controller('MainCtrl', ['$state','$rootScope', function ($state, $rootScope )
 {
 	$rootScope.currentMenu = 'Home';
 	$rootScope.previousState;
@@ -19,7 +19,12 @@ angular.module('Arduinode',
 	$rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
 		$rootScope.previousState = from.name;
 		$rootScope.currentState = to.name;
+		console.log(from.name, to.name);
 	});
+	$rootScope.goBack = function()
+	{
+		$state.go($rootScope.previousState);
+	}
 }])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 
