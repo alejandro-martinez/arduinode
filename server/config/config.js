@@ -4,13 +4,7 @@ var config = require('./env.json'),
 	bodyParser = require('body-parser');
 
 module.exports.config = function( app, express) {
-	var node_env = process.env.NODE_ENV || 'desarrollo';
-
-	if ( app.get('desarrollo') )
-	{
-		app.use(express.errorHandler());
-	}
-
+	app.set('modelsPath',process.cwd() + '/models/');
 	app.set('port', process.env.PORT || 8880);
 	app.enable('view cache');
 
@@ -28,6 +22,6 @@ module.exports.config = function( app, express) {
 	//app.use(minify());
 	//Entrega los archivos de tipo css, jss, jpg, etc
 	app.use(express.static('../client'));
-	
-	return config[node_env];
+
+	return config;
 };

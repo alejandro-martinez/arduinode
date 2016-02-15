@@ -6,6 +6,6 @@ module.exports = function(app, db){
     fs.readdirSync('models').forEach(function(file) {
         if (file == "models.js") return;
         var model = file.substr(0, file.indexOf('.'));
-		module.exports[model] = sequelize.import('./models/' + model);
+		module.exports[model] = file;
     });
 }

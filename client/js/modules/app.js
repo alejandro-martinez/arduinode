@@ -19,11 +19,17 @@ angular.module('Arduinode',
 	$rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
 		$rootScope.previousState = from.name;
 		$rootScope.currentState = to.name;
-		console.log(from.name, to.name);
 	});
 	$rootScope.goBack = function()
 	{
-		$state.go($rootScope.previousState);
+		if ($rootScope.previousState == 'estados')
+		{
+			$state.go('home');
+		}
+		else
+		{
+			$state.go($rootScope.previousState);
+		}
 	}
 
 	//Config Lib Fastclick para eliminar delay botones en mobile

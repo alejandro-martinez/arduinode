@@ -183,86 +183,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	controller: 'SelectCtrl'
   };
 })
-.controller('SelectCtrl', ['$rootScope','$scope','CombineRequestsFct','DispositivoFct','SalidaFct',
-	function ($rootScope, $scope, CombineRequests, Dispositivo,Salida)
-	{
-		console.log("SElected",$scope.data);
-
-		//Creando nuevo
-		if ($scope.selected.id_disp == 0)
-		{
-			Dispositivo.getAll(function(dispositivos)
-			{
-				$scope.dispositivos = dispositivos;
-				var dispositivo = getDispositivoSelected()[0];
-
-				if (dispositivo)
-				{
-					console.log("dispo selected",dispositivo);
-					$scope.selected.id_disp = dispositivo.id_disp;
-					$scope.selected.ip_dispositivo = dispositivo.ip;
-					$scope.apply();
-					getSalidas(dispositivo);
-				}
-				else
-				{
-					console.log("dispo selected",dispositivo);
-				}
-			})
-		}
-		//Modo edicion (Solo lectura)
-		else
-		{
-			CombineRequests.getDispositivoAndSalida($scope.selected, function(data)
-			{
-				console.log("selected",$scope.selected);
-				$scope.dispositivos = [data.dispositivo];
-				$scope.selected.id_disp = data.dispositivo.id_disp;
-				$scope.selected.ip_dispositivo = data.dispositivo.ip;
-				$scope.salidas = [data.salida];
-				console.log(data);
-				$scope.selected.nro_salida = data.salida.nro_salida;
-			})
-		}
-		var getSalidas = function(dispositivo)
-		{
-			Salida.getSalidasArduino( dispositivo, function(salidas)
-			{
-				$rootScope.loading = false;
-				//Actualiza combo de salidas
-				//para quitar las que ya fueron agregadas
-				if (typeof ImgNotes != 'undefined')
-				{
-					$scope.salidas = Salida.getSalidasDisponibles(salidas, ImgNotes.getMarkers());
-				}
-				else
-				{
-					$scope.salidas = salidas;
-				}
-			});
-		}
-		var getDispositivoSelected = function()
-		{
-			var disp = $scope.dispositivos.filter(function(e)
-			{
-				if (e.id_disp == $scope.selected.id_disp)
-				{
-					return e;
-				}
-			});
-			return disp;
-		}
-		$scope.changeDispositivo = function()
-		{
-			$rootScope.loading = true;
-			var disp = getDispositivoSelected()[0];
-			$scope.selected.ip_dispositivo = disp.ip;
-			$scope.selected.id_disp = disp.id_disp;
-			getSalidas(disp);
-		}
-	}
-])
-
 .controller('SalidaCtrl', ['$stateParams','SwitchButton','SalidaConfig','$rootScope',
 			'ngDialog','DispositivoFct','$scope','ImgNotesFct','SalidaFct',
 	function (params,SwitchButton,config,$rootScope, Popup,Dispositivo,
@@ -273,117 +193,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		$rootScope.currentMenu = params.descripcion || '';
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$scope.showDispositivos = $scope.showSalidas = true;
-		$('#image').attr('src',"/image/" + params.plano + ".jpg");
 
-		Salida.getByPlanta(params.id_planta,function(models)
-		{
-			$scope.models = models;
-			$scope.tag = $('#image').imgNotes();
-			ImgNotes.init( $scope );
-			ImgNotes.setMarkers( $scope.models );
-		});
-
-		Dispositivo.getAll(function(dispositivos)
-		{
-			$scope.dispositivos = dispositivos;
-		});
-
-		$(document).off('ImgNotesEditing').on('ImgNotesEditing', function(e, note)
-		{
-			$scope.editing = true;
-			$scope.salida = note;
-			$scope.salida.x = note.relx;
-			$scope.salida.y = note.rely;
-			$scope.showDescripcion = $scope.showSalidas = false;
-			Popup.open(
-			{
-				template: config.rootFolder+'_form.html',
-				scope: $scope
-			});
-		});
-
-		$(document).off('ImgNotesShow').on('ImgNotesShow', function(e, note)
-		{
-
-			if (note.tipo == 'P')
-			{
-				Popup.open(
-					{
-						template: config.rootFolder+'_viewPersiana.html',
-						data: note,
-						scope: $scope
-					});
-			}
-			else if (note.estado != "error")
-			{
-				Salida.switchSalida(note, function(_estado)
-				{
-					var state = (_estado == 0) ? 'on' : 'off';
-					$scope.models.filter(function(s)
-					{
-						if (s.nro_salida == note.nro_salida)
-						{
-							return s.estado = state;
-						}
-					});
-
-					note.estado = state;
-					ImgNotes.refreshMarker(note);
-					Popup.open(
-					{
-						template: config.rootFolder+'_view.html',
-						data: note
-					});
-				});
-			}
-		});
-
-		$(document).off('ImgNotesClick').on('ImgNotesClick', function(e,note)
-		{
-			if ($scope.canEdit)
-			{
-				$scope.showDescripcion = false;
-				$scope.showSalidas = true;
-				$scope.salida = note;
-				Popup.open(
-				{
-					template: config.rootFolder + '_form.html',
-					scope: $scope
-				});
-			}
-		});
-		$scope.delete = function(id)
-		{
-			Salida.deleteSalida(id, function(r)
-			{
-				Popup.close();
-				if (r.res === 1)
-				{
-					ImgNotes.deleteMarker();
-				}
-			})
-		}
-		$scope.save = function(salida, select)
-		{
-			$scope.salida.id_disp = $scope.disp.id_disp;
-			$scope.salida.id_planta = parseInt( params.id_planta );
-			$scope.salida.nro_salida = select.nro_salida;
-			Salida.save($scope.salida, function(r)
-			{
-				Popup.close();
-				$scope.toggleEdit();
-				r.model.estado = select.estado;
-				r.model.ip =  select.ip;
-				r.model.tipo =  select.tipo;
-				ImgNotes.addMarker(r.model);
-
-				//ImgNotes.refreshMarker($scope.salida.note);
-				//Actualiza combo de salidas
-				//para quitar las que ya fueron agregadas
-				//$scope.salidas = Salida.getSalidasDisponibles($scope.salidas, ImgNotes.getMarkers());
-			});
-		};
-		$scope.disp = {};
 		$scope.changeDispositivo = function()
 		{
 			var disp = $scope.dispositivos.filter(function(e)
@@ -421,7 +231,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup, $scope, Salida)
 	{
 		$('.clockpicker').clockpicker();
-
 		var params = params.params || {};
 		$scope.salida = {};
 		$rootScope.loading = true;

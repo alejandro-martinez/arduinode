@@ -14,7 +14,7 @@ module.exports = function()
 		switchSalida: function(params, callback)
 		{
 			console.log("params ardu",params);
-			if (params.duracion && params.duracion.indexOf(":") > -1)
+			if (params.duracion != undefined)
 			{
 				params.duracion = DateConvert.horario_a_min(params.duracion);
 			}

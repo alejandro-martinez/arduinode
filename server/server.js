@@ -12,7 +12,7 @@ var express = require('express'),
 	io 		= require('socket.io')(http),						// Socket IO
 	net 	= require('net'),									// Socket Arduino
 	arduino = require('./socketArduino')(),						// ArduinoModule
-	db 		= require('./config/db')(config);					// Conexión
+	db 		= require('./config/db')(app, config);					// Conexión
 	require('./models')(app);									// Modelos
 	require('./controllers')(app);								// Controladores
 
@@ -22,7 +22,7 @@ http.listen(app.get('port'), function()
 	console.log('Servidor corriendo en: ' + app.get('port'));
 
 	//Carga tareas en scheduler
-	programadorTareas.importar();
+	//programadorTareas.importar();
 
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)

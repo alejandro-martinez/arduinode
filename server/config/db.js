@@ -1,18 +1,17 @@
-module.exports = function(config)
+module.exports = function(app, config)
 {
-	var db = config.database;
-	var params =
+	this.DataStore =
 	{
-		host: db.hostname,
-		port: db.port || 5432,
-		dialect: db.databaseVendor,
-		log: console.log,
-		logging: function (str) {
-			console.log(str);
+		reader: require('jsonfile'),
+		getFile: function(file, callback)
+		{
+			this.reader.readFile( app.get('modelsPath') + file + '.json',
+				function(err, obj)
+				{
+					callback(err, obj);
+				}
+			);
 		}
 	}
-	this.Sequelize = require('sequelize');
-	this.sequelize = new this.Sequelize( db.name, db.username, db.password, params );
-
-	return this;
+	return this.DataStore;
 }

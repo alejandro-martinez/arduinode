@@ -29,6 +29,7 @@ module.exports = function()
 		//Recibe "00:15" (HH-MM), devuelve 15
 		horario_a_min: function ( horario )
 		{
+			console.log("el horario",horario.length);
 			if (horario && horario.length == 5)
 			{
 				var hrs = parseInt(horario.substr(0,2)),
