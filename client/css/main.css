@@ -98,6 +98,7 @@ a {
 }
 div.left {
     float: left;
+    text-align: left;
 }
 /* HTML5 display-role reset for older browsers */
 
@@ -143,11 +144,11 @@ table {
 
 #content {
     padding: 10px;
-    text-align: center;
+    text-align: left;
 }
 th,
 td {
-    padding: 15px;
+    padding: 4px;
     text-align: left;
     border: 1px solid black;
 }
@@ -540,7 +541,7 @@ a#home
     position: absolute;
     margin: 0 0 0.25em;
     right: 5px;
-    top: 6px;
+    top: -6px;
 }
 .timeIcon a {
     display: block;
