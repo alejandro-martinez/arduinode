@@ -2,31 +2,11 @@ module.exports = function(app)
 {
 	app.get('/salida/:id_planta', function(req, res)
 	{
-		sequelize.models.salidas.getAll(req.params.id_planta,function(models)
+		DataStore.getFile('salidas', function(err, obj)
 		{
-			res.json(models);
-		})
+			res.json(err || obj);
+		});
 	});
-
-	app.get('/salida/id/:nro_salida', function(req, res)
-	{
-		sequelize.models.salidas.findOne({nro_salida: req.params.nro_salida})
-								.then(function(models)
-		{
-			res.json(models);
-		})
-	});
-
-	//Devuelve todos los salidas filtrados por id planta
-	app.get('/salida/planta/:id_planta', function(req, res)
-	{
-		console.log(req.params);
-		sequelize.models.salidas
-				 .getByPlanta(parseInt(req.params.id_planta), function(models)
-				 {
-					res.json(models);
-				});
-	})
 
 	//Guarda salidas, si se modifico el plano
 	app.post('/salida/save', function(req, res)

@@ -7,6 +7,7 @@ module.exports = function(app)
 		{
 			res.json(err || file)
 		});
+
 	});
 
 	//Devuelve dispositivo por ID

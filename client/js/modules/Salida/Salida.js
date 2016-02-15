@@ -314,6 +314,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			},
 			function(salidas)
 			{
+				console.log(salidas);
 				if (salidas[salidas.length-1].error)
 				{
 					$rootScope.currentMenu = salidas[salidas.length-1].error;

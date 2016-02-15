@@ -70,15 +70,17 @@ http.listen(app.get('port'), function()
 		//Devuelve las salidas de un dispositivo con sus descripciones
 		var getSalidas = function(params, callback)
 		{
+			var dispositivo = DataStore.findDispositivo('id_disp',1);
+
 			arduino.getSalidas(params, function(response)
 			{
-				sequelize.models.dispositivos.getSalidas(params.id_disp,
-					function(models)
-					{
-						params.salidasDB = models;
-						params.salidasArduino = response;
-						callback( sequelize.models.salidas.addNotes(params), models );
-					});
+
+
+				console.log("Obj",obj);
+				params.salidasDB = obj;
+				params.salidasArduino = response;
+				//callback( sequelize.models.salidas.addNotes(params), models );
+				callback( obj, response );
 			});
 		}
 
@@ -86,6 +88,14 @@ http.listen(app.get('port'), function()
 		socket.on('getSalidas', function(params)
 		{
 			params.noError = true;
+			var dispositivo = DataStore.findDispositivo('id_disp',1);
+			if (dispositivo.length > 0)
+			{
+				socket.emit('salidas', dispositivo[0].salidas);
+			}
+
+
+			/*
 			getSalidas(params, function(response, models)
 			{
 				var resp;
@@ -99,7 +109,7 @@ http.listen(app.get('port'), function()
 					resp = response;
 				}
 				socket.emit('salidas', resp);
-			});
+			});*/
 		});
 
 		//Devuelve el listado de salidas de una planta específica
