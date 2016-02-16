@@ -141,9 +141,14 @@ table {
     width: 100%;
 }
 /*FIN RESET*/
-
+#all
+{
+    position:fixed;
+    width:100%;
+    z-index:1;
+}
 #content {
-    padding: 10px;
+    padding: 69px 10px;
     text-align: left;
 }
 th,
@@ -272,7 +277,14 @@ a#home
     background: url('../image/button.png');
 }
 .refresh {
-    background: url('../image/refresh.png');
+    left: 27%;
+    position: fixed;
+    display: block;
+    top: 0;
+    height: 50px;
+    background: none;
+    z-index: 99999;
+    width: 50%;
 }
 .switch {
     position: relative;

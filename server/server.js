@@ -45,7 +45,7 @@ http.listen(app.get('port'), function()
 		socket.on('getSalidasActivas', function()
 		{
 			var salidas = [];
-			sequelize.models.dispositivos.findAll().then(function(models)
+			DataStore.getFile('dispositivos',(function(err, models)
 			{
 				async.eachSeries(models, function iterator(item, callback)
 				{
@@ -53,7 +53,7 @@ http.listen(app.get('port'), function()
 						noError: true,
 						ip: item.ip,
 						id_disp: item.id_disp,
-						filterByEstado: 'on'
+						filterByEstado: '0'
 					},
 					function(response)
 					{

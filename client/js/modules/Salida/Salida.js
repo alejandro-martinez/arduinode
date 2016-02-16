@@ -260,6 +260,7 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		$scope.refreshEstados = function()
 		{
+			$rootScope.loading = true;
 			Salida.getSalidasArduino(
 			{
 				ip		: $scope.ipDispositivo,
