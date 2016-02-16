@@ -5,6 +5,7 @@ module.exports = function(app)
 	{
 		DataStore.getFile('dispositivos',function(err, file)
 		{
+			console.log(file);
 			res.json(err || file)
 		});
 

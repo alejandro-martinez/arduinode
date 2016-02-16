@@ -9,7 +9,13 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 		$rootScope.socket.on('Error', function(error)
 		{
 			if ( Object.getOwnPropertyNames(error).length == 0 )
+			{
 				var error = 'Error Desconocido';
+			}
+			else
+			{
+				$rootScope.error = error;
+			}
 			$rootScope.loading = false;
 			Popup.open({
 				template: '<h1>' + error + '</h1>',

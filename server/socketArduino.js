@@ -13,21 +13,29 @@ module.exports = function()
 		// Setea el estado de una salida en ON u OFF
 		switchSalida: function(params, callback)
 		{
-			console.log("params ardu",params);
+			var This = this;
 			if (params.duracion != undefined)
 			{
 				params.duracion = DateConvert.horario_a_min(params.duracion);
 			}
-			var This = this;
 			this.data = "";
 			params.command = 'T'.concat(params.nro_salida, params.estado, ".", params.duracion || "");
 			params.decorator = function(_data)
 			{
 				This.data+= _data;
 			}
+			params.noConnect = true;
 			socket.send(params, function( response )
 			{
-				callback( This.data );
+				if (This.data)
+				{
+					callback( parseInt(This.data) );
+				}
+				else
+				{
+					callback(null);
+				}
+
 			});
 		},
 		buscarSalida: function(params, found)
@@ -107,12 +115,10 @@ module.exports = function()
 						if (!This.found)
 						{
 							salidas.push({
-								nro_salida: nro_salida,
+								nro_salida: parseInt(nro_salida),
 								note: params.ip.concat("-",tipo,nro_salida),
 								tipo: tipo,
-								estado: (estado == 0) ? "on" : "off",
-								id_disp: "",
-								ip: params.ip,
+								estado: parseInt(estado),
 								temporizada: temporizada
 							});
 						}

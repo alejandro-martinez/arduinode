@@ -29,27 +29,13 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 {
 	var Salida =
 	{
-		getAll: function(id_planta,callback)
-		{
-			$http.get('/salida/'+id_planta).then(function(response)
-			{
-				callback(response)
-			}, function(err)
-			{
-				callback(error)
-			});
-		},
 		switchSalida: function(params, callback)
 		{
-			console.log("params",params.estado);
-
 			//Seteo el estado al que quiero cambiar la salida
-			params.estado = (params.estado == 'off') ? 0 : 1;
 			Socket.send('switchSalida',params);
 			Socket.listen('switchResponse', function(estado)
 			{
 				callback(estado);
-				Socket.listen('switchResponse',function(){});
 			});
 		},
 		movePersiana: function(params, callback)
@@ -63,9 +49,9 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 		getSalidasArduino: function(params, callback)
 		{
 			Socket.send('getSalidas',params);
-			Socket.listen('salidas', function(salidas)
+			Socket.listen('salidas', function(data)
 			{
-				callback(salidas);
+				callback(data);
 			});
 		},
 		getSalidasActivas: function(callback)
@@ -73,7 +59,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			Socket.send('getSalidasActivas');
 			Socket.listen('salidasActivas', function(salidas)
 			{
-				console.log("salidas activas",salidas);
 				callback(salidas);
 			});
 		},
@@ -96,36 +81,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 			{
 				callback(error)
 			});
-		},
-		getByPlanta: function(id, callback)
-		{
-			Socket.send('getSalidasPlanta', id);
-			Socket.listen('salidasPlanta', function(salidas)
-			{
-				console.log("Get by planta",salidas);
-				callback(salidas);
-			});
-		},
-		getSalidasDisponibles: function(todas, ocupadas)
-		{
-			var salidasOcupadas = function(id_disp,nro)
-			{
-				var found = $.grep(ocupadas, function (item) {
-					return item.id_disp == id_disp && item.nro_salida==nro;
-				});
-				return found;
-			}
-
-			var salidasDisponibles = todas.filter(function(s)
-			{
-				var found = salidasOcupadas(s.id_disp,s.nro_salida);
-				if (found.length === 0)
-				{
-					return s;
-				}
-			});
-
-			return salidasDisponibles;
 		},
 		save: function( salida, callback)
 		{
@@ -251,6 +206,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				scope: $scope
 			});
 		}
+
 		$scope.save = function(salida)
 		{
 			$scope.salida.id_disp = params.id_disp;
@@ -259,19 +215,37 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				Popup.close();
 			});
 		}
+
 		$scope.switch = function(data)
 		{
+			data.estado_orig = data.estado;
+			data.ip = $scope.ipDispositivo;
+			data.estado = (data.estado == 0) ? 1 : 0;
 			var tiempo = $('.clockpicker').val();
+
 			if (tiempo != '')
 			{
 				data.duracion = tiempo;
-				data.estado = 'off';
 			}
 			Salida.switchSalida( data, function(_estado)
 			{
-				$scope.refreshEstados();
+
+				$scope.updateEstadoSalida(data.nro_salida, _estado);
 			});
 		}
+
+		$scope.updateEstadoSalida = function(nro_salida, estado)
+		{
+			$scope.salidas.forEach(function(s)
+			{
+				if (s.nro_salida == nro_salida)
+				{
+					s.estado = estado;
+					$scope.$apply();
+				}
+			});
+		}
+
 		//Funcionamiento Persianas
 		$scope.move = function(ip, nro_salida, action)
 		{
@@ -304,6 +278,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$scope.$apply();
 			});
 		}
+
 		$scope.refreshEstados = function()
 		{
 			$('.clockpicker').val("");
@@ -312,19 +287,16 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				ip		: $scope.ipDispositivo,
 				id_disp : params.id_disp
 			},
-			function(salidas)
+			function(data)
 			{
-				console.log(salidas);
-				if (salidas[salidas.length-1].error)
-				{
-					$rootScope.currentMenu = salidas[salidas.length-1].error;
-				}
 				$rootScope.loading = false;
-				$scope.salidas = salidas;
+				$scope.ipDispositivo = data.ip;
+				$scope.salidas = data.salidas;
 				$scope.$apply();
 			});
 		}
-		if (params.estado == 'on')
+
+		if (params.estado == 0)
 		{
 			$scope.refreshLucesEncendidas();
 		}

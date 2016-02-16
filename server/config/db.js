@@ -10,6 +10,7 @@ module.exports = function(app, config)
 			this.reader.readFile( app.get('modelsPath') + file + '.json',
 				function(err, obj)
 				{
+					console.log(err);
 					if (!err)
 					{
 						console.log("guar");

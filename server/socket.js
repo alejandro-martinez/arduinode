@@ -44,6 +44,7 @@ module.exports = function()
 					}
 					else
 					{
+						This.socketClient.emit('connected', 1);
 						callback();
 					}
 					return;
@@ -66,18 +67,19 @@ module.exports = function()
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
 		{
-			console.log("Ejecutando",params.command);
 			var This = this;
 			params.ip = params.ip || params.ip_dispositivo;
 			if (params.ip)
 			{
 				this.connect(params, function(response)
 				{
+					console.log("Conexion", response);
 					if (response == 1)
 					{
 						This.client.write(params.command);
 						This.client.on('data', function(_data)
 						{
+							console.log("DATA",_data);
 							if (params.decorator)
 							{
 								params.decorator(_data.toString())

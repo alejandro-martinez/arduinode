@@ -8,6 +8,7 @@ var express = require('express'),
 	app.use(compress());
 	var http 	= require('http').Server(app),
 	programadorTareas = require('./programadorTareas'),
+	ArrayUtils = require('./utils/ArrayUtils')(),
 	config 	= require('./config/config').config(app, express),	// Configuración
 	io 		= require('socket.io')(http),						// Socket IO
 	net 	= require('net'),									// Socket Arduino
@@ -70,17 +71,9 @@ http.listen(app.get('port'), function()
 		//Devuelve las salidas de un dispositivo con sus descripciones
 		var getSalidas = function(params, callback)
 		{
-			var dispositivo = DataStore.findDispositivo('id_disp',1);
-
 			arduino.getSalidas(params, function(response)
 			{
-
-
-				console.log("Obj",obj);
-				params.salidasDB = obj;
-				params.salidasArduino = response;
-				//callback( sequelize.models.salidas.addNotes(params), models );
-				callback( obj, response );
+				callback(response );
 			});
 		}
 
@@ -89,27 +82,16 @@ http.listen(app.get('port'), function()
 		{
 			params.noError = true;
 			var dispositivo = DataStore.findDispositivo('id_disp',1);
+
 			if (dispositivo.length > 0)
 			{
-				socket.emit('salidas', dispositivo[0].salidas);
+				arduino.getSalidas(params, function(salidas)
+				{
+					var salidas = ArrayUtils.mixArrays(dispositivo[0].salidas, salidas);
+					dispositivo[0].salidas = salidas;
+					socket.emit('salidas', dispositivo[0]);
+				});
 			}
-
-
-			/*
-			getSalidas(params, function(response, models)
-			{
-				var resp;
-				if (response.length == 0)
-				{
-					models.push({error: "Dispositivo sin Conexión"});
-					resp = models
-				}
-				else
-				{
-					resp = response;
-				}
-				socket.emit('salidas', resp);
-			});*/
 		});
 
 		//Devuelve el listado de salidas de una planta específica
@@ -174,15 +156,17 @@ http.listen(app.get('port'), function()
 			});
 		});
 
+
+
 		//Setea el estado de una salida, ON/OFF
 		socket.on('switchSalida', function(params)
 		{
+			params.noError = true;
 			arduino.switchSalida(params, function(response)
 			{
-				if (response == 1 || response == 0)
-				{
-					socket.emit('switchResponse', response);
-				}
+				socket.emit('switchResponse',
+							(response === null) ? params.estado_orig : response);
+
 			});
 		});
 	});
