@@ -1,4 +1,4 @@
-angular.module('Arduinode.Salida',['Socket','ImgNotes'])
+angular.module('Arduinode.Salida',['Socket'])
 .constant('SalidaConfig',{
 		rootFolder: 'js/modules/Salida/'
 })
@@ -139,35 +139,15 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
   };
 })
 .controller('SalidaCtrl', ['$stateParams','SwitchButton','SalidaConfig','$rootScope',
-			'ngDialog','DispositivoFct','$scope','ImgNotesFct','SalidaFct',
+			'ngDialog','DispositivoFct','$scope','SalidaFct',
 	function (params,SwitchButton,config,$rootScope, Popup,Dispositivo,
-			  $scope,ImgNotes, Salida)
+			  $scope,Salida)
 	{
 		var params = params.params || {};
 		$scope.models = {};
 		$rootScope.currentMenu = params.descripcion || '';
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$scope.showDispositivos = $scope.showSalidas = true;
-
-		$scope.changeDispositivo = function()
-		{
-			var disp = $scope.dispositivos.filter(function(e)
-			{
-				if (e.id_disp == $scope.disp.id_disp)
-				{
-					return e;
-				}
-			});
-			Salida.getSalidasArduino( disp[0], function(salidas)
-			{
-				$rootScope.loading = false;
-				//Actualiza combo de salidas
-				//para quitar las que ya fueron agregadas
-				$scope.salidas = Salida.getSalidasDisponibles(salidas, ImgNotes.getMarkers());
-				$scope.$apply();
-			});
-
-		}
 	}
 ])
 .directive('onFinishRender', function ($timeout) {
@@ -185,7 +165,7 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 .controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton','$rootScope','$stateParams','ngDialog','$scope', 'SalidaFct',
 	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup, $scope, Salida)
 	{
-		$('.clockpicker').clockpicker();
+		$('.clockpicker').clockpicker({donetext: 'OK'});
 		var params = params.params || {};
 		$scope.salida = {};
 		$rootScope.loading = true;
@@ -218,29 +198,28 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 		$scope.switch = function(data)
 		{
+			console.log(data.nro_salida);
+
 			data.estado_orig = data.estado;
 			data.ip = $scope.ipDispositivo;
 			data.estado = (data.estado == 0) ? 1 : 0;
 			var tiempo = $('.clockpicker').val();
-
-			if (tiempo != '')
-			{
-				data.duracion = tiempo;
-			}
+			data.temporizada = (tiempo != '') ? tiempo : null;
 			Salida.switchSalida( data, function(_estado)
 			{
-
-				$scope.updateEstadoSalida(data.nro_salida, _estado);
+				$('.clockpicker').val("");
+				data.estado = _estado;
+				$scope.updateSalida(data);
 			});
 		}
 
-		$scope.updateEstadoSalida = function(nro_salida, estado)
+		$scope.updateSalida = function(params)
 		{
 			$scope.salidas.forEach(function(s)
 			{
-				if (s.nro_salida == nro_salida)
+				if (s.nro_salida == params.nro_salida)
 				{
-					s.estado = estado;
+					s.estado = params.estado;
 					$scope.$apply();
 				}
 			});
@@ -281,7 +260,6 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 
 		$scope.refreshEstados = function()
 		{
-			$('.clockpicker').val("");
 			Salida.getSalidasArduino(
 			{
 				ip		: $scope.ipDispositivo,
@@ -292,7 +270,9 @@ angular.module('Arduinode.Salida',['Socket','ImgNotes'])
 				$rootScope.loading = false;
 				$scope.ipDispositivo = data.ip;
 				$scope.salidas = data.salidas;
+				console.log(data.salidas)
 				$scope.$apply();
+
 			});
 		}
 

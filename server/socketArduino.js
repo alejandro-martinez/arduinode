@@ -14,12 +14,12 @@ module.exports = function()
 		switchSalida: function(params, callback)
 		{
 			var This = this;
-			if (params.duracion != undefined)
+			if (params.temporizada != undefined)
 			{
-				params.duracion = DateConvert.horario_a_min(params.duracion);
+				params.temporizada = DateConvert.horario_a_min(params.temporizada);
 			}
 			this.data = "";
-			params.command = 'T'.concat(params.nro_salida, params.estado, ".", params.duracion || "");
+			params.command = 'T'.concat(params.nro_salida, params.estado, ".", params.temporizada || "");
 			params.decorator = function(_data)
 			{
 				This.data+= _data;
@@ -27,6 +27,7 @@ module.exports = function()
 			params.noConnect = true;
 			socket.send(params, function( response )
 			{
+				console.log("Programando",This.data);
 				if (This.data)
 				{
 					callback( parseInt(This.data) );

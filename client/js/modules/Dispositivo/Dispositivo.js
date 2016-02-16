@@ -1,5 +1,5 @@
 'use strict';
-angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
+angular.module('Arduinode.Dispositivo',['Socket'])
 .constant('DispositivoConfig',{
 		rootFolder: 'js/modules/Dispositivo/'
 })
@@ -99,8 +99,8 @@ angular.module('Arduinode.Dispositivo',['Socket','ImgNotes'])
 	}
 	return Dispositivo;
 }])
-.controller('DispositivoCtrl', ['$rootScope','$scope','ImgNotesFct', 'SocketIO','DispositivoFct',
-	function ($rootScope,$scope,ImgNotes, Socket, Dispositivo)
+.controller('DispositivoCtrl', ['$rootScope','$scope', 'SocketIO','DispositivoFct',
+	function ($rootScope,$scope,Socket, Dispositivo)
 	{
 		$rootScope.currentMenu = 'Dispositivos';
 		Dispositivo.getAll(function(dispositivos)

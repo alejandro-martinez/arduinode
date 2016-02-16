@@ -15,6 +15,7 @@ module.exports = function()
 					if (j.nro_salida == e.nro_salida)
 					{
 						j.estado = e.estado;
+						j.temporizada = e.temporizada;
 					}
 				});
 			})

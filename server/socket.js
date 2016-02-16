@@ -74,12 +74,13 @@ module.exports = function()
 				this.connect(params, function(response)
 				{
 					console.log("Conexion", response);
+					console.log("Comando",params.command);
 					if (response == 1)
 					{
 						This.client.write(params.command);
 						This.client.on('data', function(_data)
 						{
-							console.log("DATA",_data);
+							console.log("DATA",_data.toString());
 							if (params.decorator)
 							{
 								params.decorator(_data.toString())
