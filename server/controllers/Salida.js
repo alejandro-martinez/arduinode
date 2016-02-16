@@ -8,12 +8,12 @@ module.exports = function(app)
 		});
 	});
 
-	//Guarda salidas, si se modifico el plano
+	//Guarda salidas
 	app.post('/salida/save', function(req, res)
 	{
-		sequelize.models.salidas.createOrUpdate(req.body, function(data)
+		DataStore.save(req.body, function(response)
 		{
-			res.json(data);
+			res.json(response);
 		});
 	});
 

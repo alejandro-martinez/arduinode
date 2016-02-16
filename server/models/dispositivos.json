@@ -98,12 +98,6 @@
 				"note": "192.168.20.8-L28",
 				"tipo": "L",
 				"estado": null,
-				"temporizada": null },
-			{ "nro_salida": 28,
-				"note": "192.168.20.8-L28",
-				"tipo": "L",
-				"estado": null,
-				"temporizada": null
-			}
+				"temporizada": null }
 		]
 }]
