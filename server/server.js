@@ -45,8 +45,9 @@ http.listen(app.get('port'), function()
 		socket.on('getSalidasActivas', function()
 		{
 			var salidas = [];
-			DataStore.getFile('dispositivos',(function(err, models)
+			DataStore.getFile('dispositivos',function(err, models)
 			{
+				console.log("File",models);
 				async.eachSeries(models, function iterator(item, callback)
 				{
 					getSalidas({
@@ -80,6 +81,7 @@ http.listen(app.get('port'), function()
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
+			console.log("por");
 			params.noError = true;
 			var dispositivo = DataStore.findDispositivo('id_disp',1);
 

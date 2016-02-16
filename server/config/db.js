@@ -12,7 +12,6 @@ module.exports = function(app, config)
 				{
 					if (!err)
 					{
-						console.log("guar");
 						This.currentFile = obj;
 
 					}
@@ -29,7 +28,7 @@ module.exports = function(app, config)
 		},
 		save: function(model)
 		{
-			
+
 		}
 	}
 	return this.DataStore;

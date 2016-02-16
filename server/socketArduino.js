@@ -13,6 +13,7 @@ module.exports = function()
 		// Setea el estado de una salida en ON u OFF
 		switchSalida: function(params, callback)
 		{
+			console.log("Switch");
 			var This = this;
 			if (params.temporizada != undefined)
 			{
@@ -119,6 +120,7 @@ module.exports = function()
 								nro_salida: parseInt(nro_salida),
 								note: params.ip.concat("-",tipo,nro_salida),
 								tipo: tipo,
+								ip: params.ip,
 								estado: parseInt(estado),
 								temporizada: temporizada
 							});

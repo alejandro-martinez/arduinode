@@ -31,10 +31,12 @@ angular.module('Arduinode.Salida',['Socket'])
 	{
 		switchSalida: function(params, callback)
 		{
+			console.log("enviando",params);
 			//Seteo el estado al que quiero cambiar la salida
 			Socket.send('switchSalida',params);
 			Socket.listen('switchResponse', function(estado)
 			{
+				console.log("Respuesta");
 				callback(estado);
 			});
 		},
@@ -198,15 +200,14 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		$scope.switch = function(data)
 		{
-			console.log(data.nro_salida);
-
 			data.estado_orig = data.estado;
-			data.ip = $scope.ipDispositivo;
+			data.ip = data.ip || $scope.ipDispositivo;
 			data.estado = (data.estado == 0) ? 1 : 0;
 			var tiempo = $('.clockpicker').val();
 			data.temporizada = (tiempo != '') ? tiempo : null;
 			Salida.switchSalida( data, function(_estado)
 			{
+				console.log("Estado",_estado)
 				$('.clockpicker').val("");
 				data.estado = _estado;
 				$scope.updateSalida(data);
@@ -254,6 +255,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			{
 				$rootScope.loading = false;
 				$scope.salidas = salidas;
+				console.log($scope.salidas);
 				$scope.$apply();
 			});
 		}
@@ -276,14 +278,17 @@ angular.module('Arduinode.Salida',['Socket'])
 
 			});
 		}
-
-		if (params.estado == 0)
+		$scope.refresh = function()
 		{
-			$scope.refreshLucesEncendidas();
+			if (params.estado == 0)
+			{
+				$scope.refreshLucesEncendidas();
+			}
+			else
+			{
+				$scope.refreshEstados();
+			}
 		}
-		else
-		{
-			$scope.refreshEstados();
-		}
+		$scope.refresh();
 	}
 ])
