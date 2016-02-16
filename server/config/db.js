@@ -26,6 +26,10 @@ module.exports = function(app, config)
 			{
 				return dispositivo[key] == value;
 			})
+		},
+		save: function(model)
+		{
+			
 		}
 	}
 	return this.DataStore;
