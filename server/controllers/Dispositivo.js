@@ -5,7 +5,22 @@ module.exports = function(app)
 	{
 		DataStore.getFile('dispositivos',function(err, file)
 		{
-			res.json(err || file)
+                    if (err){
+                      res.json(err);
+                    }
+                    else {
+                      file.forEach( function (j){
+                        var d = j.ip
+                        j.salidas.forEach( function( s ){
+                          s.ip = d
+                          s.estado = null
+                          s.temporizada = null
+                        });
+                      } );
+                      res.json(file)
+                    }
+
+
 		});
 	});
 
