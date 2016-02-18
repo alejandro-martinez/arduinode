@@ -10,7 +10,8 @@
                {"note":"Sweet Pasillo","nro_salida":30,"tipo":"L"},
                {"note":"Sweet Persiana 1","nro_salida":26,"tipo":"P"},
                {"note":"Sweet Persiana 2","nro_salida":27,"tipo":"P"}
-             ]
+             ],
+	"tareas": []
   },
   {"id_disp":7,
    "note": "Felipe",
@@ -28,7 +29,8 @@
               {"note":"Josefina Izquierda","nro_salida":31,"tipo":"L"},
               {"note":"Josefina Persiana","nro_salida":36,"tipo":"P"},
               {"note":"Pasillo Chicos","nro_salida":24,"tipo":"L"}
-             ]
+             ],
+    "tareas": []
   },
   {"id_disp":8,
    "note": "Living",
@@ -53,7 +55,12 @@
               {"note":"Patio Tortugas","nro_salida":37,"tipo":"L"},
               {"note":"Patio Tortugas Casa","nro_salida":28,"tipo":"L"},
               {"note":"Perimetral Exterior","nro_salida":36,"tipo":"L"}
-             ]
+             ],
+	"tareas": [{"id_tarea": 1, "descripcion":"Nueva","nro_salida":28,
+				"hora_inicio":"14","dias_ejecucion":"0,1,2","activa":1,
+				"accion":0,"fecha_inicio":"24/05","fecha_fin":"25/05",
+				"duracion":5
+			  }]
   },
   {"id_disp":9,
    "note": "Garage",
@@ -76,7 +83,8 @@
    "salidas":[
               {"note":"Bomba Filtro","nro_salida":23,"tipo":"B"},
               {"note":"Bomba Riego","nro_salida":24,"tipo":"B"}
-             ]
+             ],
+	"tareas": []
   },
   {"id_disp":11,
    "note": "Oficina",
@@ -88,6 +96,7 @@
               {"note":"Oficina tortugas ventana","nro_salida":29,"tipo":"L"},
               {"note":"Oficina ventana","nro_salida":25,"tipo":"L"},
               {"note":"Sala Maquinas","nro_salida":22,"tipo":"L"}
-             ]
+             ],
+	"tareas": []
   }
 ]

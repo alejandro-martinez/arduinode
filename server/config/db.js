@@ -18,6 +18,21 @@ module.exports = function(app, config)
 				}
 			);
 		},
+		getTareas: function()
+		{
+			var tareas = [];
+			this.currentFile.forEach( function (j)
+			{
+				if (j.tareas)
+				{
+					j.tareas.forEach(function(tarea)
+					{
+						tareas.push(tarea);
+					});
+				}
+			} );
+			return tareas;
+		},
 		findDispositivo: function(key, value)
 		{
 			return this.currentFile.filter(function(dispositivo)
