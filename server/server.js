@@ -1,4 +1,5 @@
 'use strict';
+
 //Dependencias
 var express = require('express'),
 	app 	= express(),
@@ -12,14 +13,20 @@ var express = require('express'),
 	config 	= require('./config/config').config(app, express),	// Configuración
 	io 		= require('socket.io')(http),						// Socket IO
 	net 	= require('net'),									// Socket Arduino
-	arduino = require('./socketArduino')(),						// ArduinoModule
-	db 		= require('./config/db')(app, config);					// Conexión
+	arduino = require('./Arduino')(),							// ArduinoModule
+	DataStore	= require('./config/db')(app, config);			// Conexión
 	require('./models')(app);									// Modelos
 	require('./controllers')(app);								// Controladores
 
 //Server HTTP
 http.listen(app.get('port'), function()
 {
+	//Abre el archivo json, y cargo campos temporales
+	DataStore.getFile('dispositivos',function()
+	{
+		DataStore.updateDispositivo();
+	});
+
 	console.log('Servidor corriendo en: ' + app.get('port'));
 
 	//Carga tareas en scheduler
@@ -41,49 +48,36 @@ http.listen(app.get('port'), function()
 		//Configuracion
 		arduino.init();
 
-		//Devuelve lista de salidas activas (con estado == 'on' (0))
+		//Devuelve lista de salidas activas (con estado == 0
 		socket.on('getSalidasActivas', function()
 		{
-			var salidas = [];
-			DataStore.getFile('dispositivos',function(err, models)
+			this.salidasAux = [];
+			var params = {
+				noError: true,
+				ip: '192.168.20.8',
+				id_disp: 8,
+				filterByEstado: '0'
+			}
+			DataStore.currentFile.forEach(function(item)
 			{
-				console.log("File",models);
-				async.eachSeries(models, function iterator(item, callback)
+				var params = {
+					noError: true,
+					ip: item.ip,
+					id_disp: item.id_disp,
+					filterByEstado: '0'
+				}
+				arduino.getSalidas(params, function(response)
 				{
-					getSalidas({
-						noError: true,
-						ip: item.ip,
-						id_disp: item.id_disp,
-						filterByEstado: '0'
-					},
-					function(response)
-					{
-						salidas = salidas.concat(response);
-						callback(null, item);
-					});
-
-				}, function done()
-				{
-					socket.emit('salidasActivas', salidas);
+					socket.emit('salidasAux', response);
 				});
-			})
-		});
-
-		//Devuelve las salidas de un dispositivo con sus descripciones
-		var getSalidas = function(params, callback)
-		{
-			arduino.getSalidas(params, function(response)
-			{
-				callback(response );
 			});
-		}
+		});
 
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
-			console.log("por");
 			params.noError = true;
-			var dispositivo = DataStore.findDispositivo('id_disp',1);
+			var dispositivo = DataStore.findDispositivo('id_disp',params.id_disp);
 
 			if (dispositivo.length > 0)
 			{
@@ -96,59 +90,6 @@ http.listen(app.get('port'), function()
 			}
 		});
 
-		//Devuelve el listado de salidas de una planta específica
-		socket.on('getSalidasPlanta', function(id_planta)
-		{
-			var salidasPlanta = [];
-
-			sequelize.models.salidas.getByPlanta(id_planta,
-			function(models)
-			{
-				var dispositivosUnique = [];
-
-				models[0].forEach(function(d)
-				{
-					if (dispositivosUnique.indexOf(d.ip) == -1)
-					{
-						dispositivosUnique.push(d.ip);
-					}
-				});
-				async.eachSeries(dispositivosUnique, function iterator(ip, callback)
-				{
-					arduino.getSalidas({noError:true, ip: ip}, function(salidasDisp)
-					{
-						salidasDisp.forEach(function(s,i)
-						{
-							models[0].filter(function(m,j)
-							{
-								if (m.ip == ip)
-								{
-									if (s.nro_salida == m.nro_salida)
-									{
-										m.estado = s.estado;
-										m.tipo = s.tipo;
-									}
-								}
-							});
-						})
-
-						callback(null, ip);
-					})
-				},
-				function done()
-				{
-					models[0].filter(function(s)
-					{
-						if (typeof s.estado == "undefined")
-						{
-							s.estado = "error";
-						}
-					});
-					socket.emit('salidasPlanta', models[0]);
-				});
-			});
-		});
-
 		//Sube,baja o detiene las persianas
 		socket.on('movePersiana', function(params)
 		{
@@ -157,8 +98,6 @@ http.listen(app.get('port'), function()
 				socket.emit('moveResponse', response);
 			});
 		});
-
-
 
 		//Setea el estado de una salida, ON/OFF
 		socket.on('switchSalida', function(params)

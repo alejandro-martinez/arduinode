@@ -6,12 +6,10 @@ module.exports = function()
 		//Recibe 15, devuelve 00:15
 		min_a_horario: function(min)
 		{
-			console.log("Minutos",min);
  			if (min == 0)
 			{
 				return null;
 			}
-			console.log("Convirtiendo",min," a HH:MM");
 			var hrs = Math.floor(min/60);
 			hrs = hrs % 60;
 			if( hrs < 10 )

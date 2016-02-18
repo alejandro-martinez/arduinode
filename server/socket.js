@@ -5,82 +5,70 @@ module.exports = function()
 	var Socket =
 	{
 		socketClient: {},
+		_socket: {},
 		client: {},
+		errors: {
+				"ENOTFOUND": "No se encontró dispositivo en el socket solicitado: ",
+				"EHOSTUNREACH": "Dispositivo no alcanzado",
+				"ECONNREFUSED": "Conexión rechazada: Chequea la IP y puerto ",
+				"TIMEOUT": "Se alcanzó el tiempo de espera límite para la conexión!"
+		},
 		//Conexion al socket arduino
 		connect: function(params, callback)
 		{
 			var timer, This = this;
-			timeout = 1000;
-			console.log("[INFO] Conectando al socket: " + params.ip + ":8000");
-			this.client = net.connect(
+			timeout = 250;
+
+			timer = setTimeout(function()
+			{
+				if (!params.noError)
+				{
+					This.socketClient.emit('Error', This.errors['TIMEOUT']);
+				}
+				else
+				{
+					console.log("Timeout");
+					callback(0);
+				}
+			}, timeout);
+
+			var client = net.connect(
 			{
 				host: params.ip,
 				port: 8000
 			},function()
 			{
 				clearTimeout(timer);
-				callback(1);
+				callback(1, client)
 			});
-			timer = setTimeout(function()
+
+			client.on('error', function(err)
 			{
-				if (!params.noError)
+				if (params.noError)
 				{
-					This.socketClient.emit('Error', "Se alcanzó el tiempo de espera límite para la conexión!");
+					callback();
 				}
 				else
 				{
-					callback(0);
-				}
-			}, timeout);
-
-			this.client.on('error', function(err)
-			{
-				clearTimeout(timer);
-				if (err.code == "ENOTFOUND")
-				{
-					if (!params.noError)
-					{
-						This.socketClient.emit('Error', "No se encontró dispositivo en el socket solicitado: " + err);
-					}
-					else
-					{
-						This.socketClient.emit('connected', 1);
-						callback();
-					}
-					return;
-				}
-
-				if (err.code == "ECONNREFUSED")
-				{
-					if (!params.noError)
-					{
-						This.socketClient.emit('Error', "Conexión rechazada: Chequea la IP y puerto ");
-					}
-					else
-					{
-						callback();
-					}
-					return;
+					This.socketClient.emit('Error', This.errors[err.code]);
 				}
 			})
+
 		},
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
 		{
 			var This = this;
-			params.ip = params.ip || params.ip_dispositivo;
 			if (params.ip)
 			{
-				this.connect(params, function(response)
+				this.connect(params, function(response, socket)
 				{
-					console.log("Conexion", response);
-					console.log("Comando",params.command);
+					This.data = "";
 					if (response == 1)
 					{
-						This.client.write(params.command);
-						This.client.on('data', function(_data)
+						socket.write(params.command);
+						socket.on('data', function(_data)
 						{
-							console.log("DATA",_data.toString());
 							if (params.decorator)
 							{
 								params.decorator(_data.toString())
@@ -90,16 +78,17 @@ module.exports = function()
 								This.data = _data.toString();
 							}
 						});
-						This.client.on('end', function()
+						socket.on('end', function()
 						{
+							console.log("Desconectado del servidor");
 							callback(This.data);
 						});
 					}
 					else
 					{
-						callback("");
+						callback(null);
 					}
-				})
+				});
 			}
 		},
 	}

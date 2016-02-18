@@ -13,7 +13,6 @@ module.exports = function(app, config)
 					if (!err)
 					{
 						This.currentFile = obj;
-
 					}
 					callback(err, obj);
 				}
@@ -25,6 +24,18 @@ module.exports = function(app, config)
 			{
 				return dispositivo[key] == value;
 			})
+		},
+		updateDispositivo: function(_socket)
+		{
+			this.currentFile.forEach( function (j)
+			{
+				j.socket = null;
+				j.salidas.forEach( function( s ){
+					s.ip = j.ip;
+					s.estado = null
+					s.temporizada = null
+				});
+			} );
 		},
 		save: function(model, callback)
 		{

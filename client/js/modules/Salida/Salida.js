@@ -31,12 +31,10 @@ angular.module('Arduinode.Salida',['Socket'])
 	{
 		switchSalida: function(params, callback)
 		{
-			console.log("enviando",params);
 			//Seteo el estado al que quiero cambiar la salida
 			Socket.send('switchSalida',params);
 			Socket.listen('switchResponse', function(estado)
 			{
-				console.log("Respuesta");
 				callback(estado);
 			});
 		},
@@ -59,9 +57,9 @@ angular.module('Arduinode.Salida',['Socket'])
 		getSalidasActivas: function(callback)
 		{
 			Socket.send('getSalidasActivas');
-			Socket.listen('salidasActivas', function(salidas)
+			Socket.listen('salidasAux', function(salida)
 			{
-				callback(salidas);
+				callback(salida)
 			});
 		},
 		deleteSalida: function(id, callback)
@@ -125,21 +123,6 @@ angular.module('Arduinode.Salida',['Socket'])
 	}
 	return Request;
 }])
-.directive('selectdispositivos', function() {
-  return {
-    restrict: 'A',
-    replace: true,
-	//require:'ngModel',
-	scope: {
-	  selected: '=selected',
-	  salida: '=salida',
-	  data: '=data',
-      dispositivo: '=dispositivo'
-    },
-    templateUrl: 'js/modules/Salida/_select.html',
-	controller: 'SelectCtrl'
-  };
-})
 .controller('SalidaCtrl', ['$stateParams','SwitchButton','SalidaConfig','$rootScope',
 			'ngDialog','DispositivoFct','$scope','SalidaFct',
 	function (params,SwitchButton,config,$rootScope, Popup,Dispositivo,
@@ -205,9 +188,9 @@ angular.module('Arduinode.Salida',['Socket'])
 			data.estado = (data.estado == 0) ? 1 : 0;
 			var tiempo = $('.clockpicker').val();
 			data.temporizada = (tiempo != '') ? tiempo : null;
+			
 			Salida.switchSalida( data, function(_estado)
 			{
-				console.log("Estado",_estado)
 				$('.clockpicker').val("");
 				data.estado = _estado;
 				$scope.updateSalida(data);
@@ -249,13 +232,16 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		$scope.refreshLucesEncendidas = function()
 		{
+			$scope.salidas = [];
 			$rootScope.loading = true;
 			$rootScope.currentMenu = "Luces encendidas";
-			Salida.getSalidasActivas(function(salidas)
+			Salida.getSalidasActivas(function(salida)
 			{
 				$rootScope.loading = false;
-				$scope.salidas = salidas;
-				console.log($scope.salidas);
+				if (salida.length > 0)
+				{
+					$scope.salidas = $scope.salidas.concat(salida);
+				}
 				$scope.$apply();
 			});
 		}
@@ -273,7 +259,6 @@ angular.module('Arduinode.Salida',['Socket'])
 				$rootScope.loading = false;
 				$scope.ipDispositivo = data.ip;
 				$scope.salidas = data.salidas;
-				console.log(data.salidas)
 				$scope.$apply();
 
 			});

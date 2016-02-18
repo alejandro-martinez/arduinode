@@ -1,11 +1,13 @@
 var socket = require('./socket')(),
 	async = require('async'),
 	DateConvert = require('./utils/DateConvert')();
+
 module.exports = function()
 {
 	var Arduino =
 	{
 		socketClient: {},
+		sockets: [],
 		init: function()
 		{
 			socket.socketClient = this.socketClient;
@@ -13,7 +15,6 @@ module.exports = function()
 		// Setea el estado de una salida en ON u OFF
 		switchSalida: function(params, callback)
 		{
-			console.log("Switch");
 			var This = this;
 			if (params.temporizada != undefined)
 			{
@@ -28,7 +29,6 @@ module.exports = function()
 			params.noConnect = true;
 			socket.send(params, function( response )
 			{
-				console.log("Programando",This.data);
 				if (This.data)
 				{
 					callback( parseInt(This.data) );
@@ -37,7 +37,6 @@ module.exports = function()
 				{
 					callback(null);
 				}
-
 			});
 		},
 		buscarSalida: function(params, found)
@@ -69,7 +68,7 @@ module.exports = function()
 		getSalidas: function(params,callback)
 		{
 			var This = this;
-			this.data = "";
+			This.data = "";
 			params.command = 'G';
 			params.decorator = function(_data)
 			{
@@ -77,7 +76,8 @@ module.exports = function()
 			}
 			socket.send(params, function(response)
 			{
-				if (This.data.length > 0)
+
+				if (This.data.length > 0 && response != null)
 				{
 					delete params.decorator;
 

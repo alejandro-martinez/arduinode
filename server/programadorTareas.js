@@ -1,6 +1,6 @@
 // Tarea programadas
 schedule = require('node-schedule');
-var socketArduino = require('./socketArduino')(),
+var socketArduino = require('./Arduino')(),
 DateConvert = require('./utils/DateConvert')();
 
 var Programador = function()

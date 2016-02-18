@@ -700,7 +700,7 @@ ul#tareas li {
     background: #eceeef;
     position: absolute;
     right: 0;
-    top: 0;
+    top: -25px;
     border-radius: 10%;
     padding: 0px 8px -1px 0px;
 }

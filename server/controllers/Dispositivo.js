@@ -3,25 +3,7 @@ module.exports = function(app)
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		DataStore.getFile('dispositivos',function(err, file)
-		{
-                    if (err){
-                      res.json(err);
-                    }
-                    else {
-                      file.forEach( function (j){
-                        var d = j.ip
-                        j.salidas.forEach( function( s ){
-                          s.ip = d
-                          s.estado = null
-                          s.temporizada = null
-                        });
-                      } );
-                      res.json(file)
-                    }
-
-
-		});
+		res.json(DataStore.currentFile);
 	});
 
 	//Devuelve dispositivo por ID
@@ -36,7 +18,8 @@ module.exports = function(app)
 	//Crea o modifica dispositivos
 	app.post('/dispositivo/save', function(req, res)
 	{
-		DataStore.writeFile(app.get('modelsPath')+'dispositivos.json',function(err, file)
+		DataStore.writeFile(app.get('modelsPath')+'dispositivos.json',
+		function(err, file)
 		{
 			res.json(err || file)
 		});
