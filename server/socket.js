@@ -59,8 +59,10 @@ module.exports = function()
 		send: function(params, callback)
 		{
 			var This = this;
+			params.ip = params.ip || params.ip_dispositivo;
 			if (params.ip)
 			{
+				console.log("comando",params.command);
 				this.connect(params, function(response, socket)
 				{
 					This.data = "";

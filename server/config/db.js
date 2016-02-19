@@ -1,3 +1,4 @@
+var programadorTareas = require('./programadorTareas');
 module.exports = function(app, config)
 {
 	this.DataStore =
@@ -136,6 +137,10 @@ module.exports = function(app, config)
 							newTarea = this.replicateObj(model, {});
 						newTarea.id_tarea = id_tarea;
 						tareas.push ( newTarea );
+					}
+					else
+					{
+						programadorTareas.reprogramarTarea(tarea);
 					}
 				}
 				//Edito salidas

@@ -1,7 +1,7 @@
 // Tarea programadas
 schedule = require('node-schedule');
-var socketArduino = require('./Arduino')(),
-	DateConvert = require('./utils/DateConvert')();
+var socketArduino = require('../Arduino')(),
+	DateConvert = require('../utils/DateConvert')();
 
 
 var Programador = function()
@@ -9,13 +9,13 @@ var Programador = function()
 		this.tareas = [];
 		this.reprogramarTarea = function(_tarea)
 		{
-			console.log("Reprogramando tarea", _tarea.id_tarea)
+			console.log("Reprogramando tarea", _tarea[0])
 			//Busco la tarea,
-			this.quitarTarea(_tarea.id_tarea);
+			this.quitarTarea(_tarea[0].id_tarea);
 			console.log("Apagando");
 			//y ejecuto la accion de apagado
 			_tarea.estado = 1;
-			this.ejecutarTarea(_tarea);
+			this.ejecutarTarea(_tarea[0]);
 			console.log("Reimportando");
 			this.importar();
 		};
@@ -38,6 +38,7 @@ var Programador = function()
 		};
 		this.parseConfig = function(t)
 		{
+			console.log("convirtiendo mes,",DateConvert.fechaAMes( t.fecha_inicio ));
 			var config = {
 				id_tarea: 		t.id_tarea,
 				activa: 		t.activa,
@@ -88,7 +89,12 @@ var Programador = function()
 
 			if (this.checkValidez(config))
 			{
+				console.log("forzando true");
 				this.forzarEjecucion(config);
+			}
+			else
+			{
+				console.log("La tarea a forzar no es valida",config);
 			}
 
 			var job = schedule.scheduleJob(rule, function()
@@ -110,6 +116,7 @@ var Programador = function()
 		{
 			var This = this;
 			This.tareas = DataStore.getTareas();
+			console.log(This.tareas);
 			This.cargarTodas();
 		};
 		this.checkValidez = function(config)
@@ -117,6 +124,8 @@ var Programador = function()
 			//Tarea activa o desactivada
 			if (config.activa)
 			{
+				console.log("tarea activa");
+				console.log("fecha valida?",DateConvert.fechaBetween(config));
 				return DateConvert.fechaBetween(config);
 			}
 			return false;
@@ -126,31 +135,33 @@ var Programador = function()
 // 			console.log("raw inicio",config.raw_hora_inicio);
 			var hora_fin_min =
 					DateConvert.sumarHoras(config.raw_hora_inicio, config.raw_duracion),
-				tiempo_ejecutada = DateConvert.difHoraConActual(config.raw_hora_inicio);
+				tiempo_ejecutada = DateConvert.difHoraConActual(config.raw_hora_inicio) * 60;
 
 			var hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
 
-			console.log("Pasaron ",tiempo_ejecutada," min desde: ",config.raw_hora_inicio)
+			console.log("Pasaron ",tiempo_ejecutada," seg desde: ",config.raw_hora_inicio)
 
 			//Si Hora actual > hora_inicio de tarea
-			if (tiempo_ejecutada  > 0 )
+			console.log("Tiempo que lleva ejecutada + duracion",tiempo_ejecutada,config.duracion);
+			if (tiempo_ejecutada < config.duracion)
 			{
-				console.log("Deberia ejecutarse si horaActual < hora_fin_tarea");
-				if ( DateConvert.mayorAHoraActual(hora_fin_min) )
-				{
-// 					console.log("Hora actual es < a hora_fin tarea");
-// 					console.log("Significa que deberia estar ejecutandose");
-					var tiempo_restante = DateConvert.difHoraConActual( hora_fin_HHMM );
-//  					console.log("Tiempo restante",tiempo_restante);
-					//Ejecuto la tarea con tiempo_restante
-					config.estado = 0;
-					config.duracion = tiempo_restante;
-					this.ejecutarTarea(config);
-				}
+				console.log("Hora actual es < a hora_fin tarea");
+
+				var tiempo_restante = parseInt(DateConvert.difHoraConActual( hora_fin_HHMM ) / 60);
+
+				console.log("Tiempo restante",tiempo_restante);
+				console.log("si tiempo restante es > 0 ejecuto la tarea");
+				//Ejecuto la tarea con tiempo_restante
+				config.estado = 0;
+				console.log("la temp",tiempo_restante);
+				config.temporizada = tiempo_restante;
+				this.ejecutarTarea(config);
 			}
 		};
 		this.ejecutarTarea = function(params)
 		{
+			console.log("ejecutando");
+			params.noError = true;
 			socketArduino.switchSalida(params, function(response)
 			{
 				console.log("Switch response", response);
@@ -162,7 +173,8 @@ var Programador = function()
 			this.tareas.forEach(function(t)
 			{
 				//Armo la config de la tarea y Creo la tarea
-				var configTarea = This.parseConfig(t.dataValues);
+				var configTarea = This.parseConfig(t);
+				console.log("la confi de tarea es",configTarea);
 				This.nuevaTarea(configTarea);
 			})
 		};

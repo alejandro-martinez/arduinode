@@ -34,7 +34,10 @@ module.exports = function()
 				min = parseInt(horario.substr(-2));
 				return (hrs * 60) + min;
 			}
-			return "Horario inválido";
+			else
+			{
+				return horario;
+			}
 		},
 		//Recibe "01-05" (mes-dia), devuelve 5
 		fechaADia: function(fecha)
@@ -48,10 +51,11 @@ module.exports = function()
 						+ ":" + ("0" + time.getMinutes()).slice(-2);
 			return horario;
 		},
-		//Recibe "01-05" (mes-dia), devuelve 1
+		//Recibe DDMMAAAA devuelve MM
 		fechaAMes: function(fecha)
 		{
-			return parseInt(fecha.substr(0,2));
+			console.log("recibo",fecha);
+			return parseInt(fecha.substr(5,2));
 		},
 		//Convierte "1,2,3,4,5" en [1,2,3,4,5]
 		strToArray: function(str)
@@ -64,7 +68,8 @@ module.exports = function()
 			var fechaActual = new Date(),
 				diaActual = parseInt( fechaActual.getDate() ),
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
-
+			console.log(config);
+			console.log(diaActual,mesActual);
 			return ( config.dia_ini <= diaActual
 				&& 	 config.mes_ini <= mesActual )
 				&& ( config.dia_fin >= diaActual

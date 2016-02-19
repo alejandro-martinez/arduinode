@@ -8,7 +8,7 @@ var express = require('express'),
 	compress = require('compression');
 	app.use(compress());
 	var http 	= require('http').Server(app),
-	programadorTareas = require('./programadorTareas'),
+	programadorTareas = require('./config/programadorTareas'),
 	ArrayUtils = require('./utils/ArrayUtils')(),
 	config 	= require('./config/config').config(app, express),	// Configuración
 	io 		= require('socket.io')(http),						// Socket IO
@@ -25,12 +25,14 @@ http.listen(app.get('port'), function()
 	DataStore.getFile('dispositivos',function()
 	{
 		DataStore.updateDispositivo();
+		//Carga tareas en scheduler
+		programadorTareas.importar();
 	});
 
 	console.log('Servidor corriendo en: ' + app.get('port'));
 
-	//Carga tareas en scheduler
-	//programadorTareas.importar();
+
+
 
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)
