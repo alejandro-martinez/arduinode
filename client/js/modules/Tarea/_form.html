@@ -24,7 +24,7 @@
 				</label>
 			</div>
 			<label>Activa<br>
-				<input type="checkbox" ng-checked="tarea.activa" ng-model="tarea.activa" />
+				<input type="checkbox" ng-checked="tarea.activa == 1" ng-model="tarea.activa" />
 			</label>
 		</div>
 		<div class="left">
@@ -39,8 +39,8 @@
 				</label>
 				<label class="switcher"> Acción inicial: <br>
 					<label class="switch">
-						<input class="switch-input" ng-click="switch()" type="checkbox"
-						ng-model="tarea.accion" ng-checked="{{tarea.accion == 0}}" />
+						<input class="switch-input prendida" type="checkbox"
+						checked="checked" ng-checked="true" />
 						<span class="switch-label" data-on="Encender"
 						data-off="Apagar"></span>
 						<span class="switch-handle"></span>
@@ -66,19 +66,13 @@
 			</div>
 		</div>
 	    <ul class="inlineButtons actionsPopup">
-			<li><input class="button" ng-show="editing"
-			type="button" ng-click="deleteTarea(tarea.id_tarea)"
-			value="Eliminar" />
+			<li>
+				<input class="button" type="submit" ng-click="save()" value="Guardar" />
 			</li>
 			<li>
-			<input class="button" type="submit" ng-click="save()" value="Guardar" />
+				<input class="button" type="button" ng-click="deleteTarea()" value="Eliminar" />
 			</li>
 		</ul>
 	    </div>
 	</form>
-	<ul class="inlineButtons" id="actionsPage">
-		<li>
-			<a class="button" ui-sref="eliminar">Eliminar</a>
-		</li>
-	</ul>
 </div>

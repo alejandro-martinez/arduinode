@@ -1,7 +1,8 @@
 // Tarea programadas
 schedule = require('node-schedule');
 var socketArduino = require('./Arduino')(),
-DateConvert = require('./utils/DateConvert')();
+	DateConvert = require('./utils/DateConvert')();
+
 
 var Programador = function()
 {
@@ -108,12 +109,8 @@ var Programador = function()
 		this.importar = function()
 		{
 			var This = this;
-			sequelize.models.tareas.findAll().then(function(_tareas)
-			{
-				This.tareas = _tareas;
-				console.log("Cantidad de tareas",This.tareas.length);
-				This.cargarTodas();
-			});
+			This.tareas = DataStore.getTareas();
+			This.cargarTodas();
 		};
 		this.checkValidez = function(config)
 		{

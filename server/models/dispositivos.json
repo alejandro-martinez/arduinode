@@ -30,7 +30,7 @@
               {"note":"Josefina Persiana","nro_salida":36,"tipo":"P"},
               {"note":"Pasillo Chicos","nro_salida":24,"tipo":"L"}
              ],
-    "tareas": []
+	"tareas": []
   },
   {"id_disp":8,
    "note": "Living",
@@ -56,11 +56,7 @@
               {"note":"Patio Tortugas Casa","nro_salida":28,"tipo":"L"},
               {"note":"Perimetral Exterior","nro_salida":36,"tipo":"L"}
              ],
-	"tareas": [{"id_tarea": 1, "descripcion":"Nueva","nro_salida":28,
-				"hora_inicio":"14","dias_ejecucion":"0,1,2","activa":1,
-				"accion":0,"fecha_inicio":"24/05","fecha_fin":"25/05",
-				"duracion":5
-			  }]
+	"tareas": []
   },
   {"id_disp":9,
    "note": "Garage",

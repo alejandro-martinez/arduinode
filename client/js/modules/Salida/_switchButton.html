@@ -1,7 +1,6 @@
 <label class="switch" ng-class="s.estado == null ? 'disabled' : ''">
-	<input data-ip="{{s.ip}}"
-	data-nro="{{ s.nro_salida}}" class="switch-input" type="checkbox"
-	id="s{{s.nro_salida}}" ng-class="(s.estado == 0 ) ? 'prendida' : 'apagada'"
+	<input data-ip="{{s.ip}}" data-nro="{{ s.nro_salida}}"
+	class="switch-input" type="checkbox" ng-class="(s.estado == 0 ) ? 'prendida' : 'apagada'"
 	ng-checked="{{(s.estado) == 0}}" />
 	<span class="switch-label" ng-click="switch(s)"
 	ng-class="(s.temporizada) ? 'temporizada' : ''"

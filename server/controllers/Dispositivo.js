@@ -8,11 +8,7 @@ module.exports = function(app)
 
 	//Devuelve dispositivo por ID
 	app.get('/dispositivo/id/:id_disp', function(req, res){
-		sequelize.models.dispositivos.findAll({where:{'id_disp': parseInt(req.params.id_disp)}})
-						.then(function(model)
-						{
-							res.json(model);
-						});
+		res.json(DataStore.findDispositivo('id_disp', req.params.id_disp));
 	});
 
 	//Crea o modifica dispositivos

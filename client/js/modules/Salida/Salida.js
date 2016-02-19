@@ -147,8 +147,10 @@ angular.module('Arduinode.Salida',['Socket'])
         }
 	}
 })
-.controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton','$rootScope','$stateParams','ngDialog','$scope', 'SalidaFct',
-	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup, $scope, Salida)
+.controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton',
+			'$rootScope','$stateParams','ngDialog','$scope', 'SalidaFct',
+	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup,
+			  $scope, Salida)
 	{
 		$('.clockpicker').clockpicker({donetext: 'OK'});
 		var params = params.params || {};
@@ -188,7 +190,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			data.estado = (data.estado == 0) ? 1 : 0;
 			var tiempo = $('.clockpicker').val();
 			data.temporizada = (tiempo != '') ? tiempo : null;
-			
+
 			Salida.switchSalida( data, function(_estado)
 			{
 				$('.clockpicker').val("");
