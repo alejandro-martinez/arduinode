@@ -1,10 +1,13 @@
 <label class="switch" ng-class="s.estado == null ? 'disabled' : ''">
 	<input data-ip="{{s.ip}}" data-nro="{{ s.nro_salida}}"
-	class="switch-input" type="checkbox" ng-class="(s.estado == 0 ) ? 'prendida' : 'apagada'"
-	ng-checked="{{(s.estado) == 0}}" />
+		class="switch-input" type="checkbox"
+		ng-class="(s.estado == 0 ) ? 'prendida' : 'apagada'"
+		ng-checked="{{(s.estado) == 0}}"
+	/>
 	<span class="switch-label" ng-click="switch(s)"
-	ng-class="(s.temporizada) ? 'temporizada' : ''"
-	data-on="{{ s.temporizada || 'Encendida'}}"	data-off="Apagada"></span>
+		ng-class="(s.temporizada) ? 'temporizada' : ''"
+		data-on="{{ s.temporizada || 'Encendida'}}"	data-off="Apagada">
+	</span>
 	<span class="switch-handle"></span>
 </label>
 <div ng-show="{{s.temporizada > 0}}" class="timeIcon temporizada">

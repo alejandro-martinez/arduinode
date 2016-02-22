@@ -1,5 +1,4 @@
-var config = require('./env.json'),
-	session = require('express-session'),
+var session = require('express-session'),
 	minify = require('express-minify'),
 	bodyParser = require('body-parser');
 
@@ -22,6 +21,4 @@ module.exports.config = function( app, express) {
 	//app.use(minify());
 	//Entrega los archivos de tipo css, jss, jpg, etc
 	app.use(express.static('../client'));
-
-	return config;
 };
