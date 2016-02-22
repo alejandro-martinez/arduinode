@@ -15,7 +15,6 @@ module.exports = function()
 		// Setea el estado de una salida en ON u OFF
 		switchSalida: function(params, callback)
 		{
-			console.log("Comand",params);
 			var This = this;
 			if (params.temporizada != undefined)
 			{

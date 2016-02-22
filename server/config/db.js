@@ -127,21 +127,16 @@ module.exports = function(app, config)
 							return This.replicateObj(model, t);
 						}
 					});
-					console.log("TAREA existente",tarea);
+
 					//Nueva tarea
 					if (tarea.length == 0)
 					{
-						console.log("nueva tarea");
-
 						var id_tarea = this.getNewIDTarea();
 							newTarea = this.replicateObj(model, {});
 						newTarea.id_tarea = id_tarea;
 						tareas.push ( newTarea );
 					}
-					else
-					{
-						programadorTareas.reprogramarTarea(tarea);
-					}
+					programadorTareas.reprogramarTarea(tarea || newTarea);
 				}
 				//Edito salidas
 				else

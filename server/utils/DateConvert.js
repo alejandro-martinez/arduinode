@@ -27,7 +27,6 @@ module.exports = function()
 		//Recibe "00:15" (HH-MM), devuelve 15
 		horario_a_min: function ( horario )
 		{
-			console.log("el horario",horario.length);
 			if (horario && horario.length == 5)
 			{
 				var hrs = parseInt(horario.substr(0,2)),
@@ -54,7 +53,6 @@ module.exports = function()
 		//Recibe DDMMAAAA devuelve MM
 		fechaAMes: function(fecha)
 		{
-			console.log("recibo",fecha);
 			return parseInt(fecha.substr(5,2));
 		},
 		//Convierte "1,2,3,4,5" en [1,2,3,4,5]
@@ -68,8 +66,6 @@ module.exports = function()
 			var fechaActual = new Date(),
 				diaActual = parseInt( fechaActual.getDate() ),
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
-			console.log(config);
-			console.log(diaActual,mesActual);
 			return ( config.dia_ini <= diaActual
 				&& 	 config.mes_ini <= mesActual )
 				&& ( config.dia_fin >= diaActual
@@ -104,6 +100,10 @@ module.exports = function()
 			var hora_actual_min = this.horario_a_min(this.horarioEnHHMM())
 // 			console.log("comparo:", min,"con ",hora_actual_min);
 			return min > hora_actual_min;
+		},
+		aMin: function(seg)
+		{
+			return parseInt(seg) / 60;
 		}
 	}
 

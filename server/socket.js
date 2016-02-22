@@ -27,7 +27,6 @@ module.exports = function()
 				}
 				else
 				{
-					console.log("Timeout");
 					callback(0);
 				}
 			}, timeout);
@@ -62,7 +61,6 @@ module.exports = function()
 			params.ip = params.ip || params.ip_dispositivo;
 			if (params.ip)
 			{
-				console.log("comando",params.command);
 				this.connect(params, function(response, socket)
 				{
 					This.data = "";
@@ -82,7 +80,6 @@ module.exports = function()
 						});
 						socket.on('end', function()
 						{
-							console.log("Desconectado del servidor");
 							callback(This.data);
 						});
 					}

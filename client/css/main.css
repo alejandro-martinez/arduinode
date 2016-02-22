@@ -237,11 +237,6 @@ button,
 ul.inlineButtons .button {
     display: inline-block;
 }
-#image {
-    border: 30px solid #ccc;
-    padding: 20px;
-    width: 80%;
-}
 #img_div {
     text-align: center;
 }
@@ -406,37 +401,6 @@ a#home
     top: 0;
 }
 /*Estados salidas*/
-/*Marcador de dispositivos*/
-
-.marker {
-    width: 51px;
-    color: black !important;
-    height: 61px;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 25px;
-    letter-spacing: -1px;
-    text-align: center;
-    color: #fff;
-    background: url(sprite.png);
-}
-/* Tipos de marcadores en el plano*/
-
-.marker.L {
-    background-position: 8px 0px;
-}
-.marker.L.on {
-    background-position: 238px 0px;
-}
-.marker.B {
-    background-position: 184px 9px;
-}
-.marker.on.B {
-    background-position: 62px 7px;
-}
-.marker.P {
-    background-position: 125px 0px;
-}
 #header {
     background-color: #03ae74;
     width: 100%;
@@ -533,26 +497,11 @@ a#home
 .containerSwitchWindow .active {
     background: green !important;
 }
-/*Boton switch window*/
-/*PLANTAS*/
-/*PLANTAS*/
-/* Plano popup salida */
-
 #viewSalida .switch,
 .persianaView .containerSwitchWindow {
     float: right;
     margin-right: 30px;
 }
-/* Plano popup salida
-@media (max-width:1024px)
-{
-	#actionsPage li:last-child
-	{
-		display:none;
-	}
-}*/
-/* Vista Estados, icono Programacion Salida */
-
 .timeIcon {
     z-index: 1;
     overflow: hidden;
@@ -638,37 +587,7 @@ ul#tareas li {
     display:none;
 }
 /*Estados salidas*/
-/*Marcador de dispositivos*/
 
-.marker {
-    width: 51px;
-    color: black !important;
-    height: 61px;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 25px;
-    letter-spacing: -1px;
-    text-align: center;
-    color: #fff;
-    background: url(sprite.png);
-}
-/* Tipos de marcadores en el plano*/
-
-.marker.L {
-    background-position: 8px 0px;
-}
-.marker.L.on {
-    background-position: 238px 0px;
-}
-.marker.B {
-    background-position: 184px 9px;
-}
-.marker.on.B {
-    background-position: 62px 7px;
-}
-.marker.P {
-    background-position: 125px 0px;
-}
 #header h1 {
     display: block;
     text-align: center;

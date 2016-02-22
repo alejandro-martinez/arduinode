@@ -3,27 +3,25 @@ schedule = require('node-schedule');
 var socketArduino = require('../Arduino')(),
 	DateConvert = require('../utils/DateConvert')();
 
-
 var Programador = function()
 {
 		this.tareas = [];
 		this.reprogramarTarea = function(_tarea)
 		{
-			console.log("Reprogramando tarea", _tarea[0])
+			console.log("Reprogramando tarea")
 			//Busco la tarea,
 			this.quitarTarea(_tarea[0].id_tarea);
-			console.log("Apagando");
+			console.log("Ejecutando tarea con accion de apagado");
 			//y ejecuto la accion de apagado
 			_tarea.estado = 1;
 			this.ejecutarTarea(_tarea[0]);
-			console.log("Reimportando");
 			this.importar();
 		};
 		this.quitarTarea = function(id_tarea)
 		{
 			console.log("Quitando tarea");
 			var tarea = this.getTarea(id_tarea)[0];
-			tarea.enEjecucion.job = null;
+			tarea.enEjecucion = null;
 		},
 		this.getTarea = function(id)
 		{
@@ -38,7 +36,6 @@ var Programador = function()
 		};
 		this.parseConfig = function(t)
 		{
-			console.log("convirtiendo mes,",DateConvert.fechaAMes( t.fecha_inicio ));
 			var config = {
 				id_tarea: 		t.id_tarea,
 				activa: 		t.activa,
@@ -60,7 +57,6 @@ var Programador = function()
 		};
 		this.registerTareaActiva = function(config, _tarea)
 		{
-			console.log("Registrando tarea");
 			var tarea = this.getTarea(config.id_tarea)[0];
 			tarea.enEjecucion = _tarea;
 		};
@@ -79,17 +75,11 @@ var Programador = function()
 				estado: config.accion,
 				nro_salida: config.nro_salida,
 				duracion: config.duracion
-			}/*
-			console.log("tarea inicio es valida");
-			console.log("Deberia ejecutarse la accion",config.accion,
-						" sobre la salida:",config.nro_salida,
-						" del dispositivo: ",config.ip_dispositivo,
-						" a las ",config.hora_ini,":",config.min_ini);*/
+			}
 			console.log("Forzando ejecucion de tarea",config.raw_hora_inicio);
 
 			if (this.checkValidez(config))
 			{
-				console.log("forzando true");
 				this.forzarEjecucion(config);
 			}
 			else
@@ -101,7 +91,6 @@ var Programador = function()
 			{
 				if (This.checkValidez(config))
 				{
-					console.log("Ejecutando Tarea");
 					This.ejecutarTarea(paramsDispositivo);
 				}
 				else
@@ -109,62 +98,50 @@ var Programador = function()
 					console.log("no valida");
 				}
 			});
-			console.log("registrando tarea");
 			this.registerTareaActiva(config, job);
 		};
 		this.importar = function()
 		{
 			var This = this;
 			This.tareas = DataStore.getTareas();
-			console.log(This.tareas);
 			This.cargarTodas();
 		};
 		this.checkValidez = function(config)
 		{
-			//Tarea activa o desactivada
+			//Tarea activa o no?
 			if (config.activa)
 			{
-				console.log("tarea activa");
-				console.log("fecha valida?",DateConvert.fechaBetween(config));
 				return DateConvert.fechaBetween(config);
 			}
 			return false;
 		};
-		this.forzarEjecucion = function(config)
+		this.forzarEjecucion = function(t)
 		{
-// 			console.log("raw inicio",config.raw_hora_inicio);
 			var hora_fin_min =
-					DateConvert.sumarHoras(config.raw_hora_inicio, config.raw_duracion),
-				tiempo_ejecutada = DateConvert.difHoraConActual(config.raw_hora_inicio) * 60;
-
-			var hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
-
-			console.log("Pasaron ",tiempo_ejecutada," seg desde: ",config.raw_hora_inicio)
+					DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion),
+					tiempo_desde_inicio = DateConvert.difHoraConActual(t.raw_hora_inicio) * 60;
+					hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
 
 			//Si Hora actual > hora_inicio de tarea
-			console.log("Tiempo que lleva ejecutada + duracion",tiempo_ejecutada,config.duracion);
-			if (tiempo_ejecutada < config.duracion)
+			if (tiempo_desde_inicio < t.duracion)
 			{
-				console.log("Hora actual es < a hora_fin tarea");
-
-				var tiempo_restante = parseInt(DateConvert.difHoraConActual( hora_fin_HHMM ) / 60);
-
-				console.log("Tiempo restante",tiempo_restante);
-				console.log("si tiempo restante es > 0 ejecuto la tarea");
-				//Ejecuto la tarea con tiempo_restante
-				config.estado = 0;
-				console.log("la temp",tiempo_restante);
-				config.temporizada = tiempo_restante;
-				this.ejecutarTarea(config);
+				t.estado = 0;
+				t.temporizada = DateConvert.aMin( t.duracion - tiempo_desde_inicio );
+				this.ejecutarTarea(t);
+			}
+			else
+			{
+				console.log("La tarea no deberia estar ejecutandose en este momento");
 			}
 		};
 		this.ejecutarTarea = function(params)
 		{
-			console.log("ejecutando");
+			console.log("Ejecutando tarea");
 			params.noError = true;
 			socketArduino.switchSalida(params, function(response)
 			{
-				console.log("Switch response", response);
+				if (response === null)
+					console.log("ERROR: No se puede llegar a:",params.ip);
 			})
 		};
 		this.cargarTodas = function()
@@ -172,30 +149,15 @@ var Programador = function()
 			var This = this;
 			this.tareas.forEach(function(t)
 			{
+				console.log("Importando ",This.tareas.length, " tarea/s");
 				//Armo la config de la tarea y Creo la tarea
 				var configTarea = This.parseConfig(t);
-				console.log("la confi de tarea es",configTarea);
 				This.nuevaTarea(configTarea);
-			})
-		};
-		//Detiene las tareas pasadas por param
-		this.detener = function(tareas)
-		{
-			var This = this;
-			tareas.forEach(function(t)
-			{
-				This.tareas.forEach(function(s)
-				{
-					if (t == s.tarea.id_tarea)
-					{
-
-					}
-				});
 			})
 		};
 		if(Programador.caller != Programador.getInstance)
 		{
-			console.log("This object cannot be instanciated");
+			console.log("No se puede instanciar el objeto");
 		}
 }
 
