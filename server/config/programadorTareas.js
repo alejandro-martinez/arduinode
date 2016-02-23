@@ -8,20 +8,22 @@ var Programador = function()
 		this.tareas = [];
 		this.reprogramarTarea = function(_tarea)
 		{
-			console.log("Reprogramando tarea")
+			console.log("Reprogramando tarea",_tarea)
 			//Busco la tarea,
-			this.quitarTarea(_tarea[0].id_tarea);
-			console.log("Ejecutando tarea con accion de apagado");
+			this.quitarTarea(_tarea.id_tarea);
+			console.log("Ejecutando",_tarea.descripcion," con accion de apagado");
 			//y ejecuto la accion de apagado
-			_tarea[0].estado = 1;
-			this.ejecutarTarea(_tarea[0]);
+			_tarea.estado = 1;
+			this.ejecutarTarea(_tarea);
 			this.importar();
 		};
 		this.quitarTarea = function(id_tarea)
 		{
-			console.log("Quitando tarea");
 			var tarea = this.getTarea(id_tarea)[0];
-			tarea.enEjecucion = null;
+			if (tarea && tarea.hasOwnProperty('enEjecucion'))
+			{
+				tarea.enEjecucion = null;
+			}
 		},
 		this.getTarea = function(id)
 		{
@@ -50,9 +52,9 @@ var Programador = function()
 				dias_ejecucion: DateConvert.strToArray(t.dias_ejecucion),
 				dia_fin	: 		DateConvert.fechaADia( t.fecha_fin ),
 				mes_fin	: 		DateConvert.fechaAMes( t.fecha_fin ),
-				duracion: 		DateConvert.horario_a_min( t.duracion ),
+				temporizada: 	DateConvert.horario_a_min( t.duracion ),
 				raw_duracion: 	t.duracion,
-				descripcion: t.descripcion
+				descripcion: 	t.descripcion
 			}
 			return config;
 		};
@@ -75,9 +77,9 @@ var Programador = function()
 				ip: config.ip_dispositivo,
 				estado: config.accion,
 				nro_salida: config.nro_salida,
-				duracion: config.duracion
+				temporizada: config.temporizada
 			}
-			console.log("Forzando ejecucion de tarea",config.raw_hora_inicio);
+			console.log("Forzando ejecucion de tarea",config.descripcion);
 
 			if (this.checkValidez(config))
 			{
@@ -118,17 +120,22 @@ var Programador = function()
 		};
 		this.forzarEjecucion = function(t)
 		{
-			var hora_fin_min =
-					DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion),
-					tiempo_desde_inicio = DateConvert.difHoraConActual(t.raw_hora_inicio) * 60;
-					hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
+			var hora_fin_min = DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion),
+				hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
 
-			//Si Hora actual > hora_inicio de tarea
-			if (tiempo_desde_inicio < t.duracion)
+			//Si hora_inicio de tarea + duracion tarea > hora_actual
+			//Se deberia ejecutar la tarea
+
+			if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
 			{
-				t.estado = 0;
-				t.temporizada = DateConvert.aMin( t.duracion - tiempo_desde_inicio );
-				this.ejecutarTarea(t);
+					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.raw_hora_inicio),
+					tiempo_restante = DateConvert.horario_a_min(t.temporizada) - tiempo_desde_inicio;
+					console.log("Tiempo desde inicio de tarea:",t.descripcion,":",tiempo_desde_inicio,"min");
+					console.log("Duracion de ",t.descripcion,DateConvert.horario_a_min(t.temporizada),"min");
+					console.log("Tiempo restante de ",t.descripcion,tiempo_restante,"min");
+					t.estado = 0;
+					t.temporizada = tiempo_restante;
+					this.ejecutarTarea(t);
 			}
 			else
 			{

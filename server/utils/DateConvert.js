@@ -74,9 +74,18 @@ module.exports = function()
 		//Retorna la diferencia en minutos, de la horaActual vs otra hora
 		difHoraConActual: function(hora)
 		{
+
 			var minHoraParam = this.horario_a_min(hora),
 				minHoraActual = this.horario_a_min(this.horarioEnHHMM());
+
 				return Math.abs(minHoraActual - minHoraParam);
+		},
+		horaActualBetween: function(horaIni, horaFin)
+		{
+			var horaActual = this.horarioEnHHMM();
+			if (horaIni <= horaActual && horaActual < horaFin)
+				return true;
+			return false;
 		},
 		addMinutosAHoraActual: function(minutos)
 		{
@@ -90,7 +99,6 @@ module.exports = function()
 		{
 			var minHora1 = this.horario_a_min(hora1);
 				minHora2 = this.horario_a_min(hora2);
-
 			return minHora1 + minHora2;
 		},
 		mayorAHoraActual: function(min)

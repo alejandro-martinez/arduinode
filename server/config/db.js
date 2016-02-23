@@ -1,4 +1,3 @@
-var programadorTareas = require('./programadorTareas');
 module.exports = function(app, config)
 {
 	this.DataStore =
@@ -107,6 +106,11 @@ module.exports = function(app, config)
 				//Edito o creo tareas
 				if (model.id_tarea)
 				{
+					console.log(dispositivo)
+					if (!dispositivo[0].hasOwnProperty('tareas'))
+					{
+						dispositivo[0].tareas = [];
+					}
 					var tareas = dispositivo[0].tareas;
 					//Tarea existente
 					var tarea = tareas.filter(function(t)
@@ -121,11 +125,10 @@ module.exports = function(app, config)
 					if (tarea.length == 0)
 					{
 						var id_tarea = this.getNewIDTarea();
-							newTarea = this.replicateObj(model, {});
-						newTarea.id_tarea = id_tarea;
-						tareas.push ( newTarea );
+							tarea = this.replicateObj(model, {});
+						tarea.id_tarea = id_tarea;
+						tareas.push ( tarea );
 					}
-					programadorTareas.reprogramarTarea(tarea || newTarea);
 				}
 				//Edito salidas
 				else
@@ -141,7 +144,7 @@ module.exports = function(app, config)
 				This.reader.writeFile(This.jsonFile,This.currentFile,
 					function(err)
 					{
-						callback(err);
+						callback(err, tarea[0] || tarea);
 					});
 				return true;
 			}

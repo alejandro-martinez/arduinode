@@ -1,3 +1,4 @@
+var programadorTareas = require('../config/programadorTareas');
 module.exports = function(app)
 {
 	//Devuelve todos las tareas
@@ -9,8 +10,16 @@ module.exports = function(app)
 	//Crea o modifica tareas
 	app.post('/tarea/save', function(req, res)
 	{
-		DataStore.save(req.body, function(response)
+		DataStore.save(req.body, function(response, tarea)
 		{
+			if (req.body.id_tarea === 9999)
+			{
+				programadorTareas.importar();
+			}
+			else
+			{
+				programadorTareas.reprogramarTarea(tarea);
+			}
 			res.json(response);
 		});
 	});
@@ -21,6 +30,7 @@ module.exports = function(app)
 		DataStore.deleteTarea(req.body,
 		function(response)
 		{
+			programadorTareas.importar();
 			res.json(response);
 		});
 	});
