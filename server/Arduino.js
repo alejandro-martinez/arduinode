@@ -64,6 +64,72 @@ module.exports = function()
 				return found(false);
 			}
 		},
+		formatSalidas: function(params, _salidas)
+		{
+			var This = this;
+			var infoSalida = [];
+			params.formatted = [];
+			_salidas.forEach(function(s)
+			{
+				var salidas = [];
+				var posGuion = s.indexOf("-"),
+					posDospuntos = s.indexOf(":"),
+					posPunto = s.indexOf(".");
+					switch (s[0])
+					{
+						case 'B':
+						case 'L':
+						case 'P':
+							var nro_salida = s[posGuion+1] + s[posGuion+2],
+								estado = s[posDospuntos+1],
+								tipo = s[0],
+								temporizada = DateConvert.min_a_horario(s.substr( posPunto + 1));
+							break;
+						default:
+							return;
+					}
+
+					var uniques = [],
+						_params =
+						{
+							salidas: _salidas,
+							nro_salida: parseInt(nro_salida),
+							ip: params.ip,
+							tipo: tipo
+						};
+					if (params.salidasOrig)
+					{
+						infoSalida = params.salidasOrig.filter(function(s)
+						{
+							return s.nro_salida == nro_salida && s.ip == params.ip;
+						});
+					}
+					//Quitar repetidas
+					This.buscarSalida(_params, function(_found)
+					{
+						This.found = _found;
+					});
+					if (!This.found)
+					{
+						var formatted = {
+							nro_salida: parseInt(nro_salida),
+							tipo: tipo,
+							ip: params.ip,
+							estado: parseInt(estado),
+							temporizada: temporizada
+						};
+						var note;
+						if (params.salidasOrig)
+							note = infoSalida[0].note;
+						else
+							note = params.ip.concat("-",nro_salida);
+
+						formatted.note = note;
+						params.formatted.push(formatted);
+					}
+			});
+			return params.formatted;
+		},
 		//Devuelve listado de salidas de una placa
 		getSalidas: function(params,callback)
 		{
@@ -76,65 +142,10 @@ module.exports = function()
 			}
 			socket.send(params, function(response)
 			{
-
 				if (This.data.length > 0 && response != null)
 				{
 					delete params.decorator;
-
-					var salidasRaw = This.data.match(/[^\r\n]+/g);
-					This.found;
-					var salidas = [];
-					salidasRaw.forEach(function(s)
-					{
-						var posGuion = s.indexOf("-"),
-							posDospuntos = s.indexOf(":"),
-							posPunto = s.indexOf(".");
-						switch (s[0])
-						{
-							case 'B':
-							case 'L':
-							case 'P':
-								var nro_salida = s[posGuion+1] + s[posGuion+2],
-									estado = s[posDospuntos+1],
-									tipo = s[0],
-									temporizada = DateConvert.min_a_horario(s.substr( posPunto + 1));
-								break;
-							default:
-								return;
-						}
-						var uniques = [];
-						var _params =
-						{
-							salidas: salidas,
-							nro_salida: parseInt(nro_salida),
-							ip: params.ip,
-							tipo: tipo
-						}
-						This.buscarSalida(_params, function(_found)
-						{
-							This.found = _found;
-						});
-						if (!This.found)
-						{
-							salidas.push({
-								nro_salida: parseInt(nro_salida),
-								note: params.ip.concat("-",tipo,nro_salida),
-								tipo: tipo,
-								ip: params.ip,
-								estado: parseInt(estado),
-								temporizada: temporizada
-							});
-						}
-
-					});
-					if (typeof params.filterByEstado != 'undefined' )
-					{
-						var salidasA = salidas.filter(function(s)
-						{
-							return s.estado == params.filterByEstado;
-						})
-					}
-					callback( salidasA || salidas);
+					callback( This.formatSalidas(params, This.data.match(/[^\r\n]+/g)) );
 				}
 				else
 				{

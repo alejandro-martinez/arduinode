@@ -242,6 +242,7 @@ angular.module('Arduinode.Salida',['Socket'])
 				$rootScope.loading = false;
 				if (salida.length > 0)
 				{
+					console.log(salida);
 					$scope.salidas = $scope.salidas.concat(salida);
 				}
 				$scope.$apply();

@@ -13,7 +13,7 @@ var Programador = function()
 			this.quitarTarea(_tarea[0].id_tarea);
 			console.log("Ejecutando tarea con accion de apagado");
 			//y ejecuto la accion de apagado
-			_tarea.estado = 1;
+			_tarea[0].estado = 1;
 			this.ejecutarTarea(_tarea[0]);
 			this.importar();
 		};
@@ -136,7 +136,6 @@ var Programador = function()
 		};
 		this.ejecutarTarea = function(params)
 		{
-			console.log("Ejecutando tarea");
 			params.noError = true;
 			socketArduino.switchSalida(params, function(response)
 			{

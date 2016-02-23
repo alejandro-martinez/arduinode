@@ -54,20 +54,53 @@ http.listen(app.get('port'), function()
 			var params = {
 				noError: true,
 				ip: '192.168.20.8',
-				id_disp: 8,
-				filterByEstado: '0'
+				id_disp: 8
 			}
-			DataStore.currentFile.forEach(function(item)
+			var sockets = [];
+			DataStore.currentFile.forEach(function(item, key)
 			{
-				var params = {
+				var salidas,
+				encendidas = [],
+				params = {
 					noError: true,
 					ip: item.ip,
 					id_disp: item.id_disp,
 					filterByEstado: '0'
 				}
-				arduino.getSalidas(params, function(response)
+				sockets[key] = new net.Socket();
+				sockets[key].connect(8000, item.ip, function(response)
 				{
-					socket.emit('salidasAux', response);
+					item.connectSuccess = true;
+					sockets[key].write('G')
+				})
+				sockets[key].on('data',function(_data)
+				{
+					item.buffer+= _data;
+				});
+				sockets[key].on('error',function(_err)
+				{
+					console.log("Error al conectarse a", item.ip);
+				});
+				sockets[key].on('end',function()
+				{
+					//Transformo el buffer en un aray
+					item.buffer = item.buffer.split('\r\n');
+					//Remueve el ultimo elemento porque viene vacio
+					item.buffer.pop();
+
+					if (item.buffer.length > 0 && item.connectSuccess)
+					{
+						//Reccorro buscando los encendidos
+						item.buffer.forEach( function( i ) {
+							if (i.indexOf( ':0' ) > 0 ){
+								encendidas.push( i )
+							}
+						});
+
+						params.salidasOrig = item.salidas;
+						item.buffer = "";
+						socket.emit('salidasAux', arduino.formatSalidas(params,encendidas));
+					}
 				});
 			});
 		});

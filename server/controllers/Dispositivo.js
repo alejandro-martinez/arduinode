@@ -3,7 +3,7 @@ module.exports = function(app)
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		res.json(DataStore.currentFile);
+		res.send(DataStore.currentFile);
 	});
 
 	//Devuelve dispositivo por ID
@@ -20,16 +20,5 @@ module.exports = function(app)
 			res.json(err || file)
 		});
 
-	});
-
-	//Eliminar
-	app.get('/dispositivo/delete/:id', function(req, res)
-	{
-		sequelize.models.dispositivos.findOne({id_disp: req.params.id }).then(function(dispositivo)
-		{
-			return dispositivo.destroy();
-		}).then(function(){
-			res.json({'res': 1});
-		});
 	});
 }

@@ -34,7 +34,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		{
 			$http.get('/dispositivo/').then(function(response)
 			{
-				
+
 				callback(response.data || response);
 			}, function(error)
 			{

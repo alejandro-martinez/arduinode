@@ -1,5 +1,5 @@
 <a ng-click="refresh()" class="refresh"></a>
-<input type="text" class="clockpicker estados" readonly ng-show="{{salidas.length > 0}}" />
+<input type="text" class="clockpicker estados" readonly />
 <ul id="estados">
 	<li ng-repeat="s in salidas | orderBy: -s.note" on-finish-render="ngRepeatFinished">
 		<span ng-repeat="(key, val) in s">

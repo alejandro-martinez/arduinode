@@ -57,27 +57,18 @@ module.exports = function(app, config)
 		{
 			this.currentFile.forEach( function (j)
 			{
-				j.socket = null;
+				j.buffer = "";
 				j.salidas.forEach( function( s ){
 					s.ip = j.ip;
-					s.estado = null
-					s.temporizada = null
+					s.estado = null;
+					s.temporizada = null;
 				});
 			} );
 		},
 		getNextID: function(dispositivo, tabla)
 		{
 			var tabla = dispositivo['tareas'];
-			console.log(tabla);
 		},
-// 		updateTarea: function(model)
-// 		{
-//
-// 		},
-// 		updateSalida: function(model)
-// 		{
-//
-// 		},
 		deleteTarea: function(params, callback)
 		{
 			var dispositivo = this.findDispositivo('id_disp',params.id_disp);
@@ -109,10 +100,8 @@ module.exports = function(app, config)
 		},
 		save: function(model, callback)
 		{
-			console.log("Voy a guardar");
 			var This = this;
 			var dispositivo = this.findDispositivo('id_disp',model.id_disp);
-			console.log("TAREA",model);
 			if (dispositivo.length > 0)
 			{
 				//Edito o creo tareas

@@ -6,11 +6,6 @@ module.exports = function(app)
 		res.json(DataStore.getTareas())
 	});
 
-	//Devuelve tarea por ID
-	app.get('/tarea/id/:id_tarea', function(req, res){
-
-	});
-
 	//Crea o modifica tareas
 	app.post('/tarea/save', function(req, res)
 	{

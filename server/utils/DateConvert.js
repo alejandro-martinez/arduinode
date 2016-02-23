@@ -88,7 +88,6 @@ module.exports = function()
 		//Suma 2 horarios HH:MM y retorna la suma en minutos
 		sumarHoras: function(hora1, hora2)
 		{
-// 			console.log("H1",hora1,"H2",hora2);
 			var minHora1 = this.horario_a_min(hora1);
 				minHora2 = this.horario_a_min(hora2);
 
@@ -98,7 +97,6 @@ module.exports = function()
 		{
 
 			var hora_actual_min = this.horario_a_min(this.horarioEnHHMM())
-// 			console.log("comparo:", min,"con ",hora_actual_min);
 			return min > hora_actual_min;
 		},
 		aMin: function(seg)
