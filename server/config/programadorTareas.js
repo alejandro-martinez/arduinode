@@ -51,7 +51,8 @@ var Programador = function()
 				dia_fin	: 		DateConvert.fechaADia( t.fecha_fin ),
 				mes_fin	: 		DateConvert.fechaAMes( t.fecha_fin ),
 				duracion: 		DateConvert.horario_a_min( t.duracion ),
-				raw_duracion: 	t.duracion
+				raw_duracion: 	t.duracion,
+				descripcion: t.descripcion
 			}
 			return config;
 		};
@@ -131,7 +132,7 @@ var Programador = function()
 			}
 			else
 			{
-				console.log("La tarea no deberia estar ejecutandose en este momento");
+				console.log(t.descripcion,"no deberia estar ejecutandose");
 			}
 		};
 		this.ejecutarTarea = function(params)
