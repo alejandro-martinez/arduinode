@@ -7,7 +7,8 @@ module.exports = function(app)
 	});
 
 	//Devuelve dispositivo por ID
-	app.get('/dispositivo/id/:id_disp', function(req, res){
+	app.get('/dispositivo/id/:id_disp', function(req, res)
+	{
 		res.json(DataStore.findDispositivo('id_disp', req.params.id_disp));
 	});
 
