@@ -98,6 +98,7 @@ a {
 }
 div.left {
     float: left;
+    width: 100%;
     text-align: left;
 }
 /* HTML5 display-role reset for older browsers */

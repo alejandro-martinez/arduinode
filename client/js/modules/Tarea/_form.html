@@ -37,15 +37,6 @@
 				<label>Hora inicio<br>
 					<input type="text" class="clockpicker" id="horainicio" readonly value="{{hora_inicio}}" readonly />
 				</label>
-				<label class="switcher"> Acción inicial: <br>
-					<label class="switch">
-						<input class="switch-input prendida" type="checkbox"
-						checked="checked" ng-checked="true" />
-						<span class="switch-label" data-on="Encender"
-						data-off="Apagar"></span>
-						<span class="switch-handle"></span>
-					</label>
-				</label>
 				<div class="dias_ejecucion">
 					<label ng-repeat="(key, value) in diasSemana">{{value | limitTo:1}}<br>
 					<input
