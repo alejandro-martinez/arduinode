@@ -2,7 +2,8 @@
 	<form novalidate class="simple-form" name="tareaForm" ng-model="tarea">
 		<h3>{{(editing) ? "Modificar tarea" : "Nueva tarea" }}</h3>
 		<div class="left">
-			 <div>
+
+			 <div class="dispositivo">
 				<label>Dispositivo<br>
 				<select required id="dispositivo_slt"
 				ng-options="disp as disp.note for disp in dispositivos"
@@ -10,14 +11,15 @@
 				ng-model="dispositivoSelected" name="dispositivo_id">
 				</select>
 				</label>
+				<div>
+					<label>Salidas<br>
+					<select ng-options="salida.nro_salida as salida.note for salida in salidas"
+					ng-model="tarea.nro_salida"></select>
+					</label>
+				</div>
+				<a ng-click="addDispositivo()">+</a>
 			</div>
 
-			<div>
-				<label>Salidas<br>
-				<select ng-options="salida.nro_salida as salida.note for salida in salidas"
-				ng-model="tarea.nro_salida"></select>
-				</label>
-			</div>
 			<div>
 				<label>Descripción de la Tarea<br>
 					<textarea ng-model="tarea.descripcion"></textarea>

@@ -252,6 +252,7 @@ input.clockpicker.estados
     margin: 0 auto;
     text-align: center;
     width: 83px;
+    position: fixed;
 }
 ul#estados {
     margin-top: 41px;
@@ -563,7 +564,19 @@ a#home
 }
 /* Vista Estados, icono Programacion Salida */
 /*TAREAS*/
-
+div.dispositivo > label
+{
+    float:left;
+    margin-right:8px;
+    position:relative;
+}
+div.dispositivo > a
+{
+    font-size:20px;
+    float:right;
+    margin-top:-35px;
+    font-weight:bold;
+}
 ul#tareas li {
     border: 1px solid #ccc;
     padding: 10px;
