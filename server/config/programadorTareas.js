@@ -42,8 +42,9 @@ var Programador = function()
 				id_tarea: 		t.id_tarea,
 				activa: 		t.activa,
 				accion: 		t.accion,
-				ip_dispositivo: t.ip_dispositivo,
-				nro_salida: 	t.nro_salida,
+				/*ip_dispositivo: t.ip_dispositivo,
+				nro_salida: 	t.nro_salida,*/
+				dispositivos: t.dispositivos,
 				dia_ini	: 		DateConvert.fechaADia( t.fecha_inicio ),
 				mes_ini	: 		DateConvert.fechaAMes( t.fecha_inicio ),
 				hora_ini: 		t.hora_inicio.substr(0,2),
@@ -72,13 +73,6 @@ var Programador = function()
 				rule.hour = parseInt(config.hora_ini);
 				rule.minute = parseInt(config.min_ini);
 
-			var paramsDispositivo =
-			{
-				ip: config.ip_dispositivo,
-				estado: config.accion,
-				nro_salida: config.nro_salida,
-				temporizada: config.temporizada
-			}
 			console.log("Forzando ejecucion de tarea",config.descripcion);
 
 			if (this.checkValidez(config))
@@ -94,7 +88,7 @@ var Programador = function()
 			{
 				if (This.checkValidez(config))
 				{
-					This.ejecutarTarea(paramsDispositivo);
+					This.ejecutarTarea(config);
 				}
 				else
 				{
@@ -107,7 +101,7 @@ var Programador = function()
 		{
 			var This = this;
 			This.tareas = DataStore.getTareas();
-			This.cargarTodas();
+			This.cargarEnScheduler();
 		};
 		this.checkValidez = function(config)
 		{
@@ -144,14 +138,21 @@ var Programador = function()
 		};
 		this.ejecutarTarea = function(params)
 		{
-			params.noError = true;
-			socketArduino.switchSalida(params, function(response)
+			console.log("paramstarea",params);
+			params.dispositivos.forEach(function(d)
 			{
-				if (response === null)
-					console.log("ERROR: No se puede llegar a:",params.ip);
+				d.noError = true;
+				d.estado = params.accion;
+				d.temporizada = params.temporizada;
+
+				socketArduino.switchSalida(d, function(response)
+				{
+					if (response === null)
+						console.log("ERROR: No se puede llegar a:",d.ip);
+				})
 			})
 		};
-		this.cargarTodas = function()
+		this.cargarEnScheduler = function()
 		{
 			var This = this;
 			this.tareas.forEach(function(t)

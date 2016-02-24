@@ -24,8 +24,13 @@ http.listen(app.get('port'), function()
 	DataStore.getFile('dispositivos',function()
 	{
 		DataStore.updateDispositivo();
-		//Carga tareas en scheduler
-		programadorTareas.importar();
+
+		DataStore.getFile('tareas',function()
+		{
+			//Carga tareas en scheduler
+			programadorTareas.importar();
+		});
+
 	});
 
 	console.log('Servidor corriendo en: ' + app.get('port'));

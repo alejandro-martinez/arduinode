@@ -38,6 +38,14 @@ angular.module('Arduinode.Salida',['Socket'])
 				callback(estado);
 			});
 		},
+		findSalida: function(_array, nro_salida)
+		{
+			var salida = _array.filter(function(s)
+			{
+				return s.nro_salida == nro_salida;
+			})
+			return salida;
+		},
 		movePersiana: function(params, callback)
 		{
 			Socket.send('movePersiana',params);

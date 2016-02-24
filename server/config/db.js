@@ -2,7 +2,11 @@ module.exports = function(app, config)
 {
 	this.DataStore =
 	{
-		currentFile: {},
+		currentFiles: [],
+		filesPaths: {
+			dispositivos: app.get('modelsPath') + 'dispositivos.json',
+			tareas: app.get('modelsPath') + 'tareas.json',
+		},
 		replicateObj: function(orig, copy)
 		{
 			for (var key in orig)
@@ -11,16 +15,16 @@ module.exports = function(app, config)
 			}
 			return copy;
 		},
-		jsonFile: app.get('modelsPath') + 'dispositivos.json',
 		reader: require('jsonfile'),
 		getFile: function(file, callback)
 		{
 			var This = this;
-			this.reader.readFile( this.jsonFile, function(err, obj)
+			this.reader.readFile( app.get('modelsPath') + file + '.json',
+				function(err, obj)
 				{
 					if (!err)
 					{
-						This.currentFile = obj;
+						This.currentFiles.push(obj);
 					}
 					callback(err, obj);
 				}
@@ -29,32 +33,26 @@ module.exports = function(app, config)
 		getTareas: function()
 		{
 			var tareas = [];
-			this.currentFile.forEach( function (j)
+			this.currentFiles[1].forEach( function (tarea)
 			{
-				if (j.tareas)
+				console.log("It",tarea);
+				if (tarea)
 				{
-					j.tareas.forEach(function(tarea)
-					{
-						if (tarea)
-						{
-							tarea.id_disp = j.id_disp;
-							tareas.push(tarea);
-						}
-					});
+					tareas.push(tarea);
 				}
 			} );
 			return tareas;
 		},
 		findDispositivo: function(key, value)
 		{
-			return this.currentFile.filter(function(dispositivo)
+			return this.currentFiles[0].filter(function(dispositivo)
 			{
 				return dispositivo[key] == value;
 			})
 		},
 		updateDispositivo: function(_socket)
 		{
-			this.currentFile.forEach( function (j)
+			this.currentFiles[0].forEach( function (j)
 			{
 				j.buffer = "";
 				j.salidas.forEach( function( s ){
@@ -97,58 +95,69 @@ module.exports = function(app, config)
 				return 1;
 			}
 		},
-		save: function(model, callback)
+		saveDispositivo: function(model, callback)
 		{
+
 			var This = this;
 			var dispositivo = this.findDispositivo('id_disp',model.id_disp);
 			if (dispositivo.length > 0)
 			{
-				//Edito o creo tareas
-				if (model.id_tarea)
+				var salida = dispositivo[0].salidas.filter(function(s)
 				{
-					console.log(dispositivo)
-					if (!dispositivo[0].hasOwnProperty('tareas'))
+					if (s.nro_salida == model.nro_salida)
 					{
-						dispositivo[0].tareas = [];
+						s.note = model.note;
 					}
-					var tareas = dispositivo[0].tareas;
-					//Tarea existente
-					var tarea = tareas.filter(function(t)
-					{
-						if (t && t.id_tarea == model.id_tarea)
-						{
-							return This.replicateObj(model, t);
-						}
-					});
-
-					//Nueva tarea
-					if (tarea.length == 0)
-					{
-						var id_tarea = this.getNewIDTarea();
-							tarea = this.replicateObj(model, {});
-						tarea.id_tarea = id_tarea;
-						tareas.push ( tarea );
-					}
-				}
-				//Edito salidas
-				else
-				{
-					var salida = dispositivo[0].salidas.filter(function(s)
-					{
-						if (s.nro_salida == model.nro_salida)
-						{
-							s.note = model.note;
-						}
-					});
-				}
-				This.reader.writeFile(This.jsonFile,This.currentFile,
+				});
+				this.writeToJson(this.filesPaths.dispositivos, this.currentFiles[0],
 					function(err)
 					{
-						callback(err, tarea[0] || tarea);
-					});
-				return true;
+						callback(err)
+					}
+				)
 			}
-		}
+		},
+		saveTarea: function(model, callback)
+		{
+			var This = this;
+			//Edito o creo tareas
+			if (model.id_tarea)
+			{
+				//Tarea existente?
+				var tarea = this.currentFiles[1].filter(function(t)
+				{
+					if (t && t.id_tarea == model.id_tarea)
+					{
+						return This.replicateObj(model, t);
+					}
+				});
+
+				// NO! Nueva tarea
+				if (tarea.length == 0)
+				{
+					tarea.dispositivos = [];
+
+					var id_tarea = this.getNewIDTarea();
+						tarea = this.replicateObj(model, {});
+					tarea.id_tarea = id_tarea;
+					tareas.push ( tarea );
+				}
+				this.writeToJson(this.filesPaths.tareas, this.currentFiles[1],
+					function(err)
+					{
+						callback(err, tarea[0]);
+					}
+				);
+			}
+		},
+		writeToJson: function(file, content, callback)
+		{
+			this.reader.writeFile( file, content, function(err)
+			{
+				callback(err);
+			});
+			return true;
+		},
 	}
 	return this.DataStore;
 }

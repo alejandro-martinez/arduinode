@@ -706,6 +706,16 @@ ul#tareas li {
     padding: 10px;
     position: relative;
 }
+ul#tareas li a span
+{
+    color:red;
+    float:right;
+    margin-right:30px;
+}
+ul#tareas li .timeIcon
+{
+    top:6px;
+}
 /*DatePicker fix*/
 
 ._720kb-datepicker-calendar {

@@ -3,7 +3,7 @@ module.exports = function(app)
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		res.send(DataStore.currentFile);
+		res.send(DataStore.currentFiles[0]);
 	});
 
 	//Devuelve dispositivo por ID

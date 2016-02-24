@@ -66,10 +66,19 @@ module.exports = function()
 			var fechaActual = new Date(),
 				diaActual = parseInt( fechaActual.getDate() ),
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
-			return ( config.dia_ini <= diaActual
-				&& 	 config.mes_ini <= mesActual )
-				&& ( config.dia_fin >= diaActual
-				&& 	 config.mes_fin >= mesActual );
+
+			if ( config.dia_ini <= diaActual && config.mes_ini <= mesActual )
+			{
+				if (config.mes_fin >= mesActual )
+				{
+					if (config.mes_fin == mesActual)
+					{
+						return config.dia_fin >= diaActual;
+					}
+					return true;
+				}
+			}
+			return false;
 		},
 		//Retorna la diferencia en minutos, de la horaActual vs otra hora
 		difHoraConActual: function(hora)

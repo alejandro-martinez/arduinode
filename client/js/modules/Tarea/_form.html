@@ -1,8 +1,15 @@
 <div>
 	<form novalidate class="simple-form" name="tareaForm" ng-model="tarea">
-		<h3>{{(editing) ? "Modificar tarea" : "Nueva tarea" }}</h3>
 		<div class="left">
-
+			<div class="dispositivosAdded">
+				<h5>Dispositivos vinculados</h5>
+				<br>
+				<ul class="dispositivosAdded">
+					<li ng-repeat="d in tarea.dispositivos">
+						{{d.note}} - {{d.salidaNote}}
+					</li>
+				</ul>
+			</div>
 			 <div class="dispositivo">
 				<label>Dispositivo<br>
 				<select required id="dispositivo_slt"
