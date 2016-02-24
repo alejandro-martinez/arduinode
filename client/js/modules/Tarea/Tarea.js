@@ -202,6 +202,12 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 		}
 		$scope.tarea.dispositivos.push( dispositivo );
 	}
+
+	//Remueve un dispositivo de la tarea
+	$scope.removeDispositivo = function(disp)
+	{
+		disp = null;
+	}
 }])
 
 

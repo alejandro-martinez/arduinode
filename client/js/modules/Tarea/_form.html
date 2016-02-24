@@ -7,6 +7,7 @@
 				<ul class="dispositivosAdded">
 					<li ng-repeat="d in tarea.dispositivos">
 						{{d.note}} - {{d.salidaNote}}
+						<a ng-click="removeDispositivo(d)">X</a>
 					</li>
 				</ul>
 			</div>
