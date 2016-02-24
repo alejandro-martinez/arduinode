@@ -80,20 +80,21 @@ module.exports = function(app, config)
 		},
 		deleteTarea: function(params, callback)
 		{
-			var dispositivo = this.findDispositivo('id_disp',params.id_disp);
-			dispositivo[0].tareas.filter(function(t, key)
+			var tarea = this.currentFiles[1].forEach(function(tarea,key)
 			{
-				if (t && t.id_tarea == params.id_tarea)
+				if (tarea.id_tarea == params.id_tarea)
 				{
-					delete dispositivo[0].tareas[key];
+					return key;
 				}
 			})
-			this.reader.writeFile(this.jsonFile,this.currentFile,
+			this.currentFiles[1].splice(tarea, 1);
+
+			this.writeToJson(this.filesPaths.tareas, this.currentFiles[1],
 				function(err)
 				{
-					callback(err);
+					callback(err)
 				}
-			);
+			)
 		},
 		getNewIDTarea: function()
 		{
