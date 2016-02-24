@@ -62,7 +62,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 		{
 			$http.post('/tarea/save/',tarea).then(function(response)
 			{
-				console.log("posttarea",response)
 				if (response.data && response.data.error)
 				{
 					Popup.open({
@@ -92,7 +91,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	$scope.tareas = []
 	Tarea.getAll(function(tareas)
 	{
-		console.log("tareas",tareas);
 		$scope.tareas = tareas;
 	})
 }])
@@ -101,8 +99,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 			function ( $scope, $rootScope, $params, Dispositivo, Salida,
 					   Tarea, SwitchButton, Popup )
 {
-	console.log("params",$params.params);
-
 	$scope.getSwitchButton = function() { return SwitchButton.getTemplate() }
 	$scope.diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves',
 							'Viernes','Sabado','Domingo'];
@@ -120,27 +116,13 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 					if (j.ip == e.ip)
 					{
 						e.note = j.note;
-						console.log(j.salidas)
 						e.salidaNote = Salida.findSalida(j.salidas,e.nro_salida)[0].note;
 					}
 				});
 			})
-		console.log("disp tarea",$scope.tarea.dispositivos)
-
 		$scope.dispositivos = dispositivos;
 
 	});
-/*	else
-	{
-		Dispositivo.get(params.id_disp, function(model)
-		{
-			console.log("Model",model);
-			$scope.dispositivos = model;
-			$scope.dispositivoSelected = model[0];
-
-			$scope.salidas = Salida.findSalida(model[0].salidas, $scope.tarea.nro_salida);;
-		});
-	}*/
 	$scope.loadSelect = function()
 	{
 		Dispositivo.getAll(function(dispositivos)
@@ -160,8 +142,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 		});
 
 	}
-	console.log("A setear",params);
-
 	$scope.tarea = params;
 	$('.clockpicker').clockpicker({ autoclose: true });
 	$('#horainicio').val($scope.tarea.hora_inicio)
@@ -190,11 +170,9 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 
 	$scope.checkear_dia = function(key)
 	{
-		console.log("key",key);
-		var dias = $scope.tarea.dias_ejecucion.split(",")
-		console.log("dias",dias);
-		var idx = dias.indexOf(String(key));
-		console.log("idx",idx);
+
+		var dias = $scope.tarea.dias_ejecucion.split(","),
+			idx = dias.indexOf(String(key));
 		(idx > -1) ? dias.splice(idx, 1) : dias.push(key);
 		$scope.tarea.dias_ejecucion = dias.join(",");
 	};

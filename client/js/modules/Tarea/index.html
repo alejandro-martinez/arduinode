@@ -1,8 +1,7 @@
 <ul id="tareas">
 	<li ng-repeat="t in tareas">
 		<a ui-sref="editarTarea({ params: {{t}} })">{{t.descripcion}}
-		<span>{{(t.estado == 0) ? "Ejecutandose" : "Detenida"}}</span>
-		<span>{{(t.activa) ? "Activa" : "Inactiva"}}</span>
+		<span ng-class="activa{{t.activa}}">{{(t.activa) ? "Activa" : "Inactiva"}}</span>
 		</a>
 		<div class="timeIcon">
 			<a>Tarea</a>

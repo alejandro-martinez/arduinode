@@ -708,9 +708,13 @@ ul#tareas li {
 }
 ul#tareas li a span
 {
-    color:red;
+    color:green;
     float:right;
     margin-right:30px;
+}
+span.activatrue
+{
+    color:red;
 }
 ul#tareas li .timeIcon
 {
