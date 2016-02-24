@@ -175,8 +175,15 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 		var idx = dias.indexOf(key);
 		(idx > -1) ? dias.splice(idx, 1) : dias.push(key);
 		$scope.tarea.dias_ejecucion = dias.join(",");
-
 	};
+
+	$scope.addDispositivo = function()
+	{
+		var selects = $('div.dispositivo').html();
+
+
+
+	}
 }])
 
 

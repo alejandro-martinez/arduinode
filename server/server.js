@@ -56,7 +56,7 @@ http.listen(app.get('port'), function()
 				id_disp: 8
 			}
 			var sockets = [];
-			DataStore.currentFile.forEach(function(item, key)
+			DataStore.currentFile.forEach(function(item, key, array)
 			{
 				var salidas,
 				encendidas = [],
@@ -78,6 +78,10 @@ http.listen(app.get('port'), function()
 				});
 				sockets[key].on('error',function(_err)
 				{
+					if (key === array.length - 1){
+						socket.emit('salidasAux', []);
+					}
+
 					console.log("Error al conectarse a", item.ip);
 				});
 				sockets[key].on('end',function()
@@ -100,6 +104,7 @@ http.listen(app.get('port'), function()
 						item.buffer = "";
 						socket.emit('salidasAux', arduino.formatSalidas(params,encendidas));
 					}
+					console.log("Nada");
 				});
 			});
 		});
