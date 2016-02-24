@@ -4,7 +4,6 @@
 var express = require('express'),
 	app 	= express(),
 	fs		= require('fs'),
-	async	= require('async'),
 	compress = require('compression');
 	app.use(compress());
 	var http 	= require('http').Server(app),

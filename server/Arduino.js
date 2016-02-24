@@ -43,7 +43,7 @@ module.exports = function()
 		{
 			if (params.salidas.length > 0)
 			{
-				async.forEach(params.salidas, function iterator(s, callback)
+				params.salidas.forEach(function (s)
 				{
 					if (parseInt(s.nro_salida) == params.nro_salida)
 					{
@@ -52,11 +52,6 @@ module.exports = function()
 							return found(true);
 						}
 					}
-					callback(null, s);
-
-				}, function done()
-				{
-					return found(false);
 				});
 			}
 			else
