@@ -61,9 +61,10 @@ http.listen(app.get('port'), function()
 				id_disp: 8
 			}
 			var sockets = [];
-			DataStore.currentFile.forEach(function(item, key, array)
+			DataStore.currentFiles[0].forEach(function(item, key, array)
 			{
 				var salidas,
+				connectedSuccess = false,
 				encendidas = [],
 				params = {
 					noError: true,
@@ -74,7 +75,7 @@ http.listen(app.get('port'), function()
 				sockets[key] = new net.Socket();
 				sockets[key].connect(8000, item.ip, function(response)
 				{
-					item.connectSuccess = true;
+					connectedSuccess = true;
 					sockets[key].write('G')
 				})
 				sockets[key].on('data',function(_data)
@@ -96,7 +97,7 @@ http.listen(app.get('port'), function()
 					//Remueve el ultimo elemento porque viene vacio
 					item.buffer.pop();
 
-					if (item.buffer.length > 0 && item.connectSuccess)
+					if (item.buffer.length > 0 && connectedSuccess)
 					{
 						//Reccorro buscando los encendidos
 						item.buffer.forEach( function( i ) {
@@ -109,7 +110,6 @@ http.listen(app.get('port'), function()
 						item.buffer = "";
 						socket.emit('salidasAux', arduino.formatSalidas(params,encendidas));
 					}
-					console.log("Nada");
 				});
 			});
 		});

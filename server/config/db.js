@@ -33,14 +33,19 @@ module.exports = function(app, config)
 		getTareas: function()
 		{
 			var tareas = [];
-			this.currentFiles[1].forEach( function (tarea)
+			if (this.currentFiles[1])
 			{
-				console.log("It",tarea);
-				if (tarea)
+				this.currentFiles[1].forEach( function (tarea)
 				{
-					tareas.push(tarea);
-				}
-			} );
+					if (tarea)
+					{
+						tareas.push(tarea);
+					}
+				} );
+			}
+			else {
+				this.currentFiles[1] = [];
+			}
 			return tareas;
 		},
 		findDispositivo: function(key, value)
@@ -48,6 +53,13 @@ module.exports = function(app, config)
 			return this.currentFiles[0].filter(function(dispositivo)
 			{
 				return dispositivo[key] == value;
+			})
+		},
+		findTarea: function(id_tarea)
+		{
+			return this.currentFiles[1].filter(function(tarea)
+			{
+				return tarea.id_tarea == id_tarea;
 			})
 		},
 		updateDispositivo: function(_socket)
@@ -123,24 +135,21 @@ module.exports = function(app, config)
 			//Edito o creo tareas
 			if (model.id_tarea)
 			{
+				var tarea = this.findTarea(model.id_tarea);
 				//Tarea existente?
-				var tarea = this.currentFiles[1].filter(function(t)
-				{
-					if (t && t.id_tarea == model.id_tarea)
-					{
-						return This.replicateObj(model, t);
-					}
-				});
 
+				if (tarea.length > 0)
+				{
+					 tarea[0] = This.replicateObj(model, tarea[0]);
+				}
 				// NO! Nueva tarea
-				if (tarea.length == 0)
+				else
 				{
-					tarea.dispositivos = [];
-
 					var id_tarea = this.getNewIDTarea();
 						tarea = this.replicateObj(model, {});
 					tarea.id_tarea = id_tarea;
-					tareas.push ( tarea );
+					tarea.dispositivos = model.dispositivos;
+					this.currentFiles[1].push(tarea);
 				}
 				this.writeToJson(this.filesPaths.tareas, this.currentFiles[1],
 					function(err)

@@ -106,7 +106,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	$scope.getSwitchButton = function() { return SwitchButton.getTemplate() }
 	$scope.diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves',
 							'Viernes','Sabado','Domingo'];
-	var params = $params.params || { id_tarea: 9999, dias_ejecucion:"" };
+	var params = $params.params || { id_tarea: 9999, dias_ejecucion:"", dispositivos:[]};
 	$rootScope.currentMenu = (params.id_tarea != 9999) ? 'Edición de tareas' : 'Nueva tarea';
 	$scope.dispositivoSelected = {};
 	$scope.tarea = params;
@@ -167,15 +167,20 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	$('#horainicio').val($scope.tarea.hora_inicio)
 	$('#duracion').val($scope.tarea.duracion)
 
+	$scope.validateModel = function()
+	{
+		return true;
+	}
 	$scope.save = function()
 	{
-		console.log("form",$scope.tarea);
-		$scope.tarea.id_disp = $scope.dispositivoSelected.id_disp;
-		$scope.tarea.ip_dispositivo = $scope.dispositivoSelected.ip;
 		$scope.tarea.hora_inicio = $('#horainicio').val();
 		$scope.tarea.duracion = $('#duracion').val();
 		$scope.tarea.accion = 0;
-		Tarea.save( $scope.tarea, function(response){});
+
+		if ($scope.validateModel())
+		{
+			Tarea.save( $scope.tarea, function(response){});
+		}
 	}
 
 	$scope.deleteTarea = function()
@@ -183,10 +188,13 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 		Tarea.remove( $scope.tarea );
 	}
 
-	$scope.checkear_dia = function toggleSelection(key)
+	$scope.checkear_dia = function(key)
 	{
+		console.log("key",key);
 		var dias = $scope.tarea.dias_ejecucion.split(",")
-		var idx = dias.indexOf(key);
+		console.log("dias",dias);
+		var idx = dias.indexOf(String(key));
+		console.log("idx",idx);
 		(idx > -1) ? dias.splice(idx, 1) : dias.push(key);
 		$scope.tarea.dias_ejecucion = dias.join(",");
 	};
@@ -206,7 +214,13 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	//Remueve un dispositivo de la tarea
 	$scope.removeDispositivo = function(disp)
 	{
-		disp = null;
+		$scope.tarea.dispositivos.forEach(function(_disp, index)
+		{
+			if (_disp == disp)
+			{
+				$scope.tarea.dispositivos.splice(index,1);
+			}
+		})
 	}
 }])
 

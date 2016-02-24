@@ -1,5 +1,5 @@
 <div>
-	<form novalidate class="simple-form" name="tareaForm" ng-model="tarea">
+	<form validate class="simple-form" name="tareaForm" ng-model="tarea">
 		<div class="left">
 			<div class="dispositivosAdded">
 				<h5>Dispositivos vinculados</h5>
@@ -16,12 +16,14 @@
 				<select required id="dispositivo_slt"
 				ng-options="disp as disp.note for disp in dispositivos"
 				ng-change="changeDispositivo()"
+				required
 				ng-model="dispositivoSelected" name="dispositivo_id">
 				</select>
 				</label>
 				<div>
 					<label>Salidas<br>
 					<select ng-options="salida.nro_salida as salida.note for salida in salidas"
+					required
 					ng-model="tarea.nro_salida"></select>
 					</label>
 				</div>
@@ -30,7 +32,7 @@
 
 			<div>
 				<label>Descripción de la Tarea<br>
-					<textarea ng-model="tarea.descripcion"></textarea>
+					<textarea required ng-model="tarea.descripcion"></textarea>
 				</label>
 			</div>
 			<label>Activa<br>
@@ -52,17 +54,18 @@
 					<input
 						type="checkbox"
 						value="{{key}}"
+						required
 						ng-checked="tarea.dias_ejecucion.indexOf(key) > -1"
 						ng-click="checkear_dia(key)">
 					</label>
 				</div>
 				<label>Fecha fin<br>
 					<datepicker date-format="yyyy-MM-dd">
-						<input readonly type="text" ng-model="tarea.fecha_fin" name="fechafin" />
+						<input required readonly type="text" ng-model="tarea.fecha_fin" name="fechafin" />
 					</datepicker>
 				</label>
 				<label>Duración<br>
-					<input type="text" class="clockpicker" id="duracion"	readonly value="{{duracion}}" />
+					<input required type="text" class="clockpicker" id="duracion"	readonly value="{{duracion}}" />
 				</label>
 			</div>
 		</div>

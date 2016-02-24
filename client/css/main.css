@@ -716,6 +716,20 @@ ul#tareas li .timeIcon
 {
     top:6px;
 }
+div.dispositivosAdded ul
+{
+    margin-left:10px;
+}
+div.dispositivosAdded ul li
+{
+    margin-bottom:10px;
+}
+div.dispositivosAdded ul li a
+{
+    float:right;
+    color:red;
+    font-weight:bold;
+}
 /*DatePicker fix*/
 
 ._720kb-datepicker-calendar {

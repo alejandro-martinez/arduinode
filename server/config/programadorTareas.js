@@ -99,9 +99,8 @@ var Programador = function()
 		};
 		this.importar = function()
 		{
-			var This = this;
-			This.tareas = DataStore.getTareas();
-			This.cargarEnScheduler();
+			this.tareas = DataStore.getTareas();
+			this.cargarEnScheduler();
 		};
 		this.checkValidez = function(config)
 		{
@@ -124,8 +123,6 @@ var Programador = function()
 			{
 					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.raw_hora_inicio),
 					tiempo_restante = DateConvert.horario_a_min(t.temporizada) - tiempo_desde_inicio;
-					console.log("Tiempo desde inicio de tarea:",t.descripcion,":",tiempo_desde_inicio,"min");
-					console.log("Duracion de ",t.descripcion,DateConvert.horario_a_min(t.temporizada),"min");
 					console.log("Tiempo restante de ",t.descripcion,tiempo_restante,"min");
 					t.estado = 0;
 					t.temporizada = tiempo_restante;
@@ -138,7 +135,6 @@ var Programador = function()
 		};
 		this.ejecutarTarea = function(params)
 		{
-			console.log("paramstarea",params);
 			params.dispositivos.forEach(function(d)
 			{
 				d.noError = true;
