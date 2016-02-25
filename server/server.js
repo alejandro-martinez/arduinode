@@ -27,7 +27,6 @@ http.listen(app.get('port'), function()
 
 		DataStore.getFile('tareas',function()
 		{
-			//Carga tareas en scheduler
 			programadorTareas.importar();
 		});
 
@@ -55,11 +54,6 @@ http.listen(app.get('port'), function()
 		socket.on('getSalidasActivas', function()
 		{
 			this.salidasAux = [];
-			var params = {
-				noError: true,
-				ip: '192.168.20.8',
-				id_disp: 8
-			}
 			var sockets = [];
 			DataStore.currentFiles[0].forEach(function(item, key, array)
 			{

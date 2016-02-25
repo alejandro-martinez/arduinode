@@ -138,7 +138,7 @@ var Programador = function()
 			params.dispositivos.forEach(function(d)
 			{
 				d.noError = true;
-				d.estado = params.accion;
+				d.estado = params.estado || 0;
 				d.temporizada = params.temporizada;
 
 				socketArduino.switchSalida(d, function(response)

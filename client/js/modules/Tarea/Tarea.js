@@ -121,7 +121,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 				});
 			})
 		$scope.dispositivos = dispositivos;
-
 	});
 	$scope.loadSelect = function()
 	{
