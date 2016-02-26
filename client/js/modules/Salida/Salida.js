@@ -94,6 +94,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		{
 			$http.post('/salida/save/', salida).then(function(response)
 			{
+				localStorage.removeItem('dispositivos');
 				callback(response.data || response);
 			}, function(error)
 			{

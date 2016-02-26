@@ -32,13 +32,23 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 	var Dispositivo = {
 		getAll: function(callback)
 		{
-			$http.get('/dispositivo/').then(function(response)
+			if (localStorage.getItem('dispositivos'))
 			{
-				callback(response.data || response);
-			}, function(error)
+				console.log("from cache");
+				callback(JSON.parse(localStorage.getItem("dispositivos")));
+			}
+			else
 			{
-				callback(error)
-			});
+				$http.get('/dispositivo/').then(function(response)
+				{
+					localStorage.setItem('dispositivos',JSON.stringify(response.data));
+
+					callback(response.data || response);
+				}, function(error)
+				{
+					callback(error)
+				});
+			}
 		},
 		get: function(id, callback)
 		{

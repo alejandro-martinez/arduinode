@@ -172,7 +172,8 @@ textarea,
 select {
     margin-top: 5px;
     border-radius: 2px;
-    padding: 5px;
+    width: 100%;
+    padding: 3px;
 }
 .simple-form {} .simple-form .ng-invalid {
     border: 1px solid red;

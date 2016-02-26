@@ -8,11 +8,9 @@ var Programador = function()
 		this.tareas = [];
 		this.reprogramarTarea = function(_tareaOld)
 		{
-			_tareaOld.dispositivos
-			this.findTarea(_tareaOld.id_tarea);
-
-			this.apagarTarea(_tarea.id_tarea);
-			this.quitarTarea(_tarea.id_tarea);
+			this.getTarea(_tareaOld.id_tarea);
+			this.apagarTarea(_tareaOld);
+			this.quitarTarea(_tareaOld.id_tarea);
 			this.importar();
 		};
 		this.findDeletedDispositivo = function(_tareaOld)
@@ -142,25 +140,26 @@ var Programador = function()
 		};
 		this.ejecutarTarea = function(params)
 		{
-			params.dispositivos.forEach(function(d)
+			if (params.hasOwnProperty('dispositivos'))
 			{
-				d.noError = true;
-				d.estado = params.estado || 0;
-				d.temporizada = params.temporizada;
-
-				socketArduino.switchSalida(d, function(response)
+				params.dispositivos.forEach(function(d)
 				{
-					if (response === null)
-						console.log("ERROR: No se puede llegar a:",d.ip);
+					d.noError = true;
+					d.estado = params.estado || 0;
+					d.temporizada = params.temporizada;
+
+					socketArduino.switchSalida(d, function(response)
+					{
+						if (response === null)
+							console.log("ERROR: No se puede llegar a:",d.ip);
+					})
 				})
-			})
+			}
 		};
-		this.apagarTarea = function(id_tarea)
+		this.apagarTarea = function(tarea)
 		{
-			var _tarea = this.getTarea(id_tarea)[0];
-			_tarea.estado = 1;
-			console.log("dispositivos",_tarea.dispositivos);
-			this.ejecutarTarea(_tarea);
+			tarea.estado = 1;
+			this.ejecutarTarea(tarea);
 		};
 		this.cargarEnScheduler = function()
 		{
