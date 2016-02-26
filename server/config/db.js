@@ -141,7 +141,8 @@ module.exports = function(app, config)
 
 				if (tarea.length > 0)
 				{
-					 tarea[0] = This.replicateObj(model, tarea[0]);
+					var dispositivosOrig = JSON.parse(JSON.stringify(tarea[0]));
+					tarea[0] = This.replicateObj(model, tarea[0]);
 				}
 				// NO! Nueva tarea
 				else
@@ -155,7 +156,11 @@ module.exports = function(app, config)
 				this.writeToJson(this.filesPaths.tareas, this.currentFiles[1],
 					function(err)
 					{
-						callback(err, tarea[0]);
+						params = {
+							tarea: tarea[0],
+							dispositivosOrig: dispositivosOrig
+						}
+						callback(err, params);
 					}
 				);
 			}

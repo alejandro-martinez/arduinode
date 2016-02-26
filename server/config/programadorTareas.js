@@ -6,16 +6,23 @@ var socketArduino = require('../Arduino')(),
 var Programador = function()
 {
 		this.tareas = [];
-		this.reprogramarTarea = function(_tarea)
+		this.reprogramarTarea = function(_tareaOld)
 		{
-			console.log("Reprogramando tarea",_tarea)
-			//Busco la tarea,
+			_tareaOld.dispositivos
+			this.findTarea(_tareaOld.id_tarea);
+
+			this.apagarTarea(_tarea.id_tarea);
 			this.quitarTarea(_tarea.id_tarea);
-			console.log("Ejecutando",_tarea.descripcion," con accion de apagado");
-			//y ejecuto la accion de apagado
-			_tarea.estado = 1;
-			this.ejecutarTarea(_tarea);
 			this.importar();
+		};
+		this.findDeletedDispositivo = function(_tareaOld)
+		{
+			/*b.forEach(function(d)
+			{
+				_tareaOld.dispositivos.map(function(s){
+					console.log(s.a == d.a)
+				})
+			});*/
 		};
 		this.quitarTarea = function(id_tarea)
 		{
@@ -148,11 +155,19 @@ var Programador = function()
 				})
 			})
 		};
+		this.apagarTarea = function(id_tarea)
+		{
+			var _tarea = this.getTarea(id_tarea)[0];
+			_tarea.estado = 1;
+			console.log("dispositivos",_tarea.dispositivos);
+			this.ejecutarTarea(_tarea);
+		};
 		this.cargarEnScheduler = function()
 		{
 			var This = this;
 			this.tareas.forEach(function(t)
 			{
+				This.apagarTarea(t.id_tarea);
 				console.log("Importando ",This.tareas.length, " tarea/s");
 				//Armo la config de la tarea y Creo la tarea
 				var configTarea = This.parseConfig(t);

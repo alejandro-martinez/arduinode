@@ -10,7 +10,7 @@ module.exports = function(app)
 	//Crea o modifica tareas
 	app.post('/tarea/save', function(req, res)
 	{
-		DataStore.saveTarea(req.body, function(response, tarea)
+		DataStore.saveTarea(req.body, function(response, params)
 		{
 			if (req.body.id_tarea === 9999)
 			{
@@ -18,7 +18,7 @@ module.exports = function(app)
 			}
 			else
 			{
-				programadorTareas.reprogramarTarea(tarea);
+				programadorTareas.reprogramarTarea(params);
 			}
 			res.json(response);
 		});
@@ -30,7 +30,7 @@ module.exports = function(app)
 		DataStore.deleteTarea(req.body,
 		function(response)
 		{
-			programadorTareas.importar();
+			programadorTareas.apagarTarea(req.body.id_tarea);
 			res.json(response);
 		});
 	});
