@@ -103,6 +103,16 @@ module.exports = function()
 				minutos = this.horario_a_min(minutos);
 			return this.min_a_horario(minHoraActual + minutos);
 		},
+		horario_a_ms: function(horario)
+		{
+			if (horario.length == 5)
+			{
+				var hs = parseInt( horario.substr(0,2) );
+				var min = parseInt( horario.substr(-2) );
+				console.log("horas",hs,"Min",min,( (hs * 60) + min ) * 60000);
+				return  ( (hs * 60) + min ) * 60000;
+			}
+		},
 		//Suma 2 horarios HH:MM y retorna la suma en minutos
 		sumarHoras: function(hora1, hora2)
 		{

@@ -2,6 +2,8 @@
 	<li ng-repeat="t in tareas">
 		<a ui-sref="editarTarea({ params: {{t}} })">{{t.descripcion}}
 		<span ng-class="activa{{t.activa}}">{{(t.activa) ? "Activa" : "Inactiva"}}</span>
+		<span ng-class="horafin">Duración: {{t.duracion}}
+		Finaliza: {{t.hora_fin | date:'HH:mm'}}</span>
 		</a>
 	</li>
 </ul>

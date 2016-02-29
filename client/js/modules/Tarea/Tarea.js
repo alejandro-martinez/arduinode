@@ -93,6 +93,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	Tarea.getAll(function(tareas)
 	{
 		$scope.tareas = tareas;
+
 	})
 }])
 .controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',
@@ -112,6 +113,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	{
 			dispositivos.forEach(function(j)
 			{
+
 				$scope.tarea.dispositivos.forEach(function(e)
 				{
 					if (j.ip == e.ip)
@@ -140,8 +142,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 				return e;
 			}
 		});
-
 	}
+
 	$scope.tarea = params;
 	$('.clockpicker').clockpicker({ autoclose: true });
 	$('#horainicio').val($scope.tarea.hora_inicio)
@@ -151,6 +153,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	{
 		return true;
 	}
+
 	$scope.save = function()
 	{
 		$scope.tarea.hora_inicio = $('#horainicio').val();
