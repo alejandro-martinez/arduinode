@@ -254,6 +254,8 @@ input.clockpicker.estados
     text-align: center;
     width: 83px;
     position: fixed;
+    z-index: 9099999;
+    height: 20px;
 }
 ul#estados {
     margin-top: 41px;
