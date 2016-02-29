@@ -116,22 +116,6 @@ angular.module('Arduinode.Salida',['Socket'])
 	}
 	return Factory;
 }])
-.factory('CombineRequestsFct', ['$http', function($http)
-{
-	var Request =
-	{
-		getDispositivoAndSalida: function(params, callback){
-			$http.post('/mediator/dispositivoAndSalida/',params).then(function(response)
-			{
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
-			});
-		}
-	}
-	return Request;
-}])
 .controller('SalidaCtrl', ['$stateParams','SwitchButton','SalidaConfig','$rootScope',
 			'ngDialog','DispositivoFct','$scope','SalidaFct',
 	function (params,SwitchButton,config,$rootScope, Popup,Dispositivo,
@@ -161,7 +145,7 @@ angular.module('Arduinode.Salida',['Socket'])
 	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup,
 			  $scope, Salida)
 	{
-		$('.clockpicker').clockpicker({donetext: 'OK'});
+		$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {};
 		$scope.salida = {};
 		$rootScope.loading = true;
