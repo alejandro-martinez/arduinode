@@ -4,7 +4,7 @@
 		<input type="hidden" name="y" ng-model="ngDialogData.y" />
 		<input type="hidden" name="id_planta" ng-model="ngDialogData.id_planta" />
 		<input type="hidden" name="tipo" ng-model="ngDialogData.tipo" />
-		<h3>{{(editing) ? "Modificar salida" : "Nueva salida" }}</h3>
+		<h3>{{(editing) ? "Modificar salida {{salida.nro_salida}}  : "Nueva salida" }}</h3>
 
 	    <div ng-show="{{!salida.nro_salida && showDispositivos}}">
 			<label>Dispositivo<br>
