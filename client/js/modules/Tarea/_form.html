@@ -41,11 +41,25 @@
 		</div>
 		<div class="left">
 			<div class="tarea">
-				<label>Fecha inicio<br>
-					<datepicker date-format="yyyy-MM-dd">
-						<input readonly type="text" ng-model="tarea.fecha_inicio" name="fechainicio" />
-					</datepicker>
+				<label class="fechaPicker">Fecha inicio
+					<label>
+						<select id="dia_inicio">
+							<option ng-selected="{{dia == tarea.dia_inicio}}"
+									ng-repeat="dia in dias"
+									value="{{dia}}">
+									{{dia}}
+							</option>
+						</select>
+						<select id="mes_inicio">
+							<option  ng-selected="{{mes == tarea.mes_inicio}}"
+									ng-repeat="mes in meses"
+									value="{{mes}}">
+									{{mesesTxt[mes]}}
+							</option>
+						</select>
+					</label>
 				</label>
+				<br>
 				<label>Hora inicio<br>
 					<input type="text" class="clockpicker" id="horainicio" readonly value="{{hora_inicio}}" readonly />
 				</label>
@@ -59,14 +73,29 @@
 						ng-click="checkear_dia(key)">
 					</label>
 				</div>
-				<label>Fecha fin<br>
-					<datepicker date-format="yyyy-MM-dd">
-						<input required readonly type="text" ng-model="tarea.fecha_fin" name="fechafin" />
-					</datepicker>
+				<label class="fechaPicker">Fecha fin
+					<label>
+						<select ng-model="tarea.dia_fin">
+							<option ng-selected="{{dia == tarea.dia_fin}}"
+									ng-repeat="dia in dias"
+									value="{{dia}}">
+									{{dia}}
+							</option>
+						</select>
+						<select ng-model="tarea.mes_fin">
+							<option ng-selected="{{mes == tarea.mes_fin}}"
+									ng-repeat="mes in meses"
+									value="{{mes}}">
+									{{mesesTxt[mes]}}
+							</option>
+						</select>
+					</label>
 				</label>
+				<br>
 				<label>Duración<br>
-					<input required type="text" class="clockpicker" id="duracion"	readonly value="{{duracion}}" />
-				</label>
+					<input required type="text" class="clockpicker" id="duracion"
+					readonly value="{{duracion}}" />
+					<span>Finaliza: {{tarea.hora_fin | date: 'HH:mm'}}</span></label>
 			</div>
 		</div>
 	    <ul class="inlineButtons actionsPopup">

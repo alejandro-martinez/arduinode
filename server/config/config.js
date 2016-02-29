@@ -20,5 +20,6 @@ module.exports.config = function( app, express) {
 	app.use(bodyParser.urlencoded({ extended: true }));
 	//app.use(minify());
 	//Entrega los archivos de tipo css, jss, jpg, etc
-	app.use(express.static('../client', { maxAge: 86400000 * 365 }));
+	var cache = { maxAge: 86400000 * 365 }
+	app.use(express.static('../client', cache));
 };

@@ -575,6 +575,15 @@ a#home
 }
 /* Vista Estados, icono Programacion Salida */
 /*TAREAS*/
+.dispositivo select
+{
+    width:70%;
+}
+.fechaPicker select
+{
+    float:left;
+    width:50%;
+}
 div.dispositivo > label
 {
     float:left;
@@ -583,17 +592,22 @@ div.dispositivo > label
 }
 div.dispositivo > a
 {
-    font-size:20px;
+    font-size: 38px;
     float:right;
-    margin-top:-35px;
+    position: absolute;
+    margin-top: -43px;
     font-weight:bold;
+    right: 6px;
 }
 ul#tareas li {
     border: 1px solid #ccc;
     padding: 10px;
     position: relative;
 }
-
+form #duracion
+{
+    width: 100px !important;
+}
 #estados > li {
     position: relative;
     height: 4em;

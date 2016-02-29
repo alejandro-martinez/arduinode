@@ -104,16 +104,38 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 	$scope.getSwitchButton = function() { return SwitchButton.getTemplate() }
 	$scope.diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves',
 							'Viernes','Sabado','Domingo'];
-	var params = $params.params || { id_tarea: 9999, dias_ejecucion:"", dispositivos:[]};
+
+	$scope.mesesTxt = ["Enero", "Febrero", "Marzo", "Abril",
+					   "Mayo", "Junio", "Julio","Agosto", "Septiembre",
+					   "Octubre", "Noviembre", "Diciembre"];
+	var def_model = {
+		id_tarea: 9999,
+		dias_ejecucion:"",
+		dispositivos:[],
+		fecha_inicio: "",
+		fecha_fin: ""
+	}
+
+	var params = $params.params || def_model;
+
 	$rootScope.currentMenu = (params.id_tarea != 9999) ? 'Edición de tareas' : 'Nueva tarea';
 	$scope.dispositivoSelected = {};
 	$scope.tarea = params;
+	$scope.dias = [];
+	$scope.meses = [];
 
+	for (i = 1; i < 32; i++)
+	{
+		$scope.dias.push(i);
+		if (i < 13)
+		{
+			$scope.meses.push(i - 1);
+		}
+	}
 	Dispositivo.getAll(function(dispositivos)
 	{
 			dispositivos.forEach(function(j)
 			{
-
 				$scope.tarea.dispositivos.forEach(function(e)
 				{
 					if (j.ip == e.ip)
@@ -156,6 +178,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 
 	$scope.save = function()
 	{
+		$scope.tarea.dia_inicio = $('#dia_inicio').val();
+		$scope.tarea.mes_inicio = $('#mes_inicio').val();
 		$scope.tarea.hora_inicio = $('#horainicio').val();
 		$scope.tarea.duracion = $('#duracion').val();
 		$scope.tarea.accion = 0;
