@@ -74,7 +74,7 @@ module.exports = function(app, config)
 				return tarea.id_tarea == id_tarea;
 			})
 		},
-		updateDispositivo: function(_socket)
+		updateDispositivo: function()
 		{
 			this.currentFiles[0].forEach( function (j)
 			{
@@ -84,7 +84,7 @@ module.exports = function(app, config)
 					s.estado = null;
 					s.temporizada = null;
 				});
-			} );
+			});
 		},
 		getNextID: function(dispositivo, tabla)
 		{
@@ -122,11 +122,11 @@ module.exports = function(app, config)
 		},
 		saveDispositivo: function(model, callback)
 		{
-
 			var This = this;
 			var dispositivo = this.findDispositivo('id_disp',model.id_disp);
-			if (dispositivo.length > 0)
+			if (dispositivo.length > 0 || dispositivo)
 			{
+				dispositivo[0].note = model.note;
 				var salida = dispositivo[0].salidas.filter(function(s)
 				{
 					if (s.nro_salida == model.nro_salida)

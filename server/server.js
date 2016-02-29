@@ -86,6 +86,7 @@ http.listen(app.get('port'), function()
 				});
 				sockets[key].on('end',function()
 				{
+					console.log("End");
 					//Transformo el buffer en un aray
 					item.buffer = item.buffer.split('\r\n');
 					//Remueve el ultimo elemento porque viene vacio
