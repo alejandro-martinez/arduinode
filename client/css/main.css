@@ -205,7 +205,7 @@ ul.actions li {
     margin-right: 10px;
 }
 ul.actionsPopup {
-    /* position:absolute; */
+    float: left;
 
     bottom: 10px;
     right: 10px;

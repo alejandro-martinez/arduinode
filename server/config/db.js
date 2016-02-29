@@ -48,11 +48,8 @@ module.exports = function(app, config)
 												tarea.hora_inicio.substr(-2));
 
 						var duracion_ms = DateConvert.horario_a_ms( tarea.duracion );
-
 						var suma = duracion_ms + hora_inicio.getTime();
-						
 						tarea.hora_fin = new Date(suma);
-
 						tareas.push(tarea);
 					}
 				} );

@@ -109,7 +109,6 @@ module.exports = function()
 			{
 				var hs = parseInt( horario.substr(0,2) );
 				var min = parseInt( horario.substr(-2) );
-				console.log("horas",hs,"Min",min,( (hs * 60) + min ) * 60000);
 				return  ( (hs * 60) + min ) * 60000;
 			}
 		},
@@ -122,7 +121,6 @@ module.exports = function()
 		},
 		mayorAHoraActual: function(min)
 		{
-
 			var hora_actual_min = this.horario_a_min(this.horarioEnHHMM())
 			return min > hora_actual_min;
 		},
