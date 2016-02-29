@@ -246,6 +246,11 @@ ul.inlineButtons .button {
     text-align: center;
 }
 /*CasaCtrl HOME*/
+/*DISPOSITIVOS*/
+#content table td
+{
+    width:120%;
+}
 /* ABM Dispositivos */
 /* ABM Dispositivos */
 /*Estados salidas*/
