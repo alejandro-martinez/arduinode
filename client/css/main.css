@@ -206,9 +206,12 @@ ul.actions li {
 }
 ul.actionsPopup {
     float: left;
-
     bottom: 10px;
     right: 10px;
+}
+.ngdialog ul
+{
+    float:none;
 }
 /*CasaCtrl HOME*/
 
@@ -254,7 +257,7 @@ input.clockpicker.estados
     text-align: center;
     width: 83px;
     position: fixed;
-    z-index: 9099999;
+    z-index: 10000;
     height: 20px;
 }
 ul#estados {
