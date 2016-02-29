@@ -150,7 +150,6 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.salida = {};
 		$rootScope.loading = true;
 		$rootScope.currentMenu = 'Salidas de: ' + params.note;
-
 		$scope.ipDispositivo = params.ip;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$scope.showDescripcion = $scope.editing = true;
@@ -186,7 +185,6 @@ angular.module('Arduinode.Salida',['Socket'])
 
 			Salida.switchSalida( data, function(_estado)
 			{
-				$('.clockpicker').val("");
 				data.estado = _estado;
 				$scope.updateSalida(data);
 			});

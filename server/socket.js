@@ -52,7 +52,6 @@ module.exports = function()
 					This.socketClient.emit('Error', This.errors[err.code]);
 				}
 			})
-
 		},
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
@@ -66,7 +65,6 @@ module.exports = function()
 					This.data = "";
 					if (response == 1)
 					{
-						console.log("Comando",params.command);
 						socket.write(params.command);
 						socket.on('data', function(_data)
 						{
