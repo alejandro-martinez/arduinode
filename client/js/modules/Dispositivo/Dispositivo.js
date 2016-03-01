@@ -62,14 +62,8 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		{
 			$http.get('/dispositivo/delete/'+id).then(function(response)
 			{
-				if (response.data && response.data.res === 1)
-				{
-					Popup.open({
-						template:'<h1>Se eliminó el dispositivo</h1>',
-						plain:true
-					});
-					$state.go('dispositivos');
-				}
+				localStorage.removeItem('dispositivos');
+				$state.go('dispositivos');
 			}, function(error)
 			{
 				if (response.data)

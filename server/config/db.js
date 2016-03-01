@@ -117,6 +117,24 @@ module.exports = function(app, config)
 				}
 			)
 		},
+		deleteDispositivo: function(params, callback)
+		{
+			var dispositivo = this.currentFiles[0].forEach(function(disp,key)
+			{
+				if (disp.id_disp == params.id_disp)
+				{
+					return key;
+				}
+			})
+			this.currentFiles[0].splice(dispositivo, 1);
+
+			this.writeToJson(this.filesPaths.dispositivos, this.currentFiles[0],
+				function(err)
+				{
+					callback(err)
+				}
+			)
+		},
 		getNewIDTarea: function()
 		{
 			var tareas = this.getTareas();

@@ -1,4 +1,4 @@
-angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','720kb.datepicker'])
+angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 .config(function( $stateProvider, $urlRouterProvider )
 {
 	$stateProvider

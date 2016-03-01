@@ -5,27 +5,14 @@
 		<!--Previene request de favicon-->
 		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 		<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1">
-		
 		<link rel="stylesheet" href="css/main.css" media="all">
 		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog.min.css" media="all">
-		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css" media="all">
-		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-plain.min.css" media="all">
-		<link rel="stylesheet" href="bower_components/angularjs-datepicker/dist/angular-datepicker.min.css" media="all">
-		<link rel="stylesheet" href="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.css" media="all" >
-
-		<script type="text/javascript" src="libs/jquery/jquery.js"></script>
-		<script type="text/javascript" src="libs/jquery/jquery-ui.js"></script>
-		<script type="text/javascript" src="libs/jquery.fs.zoetrope.min.js"></script>
-		<script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.min.js"></script>
-		<script type="text/javascript" src="libs/toe.min.js"></script>
-		<script type="text/javascript" src="libs/jquery.mousewheel.min.js"></script>
-		<script type="text/javascript" src="libs/imgViewer.min.js"></script>
-		<script type="text/javascript" src="libs/imgNotes.js"></script>
-		<script src="bower_components/socket.io-client/socket.io.js"></script>
+	<!--	<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css" media="all">
+		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-plain.min.css" media="all">-->
+		<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+		<link rel="stylesheet" href="bower_components/clockpicker/dist/bootstrap-clockpicker.min.css"></script>
 		<script src="bower_components/angular/angular.min.js"></script>
 		<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-		<script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
-		<script src="bower_components/ng-file-upload/ng-file-upload-all.min.js"></script>
 		<script src="js/modules/app.js"></script>
 		<script src="js/modules/Socket/Socket.js"></script>
 		<script src="js/modules/Salida/Salida.js"></script>
@@ -45,17 +32,10 @@
 		</div>
 		<div id="content" ui-view></div>
 		<div ng-if="loading" id="loadingDiv"></div>
-		<script src="bower_components/angularjs-datepicker/dist/angular-datepicker.min.js"></script>
 		<script src="bower_components/angular-touch/angular-touch.min.js"></script>
-		<script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
+		<script type="text/javascript" src="bower_components/clockpicker/dist/bootstrap-clockpicker.min.js"></script>
 		<script src='bower_components/fastclick/lib/fastclick.js'></script>
+		<script src="bower_components/socket.io-client/socket.io.js"></script>
+		<script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
 	</body>
-	<script>
-		mostrar = function()
-		{
-		console.log("m");
-			$('.clockpicker').trigger('click');
-			$('.clockpicker').clockpicker('show');
-		}
-	</script>
 </html>

@@ -29,6 +29,8 @@
     "angular-ui-router": "~0.2.15",
     "ng-file-upload": "~11.1.1",
     "angularjs-datepicker": "~0.2.16",
-    "fastclick": "~1.0.6"
+    "fastclick": "~1.0.6",
+    "clockpicker": "~0.0.7",
+    "jquery": "~2.2.1"
   }
 }

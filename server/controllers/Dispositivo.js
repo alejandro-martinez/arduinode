@@ -20,4 +20,13 @@ module.exports = function(app)
 			res.json(err)
 		});
 	});
+
+		//Crea o modifica dispositivos
+	app.get('/dispositivo/delete/:id_disp', function(req, res)
+	{
+		DataStore.deleteDispositivo(req.params.id_disp, function(err, file)
+		{
+			res.json(err)
+		});
+	});
 }
