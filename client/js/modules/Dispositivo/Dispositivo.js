@@ -112,8 +112,9 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		})
 	}
 ])
-.controller('DispositivoFormCtrl', ['$stateParams','$scope','SocketIO','DispositivoFct',
-	function ($params, $scope, Socket, Dispositivo)
+.controller('DispositivoFormCtrl', ['$stateParams','$scope',
+			'SocketIO','DispositivoFct','ngDialog',
+	function ($params, $scope, Socket, Dispositivo, Popup)
 	{
 		var params = $params.params;
 		$scope.model = {};
@@ -134,7 +135,11 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 
 		$scope.delete = function(id)
 		{
-			Dispositivo.remove(id);
+			Popup.openConfirm({
+				template: "js/modules/Dispositivo/confirm_popup.html",
+			}).then(function (success) {
+				Dispositivo.remove(id);
+			});
 		}
 	}
 ])
