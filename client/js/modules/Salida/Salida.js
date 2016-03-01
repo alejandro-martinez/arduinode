@@ -148,7 +148,6 @@ angular.module('Arduinode.Salida',['Socket'])
 		$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {};
 		$scope.salida = {};
-		$rootScope.loading = true;
 		$rootScope.currentMenu = 'Salidas de: ' + params.note;
 		$scope.ipDispositivo = params.ip;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
@@ -226,14 +225,11 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.refreshLucesEncendidas = function()
 		{
 			$scope.salidas = [];
-			$rootScope.loading = true;
 			$rootScope.currentMenu = "Luces encendidas";
 			Salida.getSalidasActivas(function(salida)
 			{
-				$rootScope.loading = false;
 				if (salida.length > 0)
 				{
-					console.log(salida);
 					$scope.salidas = $scope.salidas.concat(salida);
 				}
 				$scope.$apply();
@@ -242,7 +238,6 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		$scope.refreshEstados = function()
 		{
-			$rootScope.loading = true;
 			Salida.getSalidasArduino(
 			{
 				ip		: $scope.ipDispositivo,
@@ -250,7 +245,6 @@ angular.module('Arduinode.Salida',['Socket'])
 			},
 			function(data)
 			{
-				$rootScope.loading = false;
 				$scope.ipDispositivo = data.ip;
 				$scope.salidas = data.salidas;
 				$scope.$apply();

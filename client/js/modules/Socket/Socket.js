@@ -27,6 +27,7 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 	return {
 		send: function(param, _data)
 		{
+			$rootScope.loading = true;
 			$rootScope.socket.emit(param, _data || {});
 		},
 		listen: function(param, callback)
@@ -35,6 +36,7 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 
 			$rootScope.socket.on(param, function(data)
 			{
+				$rootScope.loading = false;
 				callback(data);
 			});
 		}

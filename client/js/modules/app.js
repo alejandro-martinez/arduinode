@@ -12,10 +12,14 @@ angular.module('Arduinode',
 ])
 .controller('MainCtrl', ['$state','$rootScope', function ($state, $rootScope )
 {
+	localStorage.clear();
 	$rootScope.currentMenu = 'Home';
 	$rootScope.previousState;
 	$rootScope.currentState;
-	$rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
+
+	$rootScope.$on('$stateChangeSuccess',
+	function(ev, to, toParams, from, fromParams)
+	{
 		$rootScope.previousState = from.name;
 		$rootScope.currentState = to.name;
 	});

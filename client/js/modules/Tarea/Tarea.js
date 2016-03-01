@@ -71,7 +71,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida','72
 				}
 				else
 				{
-					localStorage.removeItem('dispositivos');
+					localStorage.removeItem('tareas');
 					$state.go('tareas');
 				}
 			}, function(error)

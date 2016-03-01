@@ -34,7 +34,6 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		{
 			if (localStorage.getItem('dispositivos'))
 			{
-				console.log("Getting dispositivos from cache");
 				callback(JSON.parse(localStorage.getItem("dispositivos")));
 			}
 			else
@@ -42,7 +41,6 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				$http.get('/dispositivo/').then(function(response)
 				{
 					localStorage.setItem('dispositivos',JSON.stringify(response.data));
-
 					callback(response.data || response);
 				}, function(error)
 				{
@@ -96,7 +94,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				}
 				else
 				{
-					localStorage.clear();
+					localStorage.removeItem('dispositivos');
 					$state.go('dispositivos');
 				}
 			}, function(error)
