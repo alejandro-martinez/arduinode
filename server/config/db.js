@@ -19,14 +19,23 @@ module.exports = function(app, config)
 		reader: require('jsonfile'),
 		getFile: function(file, callback)
 		{
-			var This = this;
+			var self = this;
+
 			this.reader.readFile( app.get('modelsPath') + file + '.json',
 				function(err, obj)
 				{
-					if (!err)
+					var This = this;
+					This.file = obj;
+					if (err)
 					{
-						This.currentFiles.push(obj);
+						//Si el archivo no existe lo creo
+						self.reader.writeFile(app.get('modelsPath') + file + '.json',[],
+						function (err, obj)
+						{
+							This.file = obj;
+						});
 					}
+					self.currentFiles.push(obj || []);
 					callback(err, obj);
 				}
 			);
