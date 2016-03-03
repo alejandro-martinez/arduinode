@@ -88,11 +88,14 @@ module.exports = function(app, config)
 			this.currentFiles[0].forEach( function (j)
 			{
 				j.buffer = "";
-				j.salidas.forEach( function( s ){
-					s.ip = j.ip;
-					s.estado = null;
-					s.temporizada = null;
-				});
+				if (j.salidas)
+				{
+					j.salidas.forEach( function( s ){
+						s.ip = j.ip;
+						s.estado = null;
+						s.temporizada = null;
+					});
+				}
 			});
 		},
 		getNextID: function(dispositivo, tabla)
@@ -151,7 +154,8 @@ module.exports = function(app, config)
 		{
 			var This = this;
 			var dispositivo = this.findDispositivo('id_disp',model.id_disp);
-			if (dispositivo.length > 0 || dispositivo)
+
+			if (dispositivo.length > 0 && model.hasOwnProperty('id_disp'))
 			{
 				dispositivo[0].note = model.note;
 				var salida = dispositivo[0].salidas.filter(function(s)
@@ -161,13 +165,22 @@ module.exports = function(app, config)
 						s.note = model.note;
 					}
 				});
-				this.writeToJson(this.filesPaths.dispositivos, this.currentFiles[0],
-					function(err)
-					{
-						callback(err)
-					}
-				)
 			}
+			else
+			{
+				var dispositivo = {
+					id_disp: Math.floor(Math.random() * (154874 - 50)) + 50,					note: model.note,
+					ip: model.ip,
+					salidas:[]
+				}
+				this.currentFiles[0].push(dispositivo);
+			}
+			this.writeToJson(this.filesPaths.dispositivos, this.currentFiles[0],
+				function(err)
+				{
+					callback(err)
+				}
+			)
 		},
 		saveTarea: function(model, callback)
 		{
