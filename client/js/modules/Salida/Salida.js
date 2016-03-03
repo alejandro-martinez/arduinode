@@ -193,7 +193,8 @@ angular.module('Arduinode.Salida',['Socket'])
 		{
 			$scope.salidas.forEach(function(s)
 			{
-				if (s.nro_salida == params.nro_salida)
+				if (s.nro_salida == params.nro_salida
+					&& s.ip == params.ip)
 				{
 					s.estado = params.estado;
 					$scope.$apply();
