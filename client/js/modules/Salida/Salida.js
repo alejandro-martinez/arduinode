@@ -246,6 +246,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			},
 			function(data)
 			{
+				console.log(data.salidas[0]);
 				$scope.ipDispositivo = data.ip;
 				$scope.salidas = data.salidas;
 				$scope.$apply();

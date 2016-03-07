@@ -123,7 +123,12 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.tarea = params;
 	$scope.dias = [];
 	$scope.meses = [];
-	console.log($scope.tarea);
+	$scope.getSwitchButton = SwitchButton.getTemplate;
+
+	$scope.switch = function(data)
+	{
+		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
+	}
 
 	for (i = 1; i < 32; i++)
 	{
@@ -183,7 +188,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		$scope.tarea.mes_inicio  = $('#mes_inicio').val();
 		$scope.tarea.hora_inicio = $('#horainicio').val();
 		$scope.tarea.duracion 	 = $('#duracion').val();
-		$scope.tarea.accion 	 = 0;
 
 		if ($scope.validateModel())
 		{

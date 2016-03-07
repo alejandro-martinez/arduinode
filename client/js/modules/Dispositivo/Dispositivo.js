@@ -25,7 +25,6 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 			templateUrl: "js/modules/Dispositivo/_form.html",
 			controller: 'DispositivoFormCtrl'
 		})
-
 })
 .factory('DispositivoFct', ['$http','$state','ngDialog', function($http,$state, Popup)
 {

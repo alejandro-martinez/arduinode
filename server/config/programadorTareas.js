@@ -84,8 +84,26 @@ var Programador = function()
 			}
 			else
 			{
-				console.log("La tarea a forzar no es valida",config);
+				console.log("La tarea a forzar no es valida",config.descripcion);
 			}
+			//Si se configuró acción de apagado, creo otro job
+			if (config.accion = 1)
+			{
+				var job_apagado = schedule.scheduleJob(rule, function()
+				{
+					if (This.checkValidez(config))
+					{
+						This.ejecutarTarea(config);
+					}
+					else
+					{
+						console.log("no valida");
+					}
+				});
+			}
+			this.registerTareaActiva(config, job_apagado);
+
+			config.accion = 0;
 
 			var job = schedule.scheduleJob(rule, function()
 			{
@@ -98,7 +116,9 @@ var Programador = function()
 					console.log("no valida");
 				}
 			});
+
 			this.registerTareaActiva(config, job);
+
 		};
 		this.importar = function()
 		{
