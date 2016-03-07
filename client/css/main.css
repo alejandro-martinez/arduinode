@@ -765,20 +765,6 @@ div.dispositivosAdded ul li a
     color:red;
     font-weight:bold;
 }
-/*DatePicker fix*/
-
-._720kb-datepicker-calendar {
-    margin: 0 auto 0 -14.5% !important;
-}
-/*TimePicker posicion center*/
-
-._720kb-datepicker-calendar._720kb-datepicker-open {
-    position: fixed !important;
-    top: 26% !important;
-    width: 100%;
-    left: 50% !important;
-    margin-left: -50% !important;
-}
 .popover {
     position: fixed !important;
     top: 26% !important;

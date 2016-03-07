@@ -122,21 +122,21 @@ module.exports = function(app, config)
 		},
 		deleteDispositivo: function(params, callback)
 		{
-			var dispositivo = this.currentFiles[0].forEach(function(disp,key)
+			var This = this;
+			var dispositivo = this.currentFiles[0].forEach(function( disp, key)
 			{
-				if (disp.id_disp == params.id_disp)
+				if (disp.id_disp == parseInt(params.id_disp))
 				{
-					return key;
+					This.currentFiles[0].splice(key, 1);
 				}
 			})
-			this.currentFiles[0].splice(dispositivo, 1);
-
 			this.writeToJson(this.filesPaths.dispositivos, this.currentFiles[0],
 				function(err)
 				{
 					callback(err)
 				}
 			)
+
 		},
 		getNewIDTarea: function()
 		{
