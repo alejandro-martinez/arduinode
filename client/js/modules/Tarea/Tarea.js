@@ -123,6 +123,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.tarea = params;
 	$scope.dias = [];
 	$scope.meses = [];
+	console.log($scope.tarea);
 
 	for (i = 1; i < 32; i++)
 	{
@@ -141,7 +142,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 					if (j.ip == e.ip)
 					{
 						e.note = j.note;
-						e.salidaNote = Salida.findSalida(j.salidas,e.nro_salida)[0].note;
+						e.salidaNote = Salida.findSalida( j.salidas,e.nro_salida)[0].note;
 					}
 				});
 			})
@@ -168,8 +169,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	$scope.tarea = params;
 	$('.clockpicker').clockpicker({ autoclose: true });
-	$('#horainicio').val($scope.tarea.hora_inicio)
-	$('#duracion').val($scope.tarea.duracion)
+	$('#horainicio').val( $scope.tarea.hora_inicio )
+	$('#duracion').val( $scope.tarea.duracion )
 
 	$scope.validateModel = function()
 	{
@@ -178,11 +179,11 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	$scope.save = function()
 	{
-		$scope.tarea.dia_inicio = $('#dia_inicio').val();
-		$scope.tarea.mes_inicio = $('#mes_inicio').val();
+		$scope.tarea.dia_inicio  = $('#dia_inicio').val();
+		$scope.tarea.mes_inicio  = $('#mes_inicio').val();
 		$scope.tarea.hora_inicio = $('#horainicio').val();
-		$scope.tarea.duracion = $('#duracion').val();
-		$scope.tarea.accion = 0;
+		$scope.tarea.duracion 	 = $('#duracion').val();
+		$scope.tarea.accion 	 = 0;
 
 		if ($scope.validateModel())
 		{
@@ -211,7 +212,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			note: $scope.dispositivoSelected.note,
 			ip: $scope.dispositivoSelected.ip,
 			nro_salida: $scope.tarea.nro_salida,
-			salidaNote: Salida.findSalida($scope.dispositivoSelected.salidas, $scope.tarea.nro_salida)[0].note
+			salidaNote: Salida.findSalida($scope.dispositivoSelected.salidas,
+										  $scope.tarea.nro_salida)[0].note
 		}
 		$scope.tarea.dispositivos.push( dispositivo );
 	}

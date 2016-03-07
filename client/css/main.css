@@ -247,6 +247,12 @@ ul.inlineButtons .button {
 }
 /*CasaCtrl HOME*/
 /*DISPOSITIVOS*/
+.ngdialog-buttons a.button
+{
+    width:40%;
+    float:left;
+    margin-right:10px;
+}
 #content table td
 {
     width:120%;
