@@ -4,7 +4,7 @@ var session = require('express-session'),
 
 module.exports.config = function( app, express) {
 	app.set('modelsPath',process.cwd() + '/models/');
-	app.set('port', process.env.PORT || 8880);
+	app.set('port', process.env.PORT || 8888);
 	app.enable('view cache');
 
 	//Cookies
