@@ -4,7 +4,6 @@
 angular.module('Arduinode',
 [	'ui.router',
 	'ngDialog',
-	'ngTouch',
 	'Arduinode.Salida',
 	'Arduinode.Home',
 	'Arduinode.Dispositivo',

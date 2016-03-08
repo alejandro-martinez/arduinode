@@ -5,20 +5,8 @@
 		<!--Previene request de favicon-->
 		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 		<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1">
-		<link rel="stylesheet" href="css/main.css" media="all">
-		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog.min.css" media="all">
-		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css" media="all">
-		<link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-plain.min.css" media="all">
-		<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-		<link rel="stylesheet" href="bower_components/clockpicker/dist/bootstrap-clockpicker.min.css"></script>
-		<script src="bower_components/angular/angular.min.js"></script>
-		<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-		<script src="js/modules/app.js"></script>
-		<script src="js/modules/Socket/Socket.js"></script>
-		<script src="js/modules/Salida/Salida.js"></script>
-		<script src="js/modules/Home/Home.js"></script>
-		<script src="js/modules/Dispositivo/Dispositivo.js"></script>
-		<script src="js/modules/Tarea/Tarea.js"></script>
+		<script src="js/jsmin.js"></script>
+		<link rel="stylesheet" href="css/cssmin.css" media="all">
 	</head>
 	<body ng-controller="MainCtrl">
 		<div id="all" ng-class="{hide:showmenu,slide:!showmenu}">
@@ -32,10 +20,5 @@
 		</div>
 		<div id="content" ui-view></div>
 		<div ng-if="loading" id="loadingDiv"></div>
-		<script src="bower_components/angular-touch/angular-touch.min.js"></script>
-		<script type="text/javascript" src="bower_components/clockpicker/dist/bootstrap-clockpicker.min.js"></script>
-		<script src='bower_components/fastclick/lib/fastclick.js'></script>
-		<script src="bower_components/socket.io-client/socket.io.js"></script>
-		<script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
 	</body>
 </html>
