@@ -3,6 +3,7 @@
 //Dependencias
 var express = require('express'),
 	app 	= express(),
+	serverInfo = {host: "localhost", port:8888 },
 	fs		= require('fs'),
 	compress = require('compression');
 	app.use(compress());
@@ -17,8 +18,21 @@ var express = require('express'),
 	require('./models')(app);									// Modelos
 	require('./controllers')(app);								// Controladores
 
+
+
+// Argumentos pasados por linea de comandos
+process.argv.forEach(function (val, index, array)
+{
+	if (index <= 3)
+	{
+		serverInfo.host = array[2];
+		serverInfo.port = array[3];
+	}
+});
+
 //Server HTTP
-http.listen(app.get('port'), function()
+
+http.listen(serverInfo.port, serverInfo.host, function()
 {
 	//Abre el archivo json, y cargo campos temporales
 	DataStore.getFile('dispositivos',function()
@@ -31,8 +45,6 @@ http.listen(app.get('port'), function()
 		});
 
 	});
-
-	console.log('Servidor corriendo en: ' + app.get('port'));
 
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)
