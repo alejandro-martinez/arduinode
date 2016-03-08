@@ -186,6 +186,29 @@ var Programador = function()
 				})
 			}
 		};
+		this.observarCambios = function()
+		{
+			var This = this;
+			//Cada 5 min
+			setInterval(function()
+			{
+				This.tareas.forEach(function(t)
+				{
+					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.hora_inicio);
+					var tiempo_restante = DateConvert.horario_a_min(t.duracion) - tiempo_desde_inicio;
+					console.log("Tareas con tiempo restante",t.descripcion,":",tiempo_restante,"min");
+					if (tiempo_restante > 0)
+					{
+						//Relanzo la tarea con el tiempo restante
+						console.log("Relanzando tarea: ",t.descripcion
+									," con tiempo restante de:",tiempo_restante);
+						t.estado = 0;
+						t.temporizada = tiempo_restante;
+						This.ejecutarTarea(t);
+					}
+				})
+			},60000 * 5)
+		};
 		this.apagarTarea = function(tarea)
 		{
 			tarea.estado = 1;

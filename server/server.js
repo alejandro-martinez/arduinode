@@ -33,14 +33,17 @@ process.argv.forEach(function (val, index, array)
 http.listen(serverInfo.port, serverInfo.host, function()
 {
 	console.log("Server iniciado en: ", serverInfo.host+":"+serverInfo.port);
+
 	//Abre el archivo json, y cargo campos temporales
 	DataStore.getFile('dispositivos',function()
 	{
 		DataStore.updateDispositivo();
-
 		DataStore.getFile('tareas',function()
 		{
 			programadorTareas.importar();
+			//	Si se apaga una salida que tenia una tarea programada
+			//	este servicio relanza la misma
+			programadorTareas.observarCambios();
 		});
 
 	});
