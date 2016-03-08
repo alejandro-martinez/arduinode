@@ -197,7 +197,7 @@ angular.module('Arduinode.Salida',['Socket'])
 					&& s.ip == params.ip)
 				{
 					s.estado = params.estado;
-					$scope.$apply();
+					$scope.$digest();
 				}
 			});
 		}
@@ -219,7 +219,6 @@ angular.module('Arduinode.Salida',['Socket'])
 				{
  					boton.removeClass('active');
 				}, 3000);
-
 			});
 		}
 
@@ -233,7 +232,7 @@ angular.module('Arduinode.Salida',['Socket'])
 				{
 					$scope.salidas = $scope.salidas.concat(salida);
 				}
-				$scope.$apply();
+				$scope.$digest();
 			});
 		}
 
@@ -246,11 +245,9 @@ angular.module('Arduinode.Salida',['Socket'])
 			},
 			function(data)
 			{
-				console.log(data.salidas[0]);
 				$scope.ipDispositivo = data.ip;
 				$scope.salidas = data.salidas;
-				$scope.$apply();
-
+				$scope.$digest();
 			});
 		}
 		$scope.refresh = function()

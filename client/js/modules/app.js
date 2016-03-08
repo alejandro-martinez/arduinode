@@ -12,7 +12,6 @@ angular.module('Arduinode',
 ])
 .controller('MainCtrl', ['$state','$rootScope', function ($state, $rootScope )
 {
-	localStorage.clear();
 	$rootScope.currentMenu = 'Home';
 	$rootScope.previousState;
 	$rootScope.currentState;
@@ -23,6 +22,7 @@ angular.module('Arduinode',
 		$rootScope.previousState = from.name;
 		$rootScope.currentState = to.name;
 	});
+
 	$rootScope.goBack = function()
 	{
 		if ($rootScope.previousState == 'estados')
@@ -39,6 +39,15 @@ angular.module('Arduinode',
 	$(function() {
 		FastClick.attach(document.body);
 	});
+
+	var restoreCache = function(content)
+	{
+		for (key in content)
+		{
+			localStorage.setItem(key,JSON.stringify(content[key]));
+		}
+		console.log("Restored",localStorage);
+	}
 }])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 

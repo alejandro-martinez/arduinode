@@ -47,16 +47,6 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				});
 			}
 		},
-		get: function(id, callback)
-		{
-			$http.get('/dispositivo/id/'+id).then(function(response)
-			{
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
-			});
-		},
 		remove: function(id)
 		{
 			$http.get('/dispositivo/delete/'+id).then(function(response)

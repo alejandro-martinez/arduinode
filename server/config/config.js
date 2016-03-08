@@ -21,5 +21,5 @@ module.exports.config = function( app, express) {
 	//app.use(minify());
 	//Entrega los archivos de tipo css, jss, jpg, etc
 	var cache = { maxAge: 86400000 * 365 }
-	app.use(express.static('../client', cache));
+	app.use(express.static('../client'));
 };

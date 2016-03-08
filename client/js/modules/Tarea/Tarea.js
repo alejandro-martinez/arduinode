@@ -16,28 +16,26 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			templateUrl: "js/modules/Tarea/_form.html"
 		})
 })
-.factory('TareaFct', ['$http','$state','ngDialog', function($http,$state, Popup)
+.factory('TareaFct', ['$http','$state','ngDialog','$window',function($http,$state, Popup, $window)
 {
 	var Tarea = {
 		getAll: function(callback)
 		{
-			$http.get('/tareas/').then(function(response)
+			if ( localStorage.getItem('tareas'))
 			{
-				callback(response.data || response);
-			}, function(error)
+				callback(JSON.parse(localStorage.getItem("tareas")));
+			}
+			else
 			{
-				callback(error)
-			});
-		},
-		get: function(id, callback)
-		{
-			$http.get('/tarea/id/'+id).then(function(response)
-			{
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
-			});
+				$http.get('/tareas/').then(function(response)
+				{
+					localStorage.setItem('tareas',JSON.stringify(response.data));
+					callback(response.data || response);
+				}, function(error)
+				{
+					callback(error)
+				});
+			}
 		},
 		remove: function(tarea)
 		{
@@ -93,7 +91,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	Tarea.getAll(function(tareas)
 	{
 		$scope.tareas = tareas;
-
 	})
 }])
 .controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',
@@ -177,7 +174,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$('#horainicio').val( $scope.tarea.hora_inicio )
 	$('#duracion').val( $scope.tarea.duracion )
 	$('#hora_apagado').val( $scope.tarea.hora_apagado )
-	
+
 	$scope.validateModel = function()
 	{
 		return true;
