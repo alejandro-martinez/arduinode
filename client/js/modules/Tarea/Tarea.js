@@ -90,6 +90,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.tareas = []
 	Tarea.getAll(function(tareas)
 	{
+		console.log("Tareas",tareas);
 		$scope.tareas = tareas;
 	})
 }])
@@ -175,11 +176,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$('#duracion').val( $scope.tarea.duracion )
 	$('#hora_apagado').val( $scope.tarea.hora_apagado )
 
-	$scope.validateModel = function()
-	{
-		return true;
-	}
-
 	$scope.save = function()
 	{
 		$scope.tarea.dia_inicio  	= $('#dia_inicio').val();
@@ -187,11 +183,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		$scope.tarea.hora_inicio 	= $('#horainicio').val();
 		$scope.tarea.hora_apagado	= $('#hora_apagado').val();
 		$scope.tarea.duracion 	 	= $('#duracion').val();
-
-		if ($scope.validateModel())
-		{
-			Tarea.save( $scope.tarea, function(response){});
-		}
+		Tarea.save( $scope.tarea, function(response){});
 	}
 
 	$scope.deleteTarea = function()
