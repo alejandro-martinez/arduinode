@@ -97,7 +97,6 @@
 					<h3>Acción:</h3>
 
 					<label class="switch">
-
 						<input 	class="switch-input" type="checkbox"
 							ng-class="(tarea.accion == 0 ) ? 'prendida' : 'apagada'"
 							ng-checked="{{(tarea.accion) == 0}}"
@@ -107,10 +106,10 @@
 						</span>
 						<span class="switch-handle"></span>
 					</label>
-					<label>Hora de apagado<br>
+					<label ng-show="tarea.accion == 1">Hora de apagado<br>
 						<input required type="text" class="clockpicker" id="hora_apagado"
 						readonly value="{{hora_apagado}}" />
-						<span>Finaliza: {{tarea.hora_apagado | date: 'HH:mm'}}</span></label>
+					</label>
 				</div>
 				<br>
 				<label>Duración<br>

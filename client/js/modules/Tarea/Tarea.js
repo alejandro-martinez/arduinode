@@ -176,7 +176,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$('.clockpicker').clockpicker({ autoclose: true });
 	$('#horainicio').val( $scope.tarea.hora_inicio )
 	$('#duracion').val( $scope.tarea.duracion )
-
+	$('#hora_apagado').val( $scope.tarea.hora_apagado )
+	
 	$scope.validateModel = function()
 	{
 		return true;
@@ -184,10 +185,11 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	$scope.save = function()
 	{
-		$scope.tarea.dia_inicio  = $('#dia_inicio').val();
-		$scope.tarea.mes_inicio  = $('#mes_inicio').val();
-		$scope.tarea.hora_inicio = $('#horainicio').val();
-		$scope.tarea.duracion 	 = $('#duracion').val();
+		$scope.tarea.dia_inicio  	= $('#dia_inicio').val();
+		$scope.tarea.mes_inicio  	= $('#mes_inicio').val();
+		$scope.tarea.hora_inicio 	= $('#horainicio').val();
+		$scope.tarea.hora_apagado	= $('#hora_apagado').val();
+		$scope.tarea.duracion 	 	= $('#duracion').val();
 
 		if ($scope.validateModel())
 		{

@@ -55,6 +55,9 @@ var Programador = function()
 				raw_hora_inicio:t.hora_inicio,
 				dias_ejecucion: DateConvert.strToArray(t.dias_ejecucion),
 				dia_fin	: 		t.dia_fin,
+				raw_hora_apagado:t.hora_apagado,
+				hora_apag: 		t.hora_apagado.substr(0,2),
+				min_apag: 		t.hora_apagado.substr(-2),
 				mes_fin	: 		t.mes_fin,
 				temporizada: 	DateConvert.horario_a_min( t.duracion ),
 				raw_duracion: 	t.duracion,
@@ -65,6 +68,7 @@ var Programador = function()
 		this.registerTareaActiva = function(config, _tarea)
 		{
 			var tarea = this.getTarea(config.id_tarea)[0];
+
 			tarea.enEjecucion = _tarea;
 		};
 		this.nuevaTarea = function(config)
@@ -87,8 +91,15 @@ var Programador = function()
 				console.log("La tarea a forzar no es valida",config.descripcion);
 			}
 			//Si se configuró acción de apagado, creo otro job
-			if (config.accion = 1)
+			if (config.accion == 1)
 			{
+				var rule = new schedule.RecurrenceRule();
+					rule.dayOfWeek = config.dias_ejecucion;
+					rule.second = 0;
+					rule.hour = parseInt(config.hora_apag);
+					rule.minute = parseInt(config.min_apag);
+
+				config.estado = 1;
 				var job_apagado = schedule.scheduleJob(rule, function()
 				{
 					if (This.checkValidez(config))
@@ -97,13 +108,15 @@ var Programador = function()
 					}
 					else
 					{
-						console.log("no valida");
+						console.log("Tarea de apagado no valida para",config.descripcion);
 					}
 				});
+				this.registerTareaActiva(config, job_apagado);
 			}
-			this.registerTareaActiva(config, job_apagado);
 
+			//Reseteo valores, para la tarea de encendido
 			config.accion = 0;
+			config.estado = 1;
 
 			var job = schedule.scheduleJob(rule, function()
 			{
@@ -141,7 +154,6 @@ var Programador = function()
 
 			//Si hora_inicio de tarea + duracion tarea > hora_actual
 			//Se deberia ejecutar la tarea
-
 			if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
 			{
 					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.raw_hora_inicio),

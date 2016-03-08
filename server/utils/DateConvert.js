@@ -67,15 +67,18 @@ module.exports = function()
 				diaActual = parseInt( fechaActual.getDate() ),
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
 
-			if ( config.dia_inicio <= diaActual && config.mes_inicio <= mesActual )
+			if (config.mes_inicio <= mesActual )
 			{
-				if (config.mes_fin >= mesActual )
+				if (config.dia_inicio >= diaActual)
 				{
-					if (config.mes_fin == mesActual)
+					if (config.mes_fin >= mesActual )
 					{
-						return config.dia_fin >= diaActual;
+						if (config.mes_fin == mesActual)
+						{
+							return config.dia_fin >= diaActual;
+						}
+						return true;
 					}
-					return true;
 				}
 			}
 			return false;

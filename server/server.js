@@ -18,12 +18,10 @@ var express = require('express'),
 	require('./models')(app);									// Modelos
 	require('./controllers')(app);								// Controladores
 
-
-
 // Argumentos pasados por linea de comandos
 process.argv.forEach(function (val, index, array)
 {
-	if (index <= 3)
+	if (index >= 2)
 	{
 		serverInfo.host = array[2];
 		serverInfo.port = array[3];
@@ -34,6 +32,7 @@ process.argv.forEach(function (val, index, array)
 
 http.listen(serverInfo.port, serverInfo.host, function()
 {
+	console.log("Server iniciado en: ", serverInfo.host+":"+serverInfo.port);
 	//Abre el archivo json, y cargo campos temporales
 	DataStore.getFile('dispositivos',function()
 	{
