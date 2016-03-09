@@ -39,14 +39,6 @@ angular.module('Arduinode',
 		FastClick.attach(document.body);
 	});
 
-	var restoreCache = function(content)
-	{
-		for (key in content)
-		{
-			localStorage.setItem(key,JSON.stringify(content[key]));
-		}
-		console.log("Restored",localStorage);
-	}
 }])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 
