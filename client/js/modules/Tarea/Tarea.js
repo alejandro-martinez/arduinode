@@ -71,6 +71,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 				}
 				else
 				{
+					$state.go('tareas');
 					callback();
 				}
 			}, function(error)
@@ -129,7 +130,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		dias_ejecucion:"",
 		dispositivos:[],
 		fecha_inicio: "",
-		fecha_fin: ""
+		fecha_fin: "",
+		accion: 0
 	}
 
 	var params = $params.params || def_model;
