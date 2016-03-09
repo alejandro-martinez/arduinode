@@ -45,7 +45,6 @@ http.listen(serverInfo.port, serverInfo.host, function()
 			//	este servicio relanza la misma
 			programadorTareas.observarCambios();
 		});
-
 	});
 
 	//Socket.IO CLIENTE

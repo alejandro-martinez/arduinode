@@ -43,6 +43,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			{
 				if (response.data == null)
 				{
+					localStorage.clear();
 					$state.go('tareas');
 				}
 			}, function(error)
@@ -56,10 +57,11 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 				}
 			});
 		},
-		save: function( tarea )
+		save: function( tarea, callback )
 		{
 			$http.post('/tarea/save/',tarea).then(function(response)
 			{
+				localStorage.clear();
 				if (response.data && response.data.error)
 				{
 					Popup.open({
@@ -69,8 +71,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 				}
 				else
 				{
-					localStorage.removeItem('tareas');
-					$state.go('tareas');
+					callback();
 				}
 			}, function(error)
 			{
@@ -88,11 +89,28 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 {
 	$rootScope.currentMenu = "Tareas programadas";
 	$scope.tareas = []
-	Tarea.getAll(function(tareas)
+
+	$scope.loadTareas = function()
 	{
-		console.log("Tareas",tareas);
-		$scope.tareas = tareas;
-	})
+		Tarea.getAll(function(tareas)
+		{
+			$scope.tareas = tareas;
+		})
+	}
+
+	$scope.duplicateTarea = function(tarea)
+	{
+		tarea.id_tarea = -1;
+		tarea.dia_inicio = tarea.dia_fin;
+		tarea.mes_inicio = tarea.mes_fin;
+		Tarea.save(tarea, function(res)
+		{
+			$scope.loadTareas();
+		});
+	}
+
+	$scope.loadTareas();
+
 }])
 .controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',
 			'DispositivoFct','SalidaFct','TareaFct','SwitchButton','ngDialog',
@@ -158,6 +176,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			$scope.dispositivos = dispositivos;
 		});
 	}
+
 	$scope.changeDispositivo = function()
 	{
 		var disp = $scope.dispositivos.filter(function(e)
@@ -225,6 +244,3 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		})
 	}
 }])
-
-
-

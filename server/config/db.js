@@ -110,7 +110,7 @@ module.exports = function(app, config)
 				{
 					return key;
 				}
-			})
+			});
 			this.currentFiles[1].splice(tarea, 1);
 
 			this.writeToJson(this.filesPaths.tareas, this.currentFiles[1],
@@ -169,7 +169,8 @@ module.exports = function(app, config)
 			else
 			{
 				var dispositivo = {
-					id_disp: Math.floor(Math.random() * (154874 - 50)) + 50,					note: model.note,
+					id_disp: this.getRandomKey(),
+					note: model.note,
 					ip: model.ip,
 					salidas:[]
 				}
@@ -181,6 +182,10 @@ module.exports = function(app, config)
 					callback(err)
 				}
 			)
+		},
+		getRandomKey: function()
+		{
+			return Math.floor(Math.random() * (15124874 - 520)) + 50;
 		},
 		saveTarea: function(model, callback)
 		{

@@ -4,6 +4,7 @@
 		<span ng-class="activa{{t.activa}}">{{(t.activa) ? "Activa" : "Inactiva"}}</span>
 		<span ng-class="horafin">Finaliza: {{t.hora_fin | date:'HH:mm'}}</span>
 		</a>
+		<a ng-click="duplicateTarea(t)"><img src="image/duplicate.png" /></a>
 	</li>
 </ul>
 <ul class="inlineButtons" id="actionsPage">

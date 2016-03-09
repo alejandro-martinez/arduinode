@@ -14,7 +14,6 @@ angular.module('Arduinode',
 	$rootScope.currentMenu = 'Home';
 	$rootScope.previousState;
 	$rootScope.currentState;
-
 	$rootScope.$on('$stateChangeSuccess',
 	function(ev, to, toParams, from, fromParams)
 	{
@@ -35,7 +34,8 @@ angular.module('Arduinode',
 	}
 
 	//Config Lib Fastclick para eliminar delay botones en mobile
-	$(function() {
+	$(function()
+	{
 		FastClick.attach(document.body);
 	});
 
@@ -67,4 +67,7 @@ angular.module('Arduinode',
 })
 .config(function ($httpProvider) {
     $httpProvider.interceptors.push('httpInterceptor');
+})
+.run(function($rootScope) {
+    localStorage.clear();
 });
