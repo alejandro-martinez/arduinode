@@ -9,7 +9,8 @@ angular.module('Arduinode',
 	'Arduinode.Dispositivo',
 	'Arduinode.Tarea'
 ])
-.controller('MainCtrl', ['$state','$rootScope', function ($state, $rootScope )
+.controller('MainCtrl', ['$state','$rootScope',
+			function ($state, $rootScope )
 {
 	$rootScope.currentMenu = 'Home';
 	$rootScope.previousState;
@@ -62,6 +63,8 @@ angular.module('Arduinode',
 .config(function ($httpProvider) {
     $httpProvider.interceptors.push('httpInterceptor');
 })
-.run(function($rootScope) {
+.run(['$rootScope','DispositivoFct',function($rootScope, Dispositivo)
+{
     localStorage.clear();
-});
+	Dispositivo.getAll(function(){});
+}]);

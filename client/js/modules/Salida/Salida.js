@@ -231,13 +231,9 @@ angular.module('Arduinode.Salida',['Socket'])
 				if (salida.length > 0)
 				{
 					$scope.salidas = $scope.salidas.concat(salida);
-
 				}
 			});
-
-			setTimeout(function(){
-				$scope.$digest()
-			},500)
+			setTimeout(function(){ $scope.$digest() },1000);
 		}
 
 		$scope.refreshEstados = function()
@@ -265,6 +261,9 @@ angular.module('Arduinode.Salida',['Socket'])
 				$scope.refreshEstados();
 			}
 		}
-		$scope.refresh();
+		if (Dispositivo.hayDispositivosDisponibles() )
+		{
+			$scope.refresh();
+		}
 	}
 ])

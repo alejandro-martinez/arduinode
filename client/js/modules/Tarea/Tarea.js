@@ -85,12 +85,16 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	}
 	return Tarea;
 }])
-.controller('TareaCtrl', ['$rootScope','$scope','TareaFct',
-		function ($rootScope,$scope, Tarea )
+.controller('TareaCtrl', ['$rootScope','$scope','TareaFct','DispositivoFct',
+		function ($rootScope,$scope, Tarea, Dispositivo )
 {
 	$rootScope.currentMenu = "Tareas programadas";
 	$scope.tareas = []
 
+	if (Dispositivo.hayDispositivosDisponibles() )
+	{
+		$scope.loadTareas();
+	}
 	$scope.loadTareas = function()
 	{
 		Tarea.getAll(function(tareas)
@@ -109,8 +113,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			$scope.loadTareas();
 		});
 	}
-
-	$scope.loadTareas();
 
 }])
 .controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',

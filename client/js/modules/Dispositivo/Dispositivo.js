@@ -26,9 +26,26 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 			controller: 'DispositivoFormCtrl'
 		})
 })
-.factory('DispositivoFct', ['$http','$state','ngDialog', function($http,$state, Popup)
-{
+.factory('DispositivoFct', ['$rootScope','$http','$state','ngDialog',
+		 function($rootScope, $http, $state, Popup)
+	{
 	var Dispositivo = {
+		hayDispositivosDisponibles: function()
+		{
+			if (JSON.parse(localStorage.getItem("dispositivos")).length > 0)
+			{
+				return true;
+			}
+			else
+			{
+				$rootScope.currentMenu = 'Sin dispositivos';
+				Popup.open(
+				{
+					template: '<h1>No hay dispositivos configurados</h1>',
+					plain: true,
+				});
+			}
+		},
 		getAll: function(callback)
 		{
 			if (localStorage.getItem('dispositivos'))
