@@ -43,7 +43,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			{
 				if (response.data == null)
 				{
-					localStorage.clear();
+					localStorage.removeItem('tareas');
 					$state.go('tareas');
 				}
 			}, function(error)
@@ -61,7 +61,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		{
 			$http.post('/tarea/save/',tarea).then(function(response)
 			{
-				localStorage.clear();
+				localStorage.removeItem('tareas');
 				if (response.data && response.data.error)
 				{
 					Popup.open({
@@ -174,6 +174,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			})
 		$scope.dispositivos = dispositivos;
 	});
+
 	$scope.loadSelect = function()
 	{
 		Dispositivo.getAll(function(dispositivos)
@@ -195,7 +196,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	}
 
 	$scope.tarea = params;
-
 	$('.clockpicker').clockpicker({ autoclose: true });
 	$('#horainicio').val( $scope.tarea.hora_inicio )
 	$('#duracion').val( $scope.tarea.duracion );

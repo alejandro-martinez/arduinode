@@ -96,7 +96,7 @@ var Programador = function()
 				}
 				else
 				{
-					console.log("no valida");
+					console.log(config.descripcion, " no es valida");
 				}
 			});
 
@@ -120,26 +120,23 @@ var Programador = function()
 		this.forzarEjecucion = function(t)
 		{
 			var hora_fin_min = DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion),
-				hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
+				hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min),
+				hora_actual_HHMM = DateConvert.horarioEnHHMM();
 
 			//Si hora_inicio de tarea + duracion tarea > hora_actual
 			//Se deberia ejecutar la tarea
 			if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
 			{
-					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.raw_hora_inicio),
-					tiempo_restante = DateConvert.horario_a_min(t.temporizada) - tiempo_desde_inicio;
-					console.log("Tiempo restante de ",t.descripcion,tiempo_restante,"min");
+				var tiempo_restante = DateConvert.restarHoras(hora_actual_HHMM,hora_fin_HHMM);
+				console.log("Tiempo restante de ",t.descripcion,DateConvert.min_a_horario(tiempo_restante));
 
-					if (t.accion == 0)
-					{
-						t.estado = t.accion;
-						t.temporizada = tiempo_restante;
-						this.ejecutarTarea(t);
-					}
-			}
-			else
-			{
-				console.log(t.descripcion,"no deberia estar ejecutandose");
+				if (tiempo_restante > 0)
+				{
+					console.log("Ejecutando la tarea forzada",t.descripcion);
+					t.estado = t.accion;
+					t.temporizada = tiempo_restante;
+					this.ejecutarTarea(t);
+				}
 			}
 		};
 		this.ejecutarTarea = function(params)
@@ -154,8 +151,11 @@ var Programador = function()
 
 					socketArduino.switchSalida(d, function(response)
 					{
+						console.log("El dispositivo respondio:",response);
 						if (response === null)
+						{
 							console.log("ERROR: No se puede llegar a:",d.ip);
+						}
 					})
 				})
 			}
@@ -179,6 +179,10 @@ var Programador = function()
 						t.estado = t.accion;
 						t.temporizada = tiempo_restante;
 						This.ejecutarTarea(t);
+					}
+					else
+					{
+						console.log(t.descripcion, " no deberia estar en ejecucion");
 					}
 				})
 			},60000 * 5)

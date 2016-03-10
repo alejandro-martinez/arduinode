@@ -3,6 +3,12 @@ module.exports = function()
 {
 	var DateConvert =
 	{
+		restarHoras: function(_inicio, _fin)
+		{
+			var inicio_min = this.horario_a_min(_inicio);
+				fin_min = this.horario_a_min(_fin);
+			return fin_min - inicio_min;
+		},
 		//Recibe 15, devuelve 00:15
 		min_a_horario: function(min)
 		{
