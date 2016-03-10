@@ -89,6 +89,11 @@ module.exports = function()
 			}
 			return false;
 		},
+		diaActualValido: function(dias)
+		{
+			var fecha = new Date();
+			return (dias.indexOf((fecha.getDay() -1)) > -1);
+		},
 		//Retorna la diferencia en minutos, de la horaActual vs otra hora
 		difHoraConActual: function(hora)
 		{

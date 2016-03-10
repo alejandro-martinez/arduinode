@@ -6,29 +6,12 @@ var socketArduino = require('../Arduino')(),
 var Programador = function()
 {
 		this.tareas = [];
-		this.reprogramarTarea = function(_tareaOld)
+		this.reprogramarTarea = function(_newValues, _oldValues)
 		{
-			this.apagarTarea(_tareaOld.id_tarea);
-			this.quitarTarea(_tareaOld.id_tarea);
-			this.importar();
+			this.apagarTarea(_oldValues.id_tarea);
+			var configTarea = this.parseConfig(_newValues);
+			this.nuevaTarea(configTarea);
 		};
-		this.findDeletedDispositivo = function(_tareaOld)
-		{
-			/*b.forEach(function(d)
-			{
-				_tareaOld.dispositivos.map(function(s){
-					console.log(s.a == d.a)
-				})
-			});*/
-		};
-		this.quitarTarea = function(id_tarea)
-		{
-			var tarea = this.getTarea(id_tarea)[0];
-			if (tarea && tarea.hasOwnProperty('enEjecucion'))
-			{
-				tarea.enEjecucion = null;
-			}
-		},
 		this.getTarea = function(id)
 		{
 			var tarea = this.tareas.filter(function(t)
@@ -64,7 +47,6 @@ var Programador = function()
 		this.registerTareaActiva = function(config, _tarea)
 		{
 			var tarea = this.getTarea(config.id_tarea)[0];
-
 			tarea.enEjecucion = _tarea;
 		};
 		this.nuevaTarea = function(config)
@@ -86,7 +68,7 @@ var Programador = function()
 			{
 				console.log("La tarea a forzar no es valida",config.descripcion);
 			}
-
+			delete config.enEjecucion;
 			var job = schedule.scheduleJob(rule, function()
 			{
 				if (This.checkValidez(config))
@@ -98,7 +80,6 @@ var Programador = function()
 					console.log(config.descripcion, " no es valida");
 				}
 			});
-
 			this.registerTareaActiva(config, job);
 
 		};
@@ -112,7 +93,12 @@ var Programador = function()
 			//Tarea activa o no?
 			if (config.activa)
 			{
-				return DateConvert.fechaBetween(config);
+				if (DateConvert.fechaBetween(config))
+				{
+					console.log("Dia valido", DateConvert.diaActualValido(config.dias_ejecucion))
+					console.log("dias", config.dias_ejecucion);
+					return DateConvert.diaActualValido(config.dias_ejecucion);
+				}
 			}
 			return false;
 		};
@@ -140,10 +126,17 @@ var Programador = function()
 		};
 		this.ejecutarTarea = function(params, accion)
 		{
+
 			if (params.hasOwnProperty('dispositivos'))
 			{
+
+
 				params.dispositivos.forEach(function(d)
 				{
+					if (accion)
+					{
+						console.log("Apagando salida de ",d.ip, "nro: ",d.nro_salida);
+					}
 					d.noError = true;
 					d.estado = accion || params.accion;
 					d.temporizada = params.temporizada;
@@ -184,13 +177,14 @@ var Programador = function()
 						console.log(t.descripcion, " no deberia estar en ejecucion");
 					}
 				})
-			},60000 * 5)
+			},10000)
 		};
 		this.apagarTarea = function(tarea_id)
 		{
 			var tarea = this.getTarea(tarea_id);
 			if (tarea.length > 0)
 			{
+				console.log("Apagando");
 				//tarea, accion
 				this.ejecutarTarea(tarea[0], 1);
 			}
