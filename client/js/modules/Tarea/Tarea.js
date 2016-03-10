@@ -91,10 +91,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$rootScope.currentMenu = "Tareas programadas";
 	$scope.tareas = []
 	$scope.sinDispositivos = Dispositivo.hayDispositivosDisponibles();
-	if ($scope.sinDispositivos )
-	{
-		$scope.loadTareas();
-	}
+
 	$scope.loadTareas = function()
 	{
 		Tarea.getAll(function(tareas)
@@ -102,7 +99,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			$scope.tareas = tareas;
 		})
 	}
-
+	$scope.loadTareas();
 	$scope.duplicateTarea = function(tarea)
 	{
 		tarea.id_tarea = -1;
