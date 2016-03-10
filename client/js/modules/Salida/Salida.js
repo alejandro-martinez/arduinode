@@ -231,9 +231,13 @@ angular.module('Arduinode.Salida',['Socket'])
 				if (salida.length > 0)
 				{
 					$scope.salidas = $scope.salidas.concat(salida);
-					$scope.$digest();
+
 				}
 			});
+
+			setTimeout(function(){
+				$scope.$digest()
+			},500)
 		}
 
 		$scope.refreshEstados = function()

@@ -1,131 +1,130 @@
-<div>
-	<form validate class="simple-form" name="tareaForm" ng-model="tarea">
-		<div class="left">
-			<div class="dispositivosAdded">
-				<h5>Dispositivos vinculados</h5>
-				<br>
-				<ul class="dispositivosAdded">
-					<li ng-repeat="d in tarea.dispositivos">
-						{{d.note}} - {{d.salidaNote}}
-						<a ng-click="removeDispositivo(d)">X</a>
-					</li>
-				</ul>
-			</div>
-			 <div class="dispositivo">
-				<label>Dispositivo<br>
+<form novalidate class="simple-form" id="tareaForm" name="tareaForm" ng-model="tarea">
+	<div class="left">
+		<div class="dispositivosAdded">
+			<h5>Dispositivos vinculados</h5>
+			<ul class="dispositivosAdded">
+				<li ng-repeat="d in tarea.dispositivos track by $index">
+					{{d.note}} - {{d.salidaNote}}
+					<a ng-click="removeDispositivo(d)">X</a>
+				</li>
+			</ul>
+		</div>
+		<div class="dispositivo">
+			<label>Dispositivo
 				<select required id="dispositivo_slt"
-				ng-options="disp as disp.note for disp in dispositivos"
-				ng-change="changeDispositivo()"
-				required
-				ng-model="dispositivoSelected" name="dispositivo_id">
-				</select>
-				</label>
-				<div>
-					<label>Salidas<br>
-					<select ng-options="salida.nro_salida as salida.note for salida in salidas"
+					ng-options="disp as disp.note for disp in dispositivos track by disp.id_disp"
+					ng-change="changeDispositivo()"
 					required
-					ng-model="tarea.nro_salida"></select>
-					</label>
-				</div>
+					ng-model="dispositivoSelected" name="dispositivo_id">
+				</select>
+			</label>
+			<label>Salidas
+				<select
+					ng-options="salida.nro_salida as salida.note for salida in salidas
+					track by salida.nro_salida"
+					required
+					ng-model="tarea.nro_salida">
+				</select>
 				<a ng-click="addDispositivo()">+</a>
-			</div>
+			</label>
 
-			<div>
-				<label>Descripción de la Tarea<br>
-					<textarea required ng-model="tarea.descripcion"></textarea>
+			<label>Descripción de la Tarea<br>
+				<textarea required ng-model="tarea.descripcion"></textarea>
+			</label>
+			<label>
+				<span>Tarea activa:</span>
+				<label class="switch">
+					<input class="switch-input" type="checkbox"
+						ng-class="(tarea.activa == 1 ) ? 'prendida' : 'apagada'"
+						ng-checked="{{(tarea.activa) == 1}}"
+					/>
+					<span class="switch-label" ng-click="setActiva(s)" data-on="SI" data-off="NO">
+					</span>
+					<span class="switch-handle"></span>
 				</label>
-			</div>
-			<label>Activa<br>
-				<input type="checkbox" ng-checked="tarea.activa == 1" ng-model="tarea.activa" />
 			</label>
 		</div>
-		<div class="left">
-			<div class="tarea">
-				<label class="fechaPicker">Fecha inicio
-					<label>
-						<select id="dia_inicio">
-							<option ng-selected="{{dia == tarea.dia_inicio}}"
-									ng-repeat="dia in dias"
-									value="{{dia}}">
-									{{dia}}
-							</option>
-						</select>
-						<select id="mes_inicio">
-							<option  ng-selected="{{mes == tarea.mes_inicio}}"
-									ng-repeat="mes in meses"
-									value="{{mes}}">
-									{{mesesTxt[mes]}}
-							</option>
-						</select>
-					</label>
+		<div class="fechaPicker">Fecha inicio
+			<label>
+				<select id="dia_inicio">
+					<option ng-selected="{{dia == tarea.dia_inicio}}"
+							ng-repeat="dia in dias"
+							value="{{dia}}">
+							{{dia}}
+					</option>
+				</select>
+				<select id="mes_inicio">
+					<option ng-selected="{{mes == tarea.mes_inicio}}"
+							ng-repeat="mes in meses"
+							value="{{mes}}">
+							{{mesesTxt[mes]}}
+					</option>
+				</select>
+			</label>
+		</div>
+		<div>
+		<label class="fechaPicker">Hora de ejecución<br>
+			<input type="text" class="clockpicker" id="horainicio" readonly value="{{hora_inicio}}" readonly />
+		</label>
+		</div>
+		<div>
+			<label>Dias de ejecución</label>
+			<div class="dias_ejecucion">
+				<label ng-repeat="(key, value) in diasSemana track by key">{{value | limitTo:1}}<br>
+				<input
+					type="checkbox"
+					value="{{key}}"
+					required
+					ng-checked="tarea.dias_ejecucion.indexOf(key) > -1"
+					ng-click="checkear_dia(key)">
 				</label>
-				<br>
-				<label>Hora inicio<br>
-					<input type="text" class="clockpicker" id="horainicio" readonly value="{{hora_inicio}}" readonly />
-				</label>
-				<div class="dias_ejecucion">
-					<label ng-repeat="(key, value) in diasSemana">{{value | limitTo:1}}<br>
-					<input
-						type="checkbox"
-						value="{{key}}"
-						required
-						ng-checked="tarea.dias_ejecucion.indexOf(key) > -1"
-						ng-click="checkear_dia(key)">
-					</label>
-				</div>
-				<label class="fechaPicker">Fecha fin
-					<label>
-						<select ng-model="tarea.dia_fin">
-							<option ng-selected="{{dia == tarea.dia_fin}}"
-									ng-repeat="dia in dias"
-									value="{{dia}}">
-									{{dia}}
-							</option>
-						</select>
-						<select ng-model="tarea.mes_fin">
-							<option ng-selected="{{mes == tarea.mes_fin}}"
-									ng-repeat="mes in meses"
-									value="{{mes}}">
-									{{mesesTxt[mes]}}
-							</option>
-						</select>
-					</label>
-				</label>
-				<br>
-				<div>
-					<br>
-					<h3>Acción:</h3>
-
-					<label class="switch">
-						<input 	class="switch-input" type="checkbox"
-							ng-class="(tarea.accion == 0 ) ? 'prendida' : 'apagada'"
-							ng-checked="{{(tarea.accion) == 0}}"
-						/>
-						<span class="switch-label" ng-click="switch(tarea)"
-							data-on="Encender"	data-off="Apagar">
-						</span>
-						<span class="switch-handle"></span>
-					</label>
-					<label ng-show="tarea.accion == 1">Hora de apagado<br>
-						<input required type="text" class="clockpicker" id="hora_apagado"
-						readonly value="{{hora_apagado}}" />
-					</label>
-				</div>
-				<br>
-				<label>Duración<br>
-					<input required type="text" class="clockpicker" id="duracion"
-					readonly value="{{duracion}}" />
-					<span>Finaliza: {{tarea.hora_fin | date: 'HH:mm'}}</span></label>
 			</div>
 		</div>
-	    <ul class="inlineButtons actionsPopup">
-			<li>
-				<input class="button" type="submit" ng-click="save()" value="Guardar" />
-			</li>
-			<li>
-				<input class="button" type="button" ng-click="deleteTarea()" value="Eliminar" />
-			</li>
-		</ul>
-	    </div>
-	</form>
-</div>
+		<div class="fechaPicker">Fecha fin
+			<label>
+				<select ng-model="tarea.dia_fin">
+					<option ng-selected="{{dia == tarea.dia_fin}}"
+							ng-repeat="dia in dias"
+							value="{{dia}}">
+							{{dia}}
+					</option>
+				</select>
+				<select ng-model="tarea.mes_fin">
+					<option ng-selected="{{mes == tarea.mes_fin}}"
+							ng-repeat="mes in meses"
+							value="{{mes}}">
+							{{mesesTxt[mes]}}
+					</option>
+				</select>
+			</label>
+		</div>
+		<br>
+		<div class="activa">
+			<span>Acción:</span>
+			<label class="switch">
+				<input 	class="switch-input" type="checkbox"
+					ng-class="(tarea.accion == 0 ) ? 'prendida' : 'apagada'"
+					ng-checked="{{(tarea.accion) == 0}}" />
+				<span class="switch-label" ng-click="switch(tarea)"
+					data-on="Encender"	data-off="Apagar">
+				</span>
+				<span class="switch-handle"></span>
+			</label>
+		</div>
+		<div class="duracion" ng-show="tarea.accion == 0">Duración<br>
+			<input required type="text" class="clockpicker" id="duracion"
+			readonly value="{{duracion}}" />
+			<span>Finaliza: {{tarea.hora_fin | date: 'HH:mm'}}</span>
+		</div>
+		<div>
+			<ul class="inlineButtons actionsPopup">
+				<li>
+					<input class="button" type="submit" ng-click="save()" value="Guardar" />
+				</li>
+				<li>
+					<input class="button" type="button" ng-click="deleteTarea()" value="Eliminar" />
+				</li>
+			</ul>
+		</div>
+	</div>
+</form>

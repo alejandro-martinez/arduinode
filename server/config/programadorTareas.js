@@ -55,9 +55,6 @@ var Programador = function()
 				raw_hora_inicio:t.hora_inicio,
 				dias_ejecucion: DateConvert.strToArray(t.dias_ejecucion),
 				dia_fin	: 		t.dia_fin,
-				raw_hora_apagado:t.hora_apagado,
-				hora_apag: 		t.hora_apagado.substr(0,2),
-				min_apag: 		t.hora_apagado.substr(-2),
 				mes_fin	: 		t.mes_fin,
 				temporizada: 	DateConvert.horario_a_min( t.duracion ),
 				raw_duracion: 	t.duracion,
@@ -90,33 +87,6 @@ var Programador = function()
 			{
 				console.log("La tarea a forzar no es valida",config.descripcion);
 			}
-			//Si se configuró acción de apagado, creo otro job
-			if (config.accion == 1)
-			{
-				var rule = new schedule.RecurrenceRule();
-					rule.dayOfWeek = config.dias_ejecucion;
-					rule.second = 0;
-					rule.hour = parseInt(config.hora_apag);
-					rule.minute = parseInt(config.min_apag);
-
-				config.estado = 1;
-				var job_apagado = schedule.scheduleJob(rule, function()
-				{
-					if (This.checkValidez(config))
-					{
-						This.ejecutarTarea(config);
-					}
-					else
-					{
-						console.log("Tarea de apagado no valida para",config.descripcion);
-					}
-				});
-				this.registerTareaActiva(config, job_apagado);
-			}
-
-			//Reseteo valores, para la tarea de encendido
-			config.accion = 0;
-			config.estado = 1;
 
 			var job = schedule.scheduleJob(rule, function()
 			{
@@ -189,6 +159,7 @@ var Programador = function()
 		this.observarCambios = function()
 		{
 			var This = this;
+			console.log("Observando las tareas cada 5 minutos...");
 			//Cada 5 min
 			setInterval(function()
 			{
@@ -196,7 +167,6 @@ var Programador = function()
 				{
 					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.hora_inicio);
 					var tiempo_restante = DateConvert.horario_a_min(t.duracion) - tiempo_desde_inicio;
-					console.log("Tareas con tiempo restante",t.descripcion,":",tiempo_restante,"min");
 					if (tiempo_restante > 0)
 					{
 						//Relanzo la tarea con el tiempo restante

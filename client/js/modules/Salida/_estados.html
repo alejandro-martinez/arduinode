@@ -1,7 +1,7 @@
 <a ng-click="refresh()" class="refresh"></a>
-<input type="text" class="clockpicker estados" readonly />
+<input type="text" class="sprite clockpicker estados" readonly />
 <ul id="estados">
-	<li ng-repeat="s in salidas | orderBy: -s.note" on-finish-render="ngRepeatFinished">
+	<li ng-repeat="s in salidas | orderBy: -s.note track by $index" on-finish-render="ngRepeatFinished">
 		<span ng-repeat="(key, val) in s">
 			<h4 ng-click="edit(s)" ng-show="{{key == 'note'}}">{{val || s.nro_salida}}</h4>
 			<div ng-include="(key=='estado') ? getSwitchButton(s.tipo) : null"></div>

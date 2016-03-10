@@ -3,7 +3,7 @@
 //Dependencias
 var express = require('express'),
 	app 	= express(),
-	serverInfo = {host: "localhost", port:8888 },
+	serverInfo = {host: "192.168.2.12", port:8888 },
 	fs		= require('fs'),
 	compress = require('compression');
 	app.use(compress());
@@ -34,6 +34,12 @@ http.listen(serverInfo.port, serverInfo.host, function()
 {
 	console.log("Server iniciado en: ", serverInfo.host+":"+serverInfo.port);
 
+	//Captura excepciones para no detener el servidor
+	process.on('uncaughtException', function (err)
+	{
+		console.log(err)
+	});
+
 	//Abre el archivo json, y cargo campos temporales
 	DataStore.getFile('dispositivos',function()
 	{
@@ -50,12 +56,6 @@ http.listen(serverInfo.port, serverInfo.host, function()
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)
 	{
-		//Captura excepciones para no detener el servidor
-		process.on('uncaughtException', function (err)
-		{
-			console.log(err)
-		});
-
 		//Paso el handler del socket del usuario
 		//para emitir errores directamente
 		arduino.socketClient = socket;

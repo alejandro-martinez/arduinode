@@ -114,11 +114,10 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 }])
 .controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',
-			'DispositivoFct','SalidaFct','TareaFct','SwitchButton','ngDialog',
+			'DispositivoFct','SalidaFct','TareaFct','ngDialog',
 			function ( $scope, $rootScope, $params, Dispositivo, Salida,
 					   Tarea, SwitchButton, Popup )
 {
-	$scope.getSwitchButton = function() { return SwitchButton.getTemplate() }
 	$scope.diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves',
 							'Viernes','Sabado','Domingo'];
 
@@ -141,11 +140,14 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.tarea = params;
 	$scope.dias = [];
 	$scope.meses = [];
-	$scope.getSwitchButton = SwitchButton.getTemplate;
 
 	$scope.switch = function(data)
 	{
 		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
+	}
+	$scope.setActiva = function(activa)
+	{
+		$scope.tarea.activa = ($scope.tarea.activa == 0) ? 1 : 0;
 	}
 
 	for (i = 1; i < 32; i++)
@@ -192,17 +194,16 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	}
 
 	$scope.tarea = params;
+
 	$('.clockpicker').clockpicker({ autoclose: true });
 	$('#horainicio').val( $scope.tarea.hora_inicio )
-	$('#duracion').val( $scope.tarea.duracion )
-	$('#hora_apagado').val( $scope.tarea.hora_apagado )
+	$('#duracion').val( $scope.tarea.duracion );
 
 	$scope.save = function()
 	{
 		$scope.tarea.dia_inicio  	= $('#dia_inicio').val();
 		$scope.tarea.mes_inicio  	= $('#mes_inicio').val();
 		$scope.tarea.hora_inicio 	= $('#horainicio').val();
-		$scope.tarea.hora_apagado	= $('#hora_apagado').val();
 		$scope.tarea.duracion 	 	= $('#duracion').val();
 		Tarea.save( $scope.tarea, function(response){});
 	}
