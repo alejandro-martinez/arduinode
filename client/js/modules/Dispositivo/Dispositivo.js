@@ -46,6 +46,14 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				});
 			}
 		},
+		get: function(params)
+		{
+			var dispositivos = JSON.parse(localStorage.getItem("dispositivos"));
+			return dispositivos.filter(function(disp)
+			{
+				return disp.id_disp == params.id_disp;
+			});
+		},
 		getAll: function(callback)
 		{
 			if (localStorage.getItem('dispositivos'))
@@ -127,10 +135,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 
 		if (params && params.id_disp)
 		{
-			Dispositivo.get(params.id_disp, function(model)
-			{
-				$scope.model = model[0];
-			});
+			$scope.model = Dispositivo.get(params)[0];
 		}
 
 		$scope.save = function(model)
