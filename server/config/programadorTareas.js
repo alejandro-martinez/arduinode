@@ -8,8 +8,7 @@ var Programador = function()
 		this.tareas = [];
 		this.reprogramarTarea = function(_tareaOld)
 		{
-			this.getTarea(_tareaOld.id_tarea);
-			this.apagarTarea(_tareaOld);
+			this.apagarTarea(_tareaOld.id_tarea);
 			this.quitarTarea(_tareaOld.id_tarea);
 			this.importar();
 		};
@@ -139,14 +138,14 @@ var Programador = function()
 				}
 			}
 		};
-		this.ejecutarTarea = function(params)
+		this.ejecutarTarea = function(params, accion)
 		{
 			if (params.hasOwnProperty('dispositivos'))
 			{
 				params.dispositivos.forEach(function(d)
 				{
 					d.noError = true;
-					d.estado = params.accion;
+					d.estado = accion || params.accion;
 					d.temporizada = params.temporizada;
 
 					socketArduino.switchSalida(d, function(response)
@@ -187,10 +186,14 @@ var Programador = function()
 				})
 			},60000 * 5)
 		};
-		this.apagarTarea = function(tarea)
+		this.apagarTarea = function(tarea_id)
 		{
-			tarea.estado = 1;
-			this.ejecutarTarea(tarea);
+			var tarea = this.getTarea(tarea_id);
+			if (tarea.length > 0)
+			{
+				//tarea, accion
+				this.ejecutarTarea(tarea[0], 1);
+			}
 		};
 		this.cargarEnScheduler = function()
 		{

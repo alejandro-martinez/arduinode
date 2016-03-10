@@ -65,6 +65,7 @@ module.exports = function()
 					This.data = "";
 					if (response == 1)
 					{
+						console.log("comando",params)
 						socket.write(params.command);
 						socket.on('data', function(_data)
 						{

@@ -72,19 +72,19 @@ module.exports = function()
 			var fechaActual = new Date(),
 				diaActual = parseInt( fechaActual.getDate() ),
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
-
 			if (config.mes_inicio <= mesActual )
 			{
-				if (config.dia_inicio >= diaActual)
+				if (config.mes_inicio == mesActual)
 				{
-					if (config.mes_fin >= mesActual )
+					return config.dia_inicio <= diaActual;
+				}
+				if (config.mes_fin >= mesActual )
+				{
+					if (config.mes_fin == mesActual)
 					{
-						if (config.mes_fin == mesActual)
-						{
-							return config.dia_fin >= diaActual;
-						}
-						return true;
+						return config.dia_fin >= diaActual;
 					}
+					return true;
 				}
 			}
 			return false;

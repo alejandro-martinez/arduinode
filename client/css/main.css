@@ -699,15 +699,16 @@ div.dispositivosAdded ul
 div.dispositivosAdded ul li
 {
     margin:10px 0;
+    position: relative;
 }
 div.dispositivosAdded ul li a
 {
-    float:right;
+    position: absolute;
     color:red;
     font-size: 1.6em;
-    margin-right: -6px;
+    right: -4px;
     padding: 10px;
-    margin-top: -12px;
+    top: -15px;
     font-weight:bold;
 }
 .popover {

@@ -96,6 +96,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	{
 		Tarea.getAll(function(tareas)
 		{
+			console.log("Tareas",tareas);
 			$scope.tareas = tareas;
 		})
 	}
@@ -141,7 +142,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.tarea.mes_fin = params.mes_fin - 1;
 	$scope.dias = [];
 	$scope.meses = [];
-
+	console.log($params)
 	$scope.switch = function(data)
 	{
 		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
@@ -202,6 +203,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	$scope.save = function()
 	{
+		console.log("accion seteada",$scope.tarea.accion);
 		$scope.tarea.dia_inicio = $('#dia_inicio').val();
 		$scope.tarea.mes_inicio = parseInt( $('#mes_inicio').val() ) + 1;
 		$scope.tarea.dia_fin  	= $('#dia_fin').val();
