@@ -90,8 +90,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 {
 	$rootScope.currentMenu = "Tareas programadas";
 	$scope.tareas = []
-
-	if (Dispositivo.hayDispositivosDisponibles() )
+	$scope.sinDispositivos = Dispositivo.hayDispositivosDisponibles();
+	if ($scope.sinDispositivos )
 	{
 		$scope.loadTareas();
 	}
