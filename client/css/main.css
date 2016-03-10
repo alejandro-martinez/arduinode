@@ -1,24 +1,3 @@
-.ngdialog,.ngdialog-overlay{position:fixed;top:0;right:0;bottom:0;left:0}@-webkit-keyframes ngdialog-fadeout{0%{opacity:1}100%{opacity:0}}@keyframes ngdialog-fadeout{0%{opacity:1}100%{opacity:0}}@-webkit-keyframes ngdialog-fadein{0%{opacity:0}100%{opacity:1}}@keyframes ngdialog-fadein{0%{opacity:0}100%{opacity:1}}.ngdialog{box-sizing:border-box;overflow:auto;-webkit-overflow-scrolling:touch;z-index:10000}.ngdialog *,.ngdialog :after,.ngdialog :before{box-sizing:inherit}.ngdialog.ngdialog-disabled-animation,.ngdialog.ngdialog-disabled-animation .ngdialog-content,.ngdialog.ngdialog-disabled-animation .ngdialog-overlay{-webkit-animation:none!important;animation:none!important}.ngdialog-overlay{background:rgba(0,0,0,.4);-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadein .5s;animation:ngdialog-fadein .5s}.ngdialog-no-overlay{pointer-events:none}.ngdialog.ngdialog-closing .ngdialog-overlay{-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadeout .5s;animation:ngdialog-fadeout .5s}.ngdialog-content{background:#fff;-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadein .5s;animation:ngdialog-fadein .5s;pointer-events:all}.ngdialog.ngdialog-closing .ngdialog-content{-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadeout .5s;animation:ngdialog-fadeout .5s}.ngdialog-close:before{font-family:Helvetica,Arial,sans-serif;content:'\00D7';cursor:pointer}body.ngdialog-open,html.ngdialog-open{overflow:hidden}
-@-webkit-keyframes ngdialog-flyin{0%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}100%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes ngdialog-flyin{0%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}100%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}}@-webkit-keyframes ngdialog-flyout{0%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}}@keyframes ngdialog-flyout{0%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}}.ngdialog.ngdialog-theme-default{padding-bottom:160px;padding-top:160px}.ngdialog.ngdialog-theme-default.ngdialog-closing .ngdialog-content{-webkit-animation:ngdialog-flyout .5s;animation:ngdialog-flyout .5s}.ngdialog.ngdialog-theme-default .ngdialog-content{-webkit-animation:ngdialog-flyin .5s;animation:ngdialog-flyin .5s;background:#f0f0f0;border-radius:5px;color:#444;font-family:Helvetica,sans-serif;font-size:1.1em;line-height:1.5em;margin:0 auto;max-width:100%;padding:1em;position:relative;width:450px}.ngdialog.ngdialog-theme-default .ngdialog-close{border-radius:5px;cursor:pointer;position:absolute;right:0;top:0}.ngdialog.ngdialog-theme-default .ngdialog-close:before{background:0 0;border-radius:3px;color:#bbb;content:'\00D7';font-size:26px;font-weight:400;height:30px;line-height:26px;position:absolute;right:3px;text-align:center;top:3px;width:30px}.ngdialog.ngdialog-theme-default .ngdialog-close:active:before,.ngdialog.ngdialog-theme-default .ngdialog-close:hover:before{color:#777}.ngdialog.ngdialog-theme-default .ngdialog-message{margin-bottom:.5em}.ngdialog.ngdialog-theme-default .ngdialog-input{margin-bottom:1em}.ngdialog.ngdialog-theme-default .ngdialog-input input[type=text],.ngdialog.ngdialog-theme-default .ngdialog-input input[type=password],.ngdialog.ngdialog-theme-default .ngdialog-input input[type=email],.ngdialog.ngdialog-theme-default .ngdialog-input input[type=url],.ngdialog.ngdialog-theme-default .ngdialog-input textarea{background:#fff;border:0;border-radius:3px;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0 0 .25em;min-height:2.5em;padding:.25em .67em;width:100%}.ngdialog.ngdialog-theme-default .ngdialog-input input[type=text]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input input[type=password]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input input[type=email]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input input[type=url]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input textarea:focus{box-shadow:inset 0 0 0 2px #8dbdf1;outline:0}.ngdialog.ngdialog-theme-default .ngdialog-buttons:after{content:'';display:table;clear:both}.ngdialog.ngdialog-theme-default .ngdialog-button{border:0;border-radius:3px;cursor:pointer;float:right;font-family:inherit;font-size:.8em;letter-spacing:.1em;line-height:1em;margin:0 0 0 .5em;padding:.75em 2em;text-transform:uppercase}.ngdialog.ngdialog-theme-default .ngdialog-button:focus{-webkit-animation:ngdialog-pulse 1.1s infinite;animation:ngdialog-pulse 1.1s infinite;outline:0}@media (max-width:568px){.ngdialog.ngdialog-theme-default .ngdialog-button:focus{-webkit-animation:none;animation:none}}.ngdialog.ngdialog-theme-default .ngdialog-button.ngdialog-button-primary{background:#3288e6;color:#fff}.ngdialog.ngdialog-theme-default .ngdialog-button.ngdialog-button-secondary{background:#e0e0e0;color:#777}
-.ngdialog.ngdialog-theme-plain{padding-bottom:160px;padding-top:160px}.ngdialog.ngdialog-theme-plain .ngdialog-content{background:#fff;color:#444;font-family:'Helvetica Neue',sans-serif;font-size:1.1em;line-height:1.5em;margin:0 auto;max-width:100%;padding:1em;position:relative;width:450px}.ngdialog.ngdialog-theme-plain .ngdialog-content h1,.ngdialog.ngdialog-theme-plain .ngdialog-content h2,.ngdialog.ngdialog-theme-plain .ngdialog-content h3,.ngdialog.ngdialog-theme-plain .ngdialog-content h4,.ngdialog.ngdialog-theme-plain .ngdialog-content h5,.ngdialog.ngdialog-theme-plain .ngdialog-content h6,.ngdialog.ngdialog-theme-plain .ngdialog-content li,.ngdialog.ngdialog-theme-plain .ngdialog-content p,.ngdialog.ngdialog-theme-plain .ngdialog-content ul{color:inherit}.ngdialog.ngdialog-theme-plain .ngdialog-close{cursor:pointer;position:absolute;right:0;top:0}.ngdialog.ngdialog-theme-plain .ngdialog-close:before{background:0 0;color:#bbb;content:"\00D7";font-size:26px;font-weight:400;height:30px;line-height:26px;position:absolute;right:3px;text-align:center;top:3px;width:30px}.ngdialog.ngdialog-theme-plain .ngdialog-close:active:before,.ngdialog.ngdialog-theme-plain .ngdialog-close:hover:before{color:#777}.ngdialog.ngdialog-theme-plain .ngdialog-message{margin-bottom:.5em}.ngdialog.ngdialog-theme-plain .ngdialog-input{margin-bottom:1em}.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=text],.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=password],.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=email],.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=url],.ngdialog.ngdialog-theme-plain .ngdialog-input textarea{background:#f0f0f0;border:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0 0 .25em;min-height:2.5em;padding:.25em .67em;width:100%}.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=text]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=password]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=email]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=url]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input textarea:focus{box-shadow:inset 0 0 0 2px rgba(0,0,0,.2);outline:0}.ngdialog.ngdialog-theme-plain .ngdialog-buttons:after{clear:both;content:'';display:table}.ngdialog.ngdialog-theme-plain .ngdialog-button{border:0;cursor:pointer;float:right;font-family:inherit;font-size:.8em;letter-spacing:.1em;line-height:1em;margin:0 0 0 .5em;padding:.75em 2em;text-transform:uppercase}.ngdialog.ngdialog-theme-plain .ngdialog-button:focus{-webkit-animation:ngdialog-pulse 1.1s infinite;animation:ngdialog-pulse 1.1s infinite;outline:0}@media (max-width:568px){.ngdialog.ngdialog-theme-plain .ngdialog-button:focus{-webkit-animation:none;animation:none}}.ngdialog.ngdialog-theme-plain .ngdialog-button.ngdialog-button-primary{background:#3288e6;color:#fff}.ngdialog.ngdialog-theme-plain .ngdialog-button.ngdialog-button-secondary{background:#e0e0e0;color:#777}
-/*!
- * ClockPicker v0.0.7 for Bootstrap (http://weareoutman.github.io/clockpicker/)
- * Copyright 2014 Wang Shenwei.
- * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/master/LICENSE)
- */.clockpicker .input-group-addon{cursor:pointer}.clockpicker-moving{cursor:move}.clockpicker-align-left.popover>.arrow{left:25px}.clockpicker-align-top.popover>.arrow{top:17px}.clockpicker-align-right.popover>.arrow{left:auto;right:25px}.clockpicker-align-bottom.popover>.arrow{top:auto;bottom:6px}.clockpicker-popover .popover-title{background-color:#fff;color:#999;font-size:24px;font-weight:700;line-height:30px;text-align:center}.clockpicker-popover .popover-title span{cursor:pointer}.clockpicker-popover .popover-content{background-color:#f8f8f8;padding:12px}.popover-content:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px}.clockpicker-plate{background-color:#fff;border:1px solid #ccc;border-radius:50%;width:200px;height:200px;overflow:visible;position:relative;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.clockpicker-canvas,.clockpicker-dial{width:200px;height:200px;position:absolute;left:-1px;top:-1px}.clockpicker-minutes{visibility:hidden}.clockpicker-tick{border-radius:50%;color:#666;line-height:26px;text-align:center;width:26px;height:26px;position:absolute;cursor:pointer}.clockpicker-tick.active,.clockpicker-tick:hover{background-color:#c0e5f7;background-color:rgba(0,149,221,.25)}.clockpicker-button{background-image:none;background-color:#fff;border-width:1px 0 0;border-top-left-radius:0;border-top-right-radius:0;margin:0;padding:10px 0}.clockpicker-button:hover{background-image:none;background-color:#ebebeb}.clockpicker-button:focus{outline:0!important}.clockpicker-dial{-webkit-transition:-webkit-transform 350ms,opacity 350ms;-moz-transition:-moz-transform 350ms,opacity 350ms;-ms-transition:-ms-transform 350ms,opacity 350ms;-o-transition:-o-transform 350ms,opacity 350ms;transition:transform 350ms,opacity 350ms}.clockpicker-dial-out{opacity:0}.clockpicker-hours.clockpicker-dial-out{-webkit-transform:scale(1.2,1.2);-moz-transform:scale(1.2,1.2);-ms-transform:scale(1.2,1.2);-o-transform:scale(1.2,1.2);transform:scale(1.2,1.2)}.clockpicker-minutes.clockpicker-dial-out{-webkit-transform:scale(.8,.8);-moz-transform:scale(.8,.8);-ms-transform:scale(.8,.8);-o-transform:scale(.8,.8);transform:scale(.8,.8)}.clockpicker-canvas{-webkit-transition:opacity 175ms;-moz-transition:opacity 175ms;-ms-transition:opacity 175ms;-o-transition:opacity 175ms;transition:opacity 175ms}.clockpicker-canvas-out{opacity:.25}.clockpicker-canvas-bearing,.clockpicker-canvas-fg{stroke:none;fill:#0095dd}.clockpicker-canvas-bg{stroke:none;fill:#c0e5f7}.clockpicker-canvas-bg-trans{fill:rgba(0,149,221,.25)}.clockpicker-canvas line{stroke:#0095dd;stroke-width:1;stroke-linecap:round}.clockpicker-button.am-button{margin:1px;padding:5px;border:1px solid rgba(0,0,0,.2);border-radius:4px}.clockpicker-button.pm-button{margin:1px 1px 1px 136px;padding:5px;border:1px solid rgba(0,0,0,.2);border-radius:4px}
-.ngdialog,.ngdialog-overlay{position:fixed;top:0;right:0;bottom:0;left:0}@-webkit-keyframes ngdialog-fadeout{0%{opacity:1}100%{opacity:0}}@keyframes ngdialog-fadeout{0%{opacity:1}100%{opacity:0}}@-webkit-keyframes ngdialog-fadein{0%{opacity:0}100%{opacity:1}}@keyframes ngdialog-fadein{0%{opacity:0}100%{opacity:1}}.ngdialog{box-sizing:border-box;overflow:auto;-webkit-overflow-scrolling:touch;z-index:10000}.ngdialog *,.ngdialog :after,.ngdialog :before{box-sizing:inherit}.ngdialog.ngdialog-disabled-animation,.ngdialog.ngdialog-disabled-animation .ngdialog-content,.ngdialog.ngdialog-disabled-animation .ngdialog-overlay{-webkit-animation:none!important;animation:none!important}.ngdialog-overlay{background:rgba(0,0,0,.4);-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadein .5s;animation:ngdialog-fadein .5s}.ngdialog-no-overlay{pointer-events:none}.ngdialog.ngdialog-closing .ngdialog-overlay{-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadeout .5s;animation:ngdialog-fadeout .5s}.ngdialog-content{background:#fff;-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadein .5s;animation:ngdialog-fadein .5s;pointer-events:all}.ngdialog.ngdialog-closing .ngdialog-content{-webkit-backface-visibility:hidden;-webkit-animation:ngdialog-fadeout .5s;animation:ngdialog-fadeout .5s}.ngdialog-close:before{font-family:Helvetica,Arial,sans-serif;content:'\00D7';cursor:pointer}body.ngdialog-open,html.ngdialog-open{overflow:hidden}
-@-webkit-keyframes ngdialog-flyin{0%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}100%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes ngdialog-flyin{0%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}100%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}}@-webkit-keyframes ngdialog-flyout{0%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}}@keyframes ngdialog-flyout{0%{opacity:1;-webkit-transform:translateY(0);transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(-40px);transform:translateY(-40px)}}.ngdialog.ngdialog-theme-default{padding-bottom:160px;padding-top:160px}.ngdialog.ngdialog-theme-default.ngdialog-closing .ngdialog-content{-webkit-animation:ngdialog-flyout .5s;animation:ngdialog-flyout .5s}.ngdialog.ngdialog-theme-default .ngdialog-content{-webkit-animation:ngdialog-flyin .5s;animation:ngdialog-flyin .5s;background:#f0f0f0;border-radius:5px;color:#444;font-family:Helvetica,sans-serif;font-size:1.1em;line-height:1.5em;margin:0 auto;max-width:100%;padding:1em;position:relative;width:450px}.ngdialog.ngdialog-theme-default .ngdialog-close{border-radius:5px;cursor:pointer;position:absolute;right:0;top:0}.ngdialog.ngdialog-theme-default .ngdialog-close:before{background:0 0;border-radius:3px;color:#bbb;content:'\00D7';font-size:26px;font-weight:400;height:30px;line-height:26px;position:absolute;right:3px;text-align:center;top:3px;width:30px}.ngdialog.ngdialog-theme-default .ngdialog-close:active:before,.ngdialog.ngdialog-theme-default .ngdialog-close:hover:before{color:#777}.ngdialog.ngdialog-theme-default .ngdialog-message{margin-bottom:.5em}.ngdialog.ngdialog-theme-default .ngdialog-input{margin-bottom:1em}.ngdialog.ngdialog-theme-default .ngdialog-input input[type=text],.ngdialog.ngdialog-theme-default .ngdialog-input input[type=password],.ngdialog.ngdialog-theme-default .ngdialog-input input[type=email],.ngdialog.ngdialog-theme-default .ngdialog-input input[type=url],.ngdialog.ngdialog-theme-default .ngdialog-input textarea{background:#fff;border:0;border-radius:3px;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0 0 .25em;min-height:2.5em;padding:.25em .67em;width:100%}.ngdialog.ngdialog-theme-default .ngdialog-input input[type=text]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input input[type=password]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input input[type=email]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input input[type=url]:focus,.ngdialog.ngdialog-theme-default .ngdialog-input textarea:focus{box-shadow:inset 0 0 0 2px #8dbdf1;outline:0}.ngdialog.ngdialog-theme-default .ngdialog-buttons:after{content:'';display:table;clear:both}.ngdialog.ngdialog-theme-default .ngdialog-button{border:0;border-radius:3px;cursor:pointer;float:right;font-family:inherit;font-size:.8em;letter-spacing:.1em;line-height:1em;margin:0 0 0 .5em;padding:.75em 2em;text-transform:uppercase}.ngdialog.ngdialog-theme-default .ngdialog-button:focus{-webkit-animation:ngdialog-pulse 1.1s infinite;animation:ngdialog-pulse 1.1s infinite;outline:0}@media (max-width:568px){.ngdialog.ngdialog-theme-default .ngdialog-button:focus{-webkit-animation:none;animation:none}}.ngdialog.ngdialog-theme-default .ngdialog-button.ngdialog-button-primary{background:#3288e6;color:#fff}.ngdialog.ngdialog-theme-default .ngdialog-button.ngdialog-button-secondary{background:#e0e0e0;color:#777}
-.ngdialog.ngdialog-theme-plain{padding-bottom:160px;padding-top:160px}.ngdialog.ngdialog-theme-plain .ngdialog-content{background:#fff;color:#444;font-family:'Helvetica Neue',sans-serif;font-size:1.1em;line-height:1.5em;margin:0 auto;max-width:100%;padding:1em;position:relative;width:450px}.ngdialog.ngdialog-theme-plain .ngdialog-content h1,.ngdialog.ngdialog-theme-plain .ngdialog-content h2,.ngdialog.ngdialog-theme-plain .ngdialog-content h3,.ngdialog.ngdialog-theme-plain .ngdialog-content h4,.ngdialog.ngdialog-theme-plain .ngdialog-content h5,.ngdialog.ngdialog-theme-plain .ngdialog-content h6,.ngdialog.ngdialog-theme-plain .ngdialog-content li,.ngdialog.ngdialog-theme-plain .ngdialog-content p,.ngdialog.ngdialog-theme-plain .ngdialog-content ul{color:inherit}.ngdialog.ngdialog-theme-plain .ngdialog-close{cursor:pointer;position:absolute;right:0;top:0}.ngdialog.ngdialog-theme-plain .ngdialog-close:before{background:0 0;color:#bbb;content:"\00D7";font-size:26px;font-weight:400;height:30px;line-height:26px;position:absolute;right:3px;text-align:center;top:3px;width:30px}.ngdialog.ngdialog-theme-plain .ngdialog-close:active:before,.ngdialog.ngdialog-theme-plain .ngdialog-close:hover:before{color:#777}.ngdialog.ngdialog-theme-plain .ngdialog-message{margin-bottom:.5em}.ngdialog.ngdialog-theme-plain .ngdialog-input{margin-bottom:1em}.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=text],.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=password],.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=email],.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=url],.ngdialog.ngdialog-theme-plain .ngdialog-input textarea{background:#f0f0f0;border:0;font-family:inherit;font-size:inherit;font-weight:inherit;margin:0 0 .25em;min-height:2.5em;padding:.25em .67em;width:100%}.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=text]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=password]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=email]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input input[type=url]:focus,.ngdialog.ngdialog-theme-plain .ngdialog-input textarea:focus{box-shadow:inset 0 0 0 2px rgba(0,0,0,.2);outline:0}.ngdialog.ngdialog-theme-plain .ngdialog-buttons:after{clear:both;content:'';display:table}.ngdialog.ngdialog-theme-plain .ngdialog-button{border:0;cursor:pointer;float:right;font-family:inherit;font-size:.8em;letter-spacing:.1em;line-height:1em;margin:0 0 0 .5em;padding:.75em 2em;text-transform:uppercase}.ngdialog.ngdialog-theme-plain .ngdialog-button:focus{-webkit-animation:ngdialog-pulse 1.1s infinite;animation:ngdialog-pulse 1.1s infinite;outline:0}@media (max-width:568px){.ngdialog.ngdialog-theme-plain .ngdialog-button:focus{-webkit-animation:none;animation:none}}.ngdialog.ngdialog-theme-plain .ngdialog-button.ngdialog-button-primary{background:#3288e6;color:#fff}.ngdialog.ngdialog-theme-plain .ngdialog-button.ngdialog-button-secondary{background:#e0e0e0;color:#777}
-/*!
- * ClockPicker v0.0.7 for Bootstrap (http://weareoutman.github.io/clockpicker/)
- * Copyright 2014 Wang Shenwei.
- * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/master/LICENSE)
- */.clockpicker .input-group-addon{cursor:pointer}.clockpicker-moving{cursor:move}.clockpicker-align-left.popover>.arrow{left:25px}.clockpicker-align-top.popover>.arrow{top:17px}.clockpicker-align-right.popover>.arrow{left:auto;right:25px}.clockpicker-align-bottom.popover>.arrow{top:auto;bottom:6px}.clockpicker-popover .popover-title{background-color:#fff;color:#999;font-size:24px;font-weight:700;line-height:30px;text-align:center}.clockpicker-popover .popover-title span{cursor:pointer}.clockpicker-popover .popover-content{background-color:#f8f8f8;padding:12px}.popover-content:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px}.clockpicker-plate{background-color:#fff;border:1px solid #ccc;border-radius:50%;width:200px;height:200px;overflow:visible;position:relative;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.clockpicker-canvas,.clockpicker-dial{width:200px;height:200px;position:absolute;left:-1px;top:-1px}.clockpicker-minutes{visibility:hidden}.clockpicker-tick{border-radius:50%;color:#666;line-height:26px;text-align:center;width:26px;height:26px;position:absolute;cursor:pointer}.clockpicker-tick.active,.clockpicker-tick:hover{background-color:#c0e5f7;background-color:rgba(0,149,221,.25)}.clockpicker-button{background-image:none;background-color:#fff;border-width:1px 0 0;border-top-left-radius:0;border-top-right-radius:0;margin:0;padding:10px 0}.clockpicker-button:hover{background-image:none;background-color:#ebebeb}.clockpicker-button:focus{outline:0!important}.clockpicker-dial{-webkit-transition:-webkit-transform 350ms,opacity 350ms;-moz-transition:-moz-transform 350ms,opacity 350ms;-ms-transition:-ms-transform 350ms,opacity 350ms;-o-transition:-o-transform 350ms,opacity 350ms;transition:transform 350ms,opacity 350ms}.clockpicker-dial-out{opacity:0}.clockpicker-hours.clockpicker-dial-out{-webkit-transform:scale(1.2,1.2);-moz-transform:scale(1.2,1.2);-ms-transform:scale(1.2,1.2);-o-transform:scale(1.2,1.2);transform:scale(1.2,1.2)}.clockpicker-minutes.clockpicker-dial-out{-webkit-transform:scale(.8,.8);-moz-transform:scale(.8,.8);-ms-transform:scale(.8,.8);-o-transform:scale(.8,.8);transform:scale(.8,.8)}.clockpicker-canvas{-webkit-transition:opacity 175ms;-moz-transition:opacity 175ms;-ms-transition:opacity 175ms;-o-transition:opacity 175ms;transition:opacity 175ms}.clockpicker-canvas-out{opacity:.25}.clockpicker-canvas-bearing,.clockpicker-canvas-fg{stroke:none;fill:#0095dd}.clockpicker-canvas-bg{stroke:none;fill:#c0e5f7}.clockpicker-canvas-bg-trans{fill:rgba(0,149,221,.25)}.clockpicker-canvas line{stroke:#0095dd;stroke-width:1;stroke-linecap:round}.clockpicker-button.am-button{margin:1px;padding:5px;border:1px solid rgba(0,0,0,.2);border-radius:4px}.clockpicker-button.pm-button{margin:1px 1px 1px 136px;padding:5px;border:1px solid rgba(0,0,0,.2);border-radius:4px}
-/*GENERAL*/
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
 
 html,
 body,
@@ -136,7 +115,6 @@ textarea,
 select {
     margin-top: 5px;
     border-radius: 2px;
-    width: 100%;
     padding: 3px;
 }
 .simple-form {} .simple-form .ng-invalid {
@@ -221,40 +199,88 @@ ul.inlineButtons .button {
 #content table td
 {
     width:120%;
+
 }
+/*SPRITE ICONS*/
+.sprite {
+    background-image: url(sprite.png);
+    background-repeat: no-repeat;
+    display: block;
+}
+
+.sprite.back {
+    width: 30px;
+    height: 30px;
+    background-position: -5px -5px;
+	position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.sprite.home {
+    width: 29px;
+    height: 28px;
+    background-position: -45px -5px;
+}
+
+.sprite.duplicate {
+    width: 30px;
+    height: 32px;
+    background-position: -45px -43px;
+	position: absolute;
+    right: 3px;
+    top: 9px;
+}
+
+.sprite.clockpicker {
+    width: 12px;
+    height: 12px;
+     background-position: -4px -39px;
+}
+
+.sprite.refresh {
+    width: 30px;
+    height: 30px;
+    background-position: -106px -5px;
+}
+
+
 /* ABM Dispositivos */
 /* ABM Dispositivos */
 /*Estados salidas*/
 input.clockpicker.estados
 {
-    background: url(sprite.png) no-repeat scroll -294px -17px;
-    border: 0;
+
+	border: 0;
     margin: 0 auto;
     text-align: center;
-    width: 83px;
-    position: fixed;
+
+	width: 29px;
+
+	position: fixed;
+    border: 1px solid;
+    /* border-radius: 100%; */
+    background-color: #fff;
     z-index: 10000;
-    height: 20px;
+    height: 28px;
 }
 ul#estados {
     margin-top: 41px;
     text-align: left;
 }
-#back,
-a#home,
-.refresh {
-    display: block;
-    background: url('../image/back.png');
-    width: 30px;
-    height: 30px;
+a.sprite.back
+a.sprite.home,
+a.sprite.refresh {}
     position: absolute;
     top: 11px;
+    left:0;
 }
-#back {left:10px;}
-a#home
+a.back {left:10px;}
+a.home
 {
+	position:absolute;
     right:10px;
-    background: url('../image/button.png');
+    top:10px;
 }
 .refresh {
     left: 27%;
@@ -494,9 +520,18 @@ a#home
 }
 /* Vista Estados, icono Programacion Salida */
 /*TAREAS*/
-.dispositivo select
+div.activa > span
 {
-    width:70%;
+	display:inline-block;
+}
+div.activa label.switch
+{
+	margin-top: 7px;
+	float:right;
+}
+div.fechaPicker
+{
+	margin: 22px 0 !important;
 }
 .fechaPicker select
 {
@@ -505,18 +540,30 @@ a#home
 }
 div.dispositivo > label
 {
-    float:left;
+    /* float:left; */
     margin-right:8px;
+    width: 100%;
+    font-weight: bold;
     position:relative;
 }
-div.dispositivo > a
+div.dispositivo label select
 {
-    font-size: 38px;
-    float:right;
+    width: 270px;
+    display: block;
+}
+div.dispositivo label > a
+{
+    font-size: 2.6em;
     position: absolute;
-    margin-top: -43px;
+    bottom: 0;
     font-weight:bold;
-    right: 6px;
+    right: 0;
+    color: #03ae74;
+}
+.left label textarea
+{
+	width:95%;
+	min-height:60px;
 }
 ul#tareas li {
     border: 1px solid #ccc;
@@ -590,11 +637,42 @@ form #duracion
 }
 
 /*TAREAS*/
+#tareaForm div
+{
+	margin: 0px 0 6px 0;
+	font-weight: bold;
+	position: relative;
+	padding: 2px 0;
+}
+#tareaForm div.duracion
+{
+	margin-top: 25px;
+}
 
+#tareaForm div > span
+{
+	font-weight:bold;
+	margin-top: 14px;
+}
+#tareaForm div.duracion span
+{
+	float:right;
+	color:red;
+}
+#tareaForm ul.actionsPopup
+{
+	margin-top:20px;
+}
 ul#tareas li {
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 16px 15px;
     position: relative;
+}
+ul#tareas li a.icon
+{
+	position:absolute;
+	right: 4px;
+	top: 4px;
 }
 ul#tareas li a span
 {
@@ -610,18 +688,26 @@ ul#tareas li .timeIcon
 {
     top:6px;
 }
+div.dispositivosAdded h5
+{
+	font-weight:bold;
+}
 div.dispositivosAdded ul
 {
     margin-left:10px;
 }
 div.dispositivosAdded ul li
 {
-    margin-bottom:10px;
+    margin:10px 0;
 }
 div.dispositivosAdded ul li a
 {
     float:right;
     color:red;
+    font-size: 1.6em;
+    margin-right: -6px;
+    padding: 10px;
+    margin-top: -12px;
     font-weight:bold;
 }
 .popover {
@@ -629,10 +715,15 @@ div.dispositivosAdded ul li a
     top: 26% !important;
     left: 50% !important;
     margin: auto;
-    margin-left: -114px;
+    border: 30px solid #03ae74;
+    margin-left: -144px;
+    margin-top: -30px;
 }
 /*Dias ejecucion*/
-
+.dias_ejecucion
+{
+	margin:0px 0 40px 0 !important;
+}
 .dias_ejecucion label {
     float: left;
     text-align: center;
