@@ -138,6 +138,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$rootScope.currentMenu = (params.id_tarea != 9999) ? 'Edición de tareas' : 'Nueva tarea';
 	$scope.dispositivoSelected = {};
 	$scope.tarea = params;
+	$scope.tarea.mes_inicio = params.mes_inicio - 1;
+	$scope.tarea.mes_fin = params.mes_fin - 1;
 	$scope.dias = [];
 	$scope.meses = [];
 
@@ -201,10 +203,12 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	$scope.save = function()
 	{
-		$scope.tarea.dia_inicio  	= $('#dia_inicio').val();
-		$scope.tarea.mes_inicio  	= $('#mes_inicio').val();
-		$scope.tarea.hora_inicio 	= $('#horainicio').val();
-		$scope.tarea.duracion 	 	= $('#duracion').val();
+		$scope.tarea.dia_inicio = $('#dia_inicio').val();
+		$scope.tarea.mes_inicio = parseInt( $('#mes_inicio').val() ) + 1;
+		$scope.tarea.dia_fin  	= $('#dia_fin').val();
+		$scope.tarea.mes_fin  	= parseInt( $('#mes_fin').val() ) + 1;
+		$scope.tarea.hora_inicio = $('#horainicio').val();
+		$scope.tarea.duracion = $('#duracion').val();
 		Tarea.save( $scope.tarea, function(response){});
 	}
 

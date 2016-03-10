@@ -82,14 +82,14 @@
 		</div>
 		<div class="fechaPicker">Fecha fin
 			<label>
-				<select ng-model="tarea.dia_fin">
+				<select id="dia_fin" ng-model="tarea.dia_fin">
 					<option ng-selected="{{dia == tarea.dia_fin}}"
 							ng-repeat="dia in dias"
 							value="{{dia}}">
 							{{dia}}
 					</option>
 				</select>
-				<select ng-model="tarea.mes_fin">
+				<select id="mes_fin" ng-model="tarea.mes_fin">
 					<option ng-selected="{{mes == tarea.mes_fin}}"
 							ng-repeat="mes in meses"
 							value="{{mes}}">

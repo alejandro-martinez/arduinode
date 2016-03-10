@@ -129,9 +129,13 @@ var Programador = function()
 					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.raw_hora_inicio),
 					tiempo_restante = DateConvert.horario_a_min(t.temporizada) - tiempo_desde_inicio;
 					console.log("Tiempo restante de ",t.descripcion,tiempo_restante,"min");
-					t.estado = 0;
-					t.temporizada = tiempo_restante;
-					this.ejecutarTarea(t);
+
+					if (t.accion == 0)
+					{
+						t.estado = t.accion;
+						t.temporizada = tiempo_restante;
+						this.ejecutarTarea(t);
+					}
 			}
 			else
 			{
@@ -145,7 +149,7 @@ var Programador = function()
 				params.dispositivos.forEach(function(d)
 				{
 					d.noError = true;
-					d.estado = params.estado || 0;
+					d.estado = params.accion;
 					d.temporizada = params.temporizada;
 
 					socketArduino.switchSalida(d, function(response)
@@ -167,12 +171,12 @@ var Programador = function()
 				{
 					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.hora_inicio);
 					var tiempo_restante = DateConvert.horario_a_min(t.duracion) - tiempo_desde_inicio;
-					if (tiempo_restante > 0)
+					if (tiempo_restante > 0 && t.accion == 0)
 					{
 						//Relanzo la tarea con el tiempo restante
 						console.log("Relanzando tarea: ",t.descripcion
 									," con tiempo restante de:",tiempo_restante);
-						t.estado = 0;
+						t.estado = t.accion;
 						t.temporizada = tiempo_restante;
 						This.ejecutarTarea(t);
 					}
