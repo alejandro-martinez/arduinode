@@ -95,8 +95,6 @@ var Programador = function()
 			{
 				if (DateConvert.fechaBetween(config))
 				{
-					console.log("Dia valido", DateConvert.diaActualValido(config.dias_ejecucion))
-					console.log("dias", config.dias_ejecucion);
 					return DateConvert.diaActualValido(config.dias_ejecucion);
 				}
 			}
@@ -143,7 +141,6 @@ var Programador = function()
 
 					socketArduino.switchSalida(d, function(response)
 					{
-						console.log("El dispositivo respondio:",response);
 						if (response === null)
 						{
 							console.log("ERROR: No se puede llegar a:",d.ip);
@@ -177,14 +174,13 @@ var Programador = function()
 						console.log(t.descripcion, " no deberia estar en ejecucion");
 					}
 				})
-			},10000)
+			},60000 * 5)
 		};
 		this.apagarTarea = function(tarea_id)
 		{
 			var tarea = this.getTarea(tarea_id);
 			if (tarea.length > 0)
 			{
-				console.log("Apagando");
 				//tarea, accion
 				this.ejecutarTarea(tarea[0], 1);
 			}
