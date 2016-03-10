@@ -23,7 +23,9 @@ angular.module('Arduinode',
 
 	$rootScope.goBack = function()
 	{
-		if ($rootScope.previousState == 'estados')
+		if ($rootScope.previousState == 'estados'
+			|| $rootScope.currentState == 'tareas'
+		)
 		{
 			$state.go('home');
 		}
