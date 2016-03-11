@@ -75,7 +75,7 @@ module.exports = function()
 		{
 			var date = new Date(),
 				hora_1 = this.parseTimeString(hora1),
-				hora_2 = this.parseTimeString(hora2),
+				hora_2 = this.parseTimeString(hora2);
 
 			if (hora_2.getTime() < hora_1.getTime())
 			{
