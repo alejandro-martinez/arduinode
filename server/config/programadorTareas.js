@@ -53,7 +53,10 @@ var Programador = function()
 		this.registerTareaActiva = function(config, _tarea)
 		{
 			var tarea = this.getTarea(config.id_tarea)[0];
-			tarea.enEjecucion = _tarea;
+			if (tarea && tarea.length > 0)
+			{
+				tarea.enEjecucion = _tarea;
+			}
 		};
 		this.nuevaTarea = function(config)
 		{
