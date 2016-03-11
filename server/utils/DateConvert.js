@@ -137,7 +137,7 @@ module.exports = function()
 		},
 		horario_a_ms: function(horario)
 		{
-			if (horario.length == 5)
+			if (horario && horario.length == 5)
 			{
 				var hs = parseInt( horario.substr(0,2) );
 				var min = parseInt( horario.substr(-2) );

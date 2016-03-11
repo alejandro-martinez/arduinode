@@ -208,8 +208,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		$scope.tarea.dia_fin  	= $('#dia_fin').val();
 		$scope.tarea.mes_fin  	= parseInt( $('#mes_fin').val() ) + 1;
 		$scope.tarea.hora_inicio = $('#horainicio').val();
-		var duracion = ($scope.tarea.accion == 0) ? $('#duracion').val() : null;
-		$scope.tarea.duracion = duracion;
+		$scope.tarea.duracion = $('#duracion').val();
 		Tarea.save( $scope.tarea, function(response){});
 	}
 

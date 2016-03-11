@@ -114,21 +114,29 @@ var Programador = function()
 				{
 					//Si hora_inicio de tarea + duracion tarea > hora_actual
 					//Se deberia ejecutar la tarea
-				if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
-				{
-					var tiempo_restante = DateConvert.restarHoras(hora_actual_HHMM,hora_fin_HHMM);
-
-					if (tiempo_restante > 0)
+					if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
 					{
-						console.log("Tiempo restante de ",
-									t.descripcion,
-									DateConvert.min_a_horario(tiempo_restante));
-						t.estado = t.accion;
-						t.temporizada = tiempo_restante;
-						this.ejecutarTarea(t);
+						var tiempo_restante = DateConvert.restarHoras(hora_actual_HHMM,hora_fin_HHMM);
+
+						if (tiempo_restante > 0 && t.accion == 0)
+						{
+							console.log("Tiempo restante de ",
+										t.descripcion,
+										DateConvert.min_a_horario(tiempo_restante));
+							t.estado = t.accion;
+							t.temporizada = tiempo_restante;
+							this.ejecutarTarea(t);
+						}
 					}
 				}
+				else
+				{
+					console.log("Hora actual no esta en rango horario de tarea");
 				}
+			}
+			else
+			{
+				console.log("No se puede forzar la tarea porque es invalida");
 			}
 		};
 		this.ejecutarTarea = function(params, accion)
