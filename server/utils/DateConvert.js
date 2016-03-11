@@ -127,26 +127,6 @@ module.exports = function()
 				now    = this.currentTime();
 
 			return (now >= hora_1.getTime() && now < hora_2.getTime());
-			//Ej hora1 = 09:30 hora2 = 18:30
-			if (hora_1.getTime() > hora_2.getTime())
-			{
-				console.log("1")
-
-			}
-			else
-			{
-				console.log("hora 1,hora2",hora1,hora2)
-				if (now > hora_2.getTime())
-				{
-					return (now >= hora_1.getTime() && now < hora_2.getTime());
-				}
-				else
-				{
-					return (now >= hora_1.getTime() && now < hora_2.getTime());
-				}
-
-			}
-			return false;
 		},
 		addMinutosAHoraActual: function(minutos)
 		{

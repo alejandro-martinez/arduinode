@@ -12,7 +12,6 @@ var Programador = function()
 		this.tareas = [];
 		this.reprogramarTarea = function(_newValues, _oldValues)
 		{
-			this.apagarTarea(_oldValues.id_tarea);
 			var configTarea = this.parseConfig(_newValues);
 			this.nuevaTarea(configTarea);
 		};
@@ -44,13 +43,15 @@ var Programador = function()
 				mes_fin	: 		t.mes_fin,
 				temporizada: 	DateConvert.horario_a_min( t.duracion ),
 				raw_duracion: 	t.duracion,
-				descripcion: 	t.descripcion
+				descripcion: 	t.descripcion,
+				enEjecucion: {}
 			}
 			return config;
 		};
 		this.registerTareaActiva = function(config, _tarea)
 		{
 			var tarea = this.getTarea(config.id_tarea)[0];
+			console.log("REgistrando",tarea.descripcion);
 			tarea.enEjecucion = _tarea;
 		};
 		this.nuevaTarea = function(config)
@@ -106,24 +107,30 @@ var Programador = function()
 		};
 		this.forzarEjecucion = function(t)
 		{
-			var hora_fin_min = DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion),
-				hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min),
-				hora_actual_HHMM = DateConvert.horarioEnHHMM();
-
-			//Si hora_inicio de tarea + duracion tarea > hora_actual
-			//Se deberia ejecutar la tarea
-			if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
+			if (this.checkValidez(t))
 			{
-				var tiempo_restante = DateConvert.restarHoras(hora_actual_HHMM,hora_fin_HHMM);
+				var hora_fin_min = DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion),
+					hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min),
+					hora_actual_HHMM = DateConvert.horarioEnHHMM();
 
-				if (tiempo_restante > 0)
+				if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
 				{
-					console.log("Tiempo restante de ",
-								t.descripcion,
-								DateConvert.min_a_horario(tiempo_restante));
-					t.estado = t.accion;
-					t.temporizada = tiempo_restante;
-					this.ejecutarTarea(t);
+					//Si hora_inicio de tarea + duracion tarea > hora_actual
+					//Se deberia ejecutar la tarea
+				if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
+				{
+					var tiempo_restante = DateConvert.restarHoras(hora_actual_HHMM,hora_fin_HHMM);
+
+					if (tiempo_restante > 0)
+					{
+						console.log("Tiempo restante de ",
+									t.descripcion,
+									DateConvert.min_a_horario(tiempo_restante));
+						t.estado = t.accion;
+						t.temporizada = tiempo_restante;
+						this.ejecutarTarea(t);
+					}
+				}
 				}
 			}
 		};
@@ -151,13 +158,14 @@ var Programador = function()
 		{
 			var This = this;
 			console.log("Observando las tareas cada ",
-						parseInt((this.config.tiempoEscaneoTareas / 1000) / 60)," minutos ...");
+						parseInt((this.config.tiempoEscaneoTareas / 1000) / 60),
+						" minutos ...");
 			//Cada 5 min
 			setInterval(function()
 			{
 				This.tareas.forEach(function(t)
 				{
-					This.forzarEjecucion(t);
+					This.forzarEjecucion(This.parseConfig(t));
 					/*
 					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.hora_inicio);
 					var tiempo_restante = DateConvert.horario_a_min(t.duracion) - tiempo_desde_inicio;

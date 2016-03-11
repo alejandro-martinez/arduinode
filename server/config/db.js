@@ -198,6 +198,7 @@ module.exports = function(app, config)
 
 				if (tarea.length > 0)
 				{
+					console.log("Existe Tarea")
 					var dispositivosOrig = JSON.parse(JSON.stringify(tarea[0]));
 					tarea[0] = This.replicateObj(model, tarea[0]);
 				}
@@ -208,13 +209,14 @@ module.exports = function(app, config)
 						tarea = this.replicateObj(model, {});
 					tarea.id_tarea = id_tarea;
 					tarea.dispositivos = model.dispositivos;
+					console.log("nueva tarea",tarea)
 					this.currentFiles[1].push(tarea);
 				}
 				this.writeToJson(this.filesPaths.tareas, this.currentFiles[1],
 					function(err)
 					{
 						params = {
-							tarea: tarea[0],
+							tarea: tarea[0] || tarea,
 							dispositivosOrig: dispositivosOrig
 						}
 						callback(err, params);
