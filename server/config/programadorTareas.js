@@ -127,6 +127,7 @@ var Programador = function()
 						if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
 						{
 							var tiempo_restante = DateConvert.diffHoras(hora_actual_HHMM,hora_fin_HHMM);
+							
 							if (tiempo_restante > 0)
 							{
 								return tiempo_restante;

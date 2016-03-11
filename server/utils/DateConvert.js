@@ -76,11 +76,13 @@ module.exports = function()
 			var date = new Date(),
 				hora_1 = this.parseTimeString(hora1),
 				hora_2 = this.parseTimeString(hora2),
-				now    = this.currentTime();
 
 			if (hora_2.getTime() < hora_1.getTime())
 			{
-				return Math.abs((((hora_2.getTime() - hora_1.getTime() ) / 1000) / 60));
+				var timeTo0 = 24 - hora_1.getHours();
+				var past0hours = hora_2.getHours();
+				var total = (timeTo0 + past0hours) * 60;
+				return total;
 			}
 			return Math.abs((((hora_1.getTime() - hora_2.getTime() ) / 1000) / 60));
 		},
