@@ -5,6 +5,10 @@ var socketArduino = require('../Arduino')(),
 
 var Programador = function()
 {
+		this.setConfig = function(config)
+		{
+			this.config = config;
+		};
 		this.tareas = [];
 		this.reprogramarTarea = function(_newValues, _oldValues)
 		{
@@ -152,7 +156,8 @@ var Programador = function()
 		this.observarCambios = function()
 		{
 			var This = this;
-			console.log("Observando las tareas cada 5 minutos...");
+			console.log("Observando las tareas cada ",
+						parseInt((this.config.tiempoEscaneoTareas / 1000) / 60)," minutos ...");
 			//Cada 5 min
 			setInterval(function()
 			{
@@ -174,7 +179,7 @@ var Programador = function()
 						console.log(t.descripcion, " no deberia estar en ejecucion");
 					}
 				})
-			},60000 * 5)
+			},this.config.tiempoEscaneoTareas)
 		};
 		this.apagarTarea = function(tarea_id)
 		{

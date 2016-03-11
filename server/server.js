@@ -3,20 +3,20 @@
 //Dependencias
 var express = require('express'),
 	app 	= express(),
-	serverInfo = {host: "192.168.2.12", port:8888 },
+	serverInfo = {host: "localhost", port:8888 },
 	fs		= require('fs'),
 	compress = require('compression');
 	app.use(compress());
 	var http 	= require('http').Server(app),
 	programadorTareas = require('./config/programadorTareas'),
+	serverConfig = {},
 	ArrayUtils = require('./utils/ArrayUtils')(),
-	config 	= require('./config/config').config(app, express),	// Configuración
-	io 		= require('socket.io')(http),						// Socket IO
-	net 	= require('net'),									// Socket Arduino
-	arduino = require('./Arduino')(),							// ArduinoModule
-	DataStore	= require('./config/db')(app, config);			// Conexión
-	require('./models')(app);									// Modelos
-	require('./controllers')(app);								// Controladores
+	expressConfig = require('./config/config').config(app, express),// Configuración
+	io 		= require('socket.io')(http),							// Socket IO
+	net 	= require('net'),										// Socket Arduino
+	arduino = require('./Arduino')(),								// ArduinoModule
+	DataStore	= require('./config/db')(app, expressConfig);		// Conexión
+	require('./controllers')(app);									// Controladores
 
 // Argumentos pasados por linea de comandos
 process.argv.forEach(function (val, index, array)
@@ -28,11 +28,18 @@ process.argv.forEach(function (val, index, array)
 	}
 });
 
-//Server HTTP
 
-http.listen(serverInfo.port, serverInfo.host, function()
+//Crea o trae el archivo de configuracion para el servidor y Programador de tareas
+var path = './config/config.json';
+if (!fs.existsSync(path))
 {
-	console.log("Server iniciado en: ", serverInfo.host+":"+serverInfo.port);
+	fs.writeFileSync(path, '{"ip":"localhost","port":8888,"tiempoEscaneoTareas":300000}');
+}
+serverConfig = require(path);
+//Server HTTP
+http.listen(serverConfig.port, serverConfig.ip, function()
+{
+	console.log("Server iniciado en: ", serverConfig.ip +":"+serverConfig.port);
 
 	//Captura excepciones para no detener el servidor
 	process.on('uncaughtException', function (err)
@@ -46,6 +53,7 @@ http.listen(serverInfo.port, serverInfo.host, function()
 		DataStore.updateDispositivo();
 		DataStore.getFile('tareas',function()
 		{
+			programadorTareas.setConfig(serverConfig);
 			programadorTareas.importar();
 			//	Si se apaga una salida que tenia una tarea programada
 			//	este servicio relanza la misma
