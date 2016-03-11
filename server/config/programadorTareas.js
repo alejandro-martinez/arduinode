@@ -53,7 +53,6 @@ var Programador = function()
 		this.registerTareaActiva = function(config, _tarea)
 		{
 			var tarea = this.getTarea(config.id_tarea)[0];
-			console.log("REgistrando",tarea.descripcion);
 			tarea.enEjecucion = _tarea;
 		};
 		this.nuevaTarea = function(config)
@@ -81,10 +80,6 @@ var Programador = function()
 				if (This.checkValidez(config))
 				{
 					This.ejecutarTarea(config);
-				}
-				else
-				{
-					console.log(config.descripcion, " no es valida");
 				}
 			});
 			this.registerTareaActiva(config, job);
