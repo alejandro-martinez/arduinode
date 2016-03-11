@@ -78,6 +78,10 @@ module.exports = function()
 				hora_2 = this.parseTimeString(hora2),
 				now    = this.currentTime();
 
+			if (hora_2.getTime() < hora_1.getTime())
+			{
+				return Math.abs((((hora_2.getTime() - hora_1.getTime() ) / 1000) / 60));
+			}
 			return Math.abs((((hora_1.getTime() - hora_2.getTime() ) / 1000) / 60));
 		},
 		// Chequea si fechaActual esta entre 2 fechas
