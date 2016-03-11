@@ -130,7 +130,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		dispositivos:[],
 		fecha_inicio: "",
 		fecha_fin: "",
-		accion: 0
+		accion: 0,
+		activa: 0
 	}
 
 	var params = $params.params || def_model;

@@ -41,7 +41,6 @@ module.exports = function()
 		},
 		getEstadoSalida: function(params, callback)
 		{
-			console.log("params",params);
 			var This = this;
 			params.command = 'S'.concat(params.nro_salida);
 			params.noConnect = true;
