@@ -60,8 +60,9 @@ angular.module('Arduinode',
         }
     };
 })
-.config(function ($httpProvider) {
+.config(function ($httpProvider,$compileProvider) {
     $httpProvider.interceptors.push('httpInterceptor');
+	$compileProvider.debugInfoEnabled(false);
 })
 .run(['$rootScope','DispositivoFct',function($rootScope, Dispositivo)
 {
