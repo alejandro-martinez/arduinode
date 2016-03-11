@@ -10,11 +10,30 @@ var Programador = function()
 			this.config = config;
 		};
 		this.tareas = [];
-		this.reprogramarTarea = function(_newValues, _oldValues)
+		this.reprogramarTarea = function(_newValues)
 		{
 			var configTarea = this.parseConfig(_newValues);
 			this.nuevaTarea(configTarea);
 			var tarea = this.getTarea(configTarea.id_tarea);
+
+
+			/*if (_newValues.dispositivosEliminados.length > 0)
+			{
+				//Si la tarea es valida (está en ejecución)
+				if (this.checkValidez(configTarea))
+				{
+					_newValues.dispositivosEliminados.forEach(function(disp)
+					{
+						console.log("Apagando salida de disp eliminado",disp);
+						console.log("Consultando estado de salida",disp.nro_salida);
+						socketArduino.getEstadoSalida(disp, function(response)
+						{
+							console.log("Resp",response);
+						})
+					});
+				}
+			}*/
+
 			this.forzarEjecucion(tarea);
 		};
 		this.getTarea = function(id)
@@ -93,53 +112,47 @@ var Programador = function()
 			this.tareas = DataStore.getTareas();
 			this.cargarEnScheduler();
 		};
-		this.checkValidez = function(config)
+		this.checkValidez = function(t)
 		{
 			//Tarea activa o no?
-			if (config.activa)
+			if (t.activa)
 			{
-				if (DateConvert.fechaBetween(config))
+				if (DateConvert.fechaBetween(t))
 				{
-					return DateConvert.diaActualValido(config.dias_ejecucion);
+					if (DateConvert.diaActualValido(t.dias_ejecucion))
+					{
+						var hora_fin_min = DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion);
+						var hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
+						var hora_actual_HHMM = DateConvert.horarioEnHHMM();
+						if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
+						{
+							var tiempo_restante = DateConvert.diffHoras(hora_actual_HHMM,hora_fin_HHMM);
+							if (tiempo_restante > 0)
+							{
+								return tiempo_restante;
+							}
+						}
+						else
+						{
+							console.log("Hora actual no esta en rango horario de tarea");
+						}
+					}
 				}
 			}
 			return false;
 		};
 		this.forzarEjecucion = function(t)
 		{
-			if (this.checkValidez(t))
-			{
-				var hora_fin_min = DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion),
-					hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min),
-					hora_actual_HHMM = DateConvert.horarioEnHHMM();
+			var tiempo_restante = this.checkValidez(t);
 
-				if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
-				{
-					//Si hora_inicio de tarea + duracion tarea > hora_actual
-					//Se deberia ejecutar la tarea
-					if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
-					{
-						var tiempo_restante = DateConvert.restarHoras(hora_actual_HHMM,hora_fin_HHMM);
-
-						if (tiempo_restante > 0 && t.accion == 0)
-						{
-							console.log("Tiempo restante de ",
-										t.descripcion,
-										DateConvert.min_a_horario(tiempo_restante));
-							t.estado = t.accion;
-							t.temporizada = tiempo_restante;
-							this.ejecutarTarea(t);
-						}
-					}
-				}
-				else
-				{
-					console.log("Hora actual no esta en rango horario de tarea");
-				}
-			}
-			else
+			if (tiempo_restante)
 			{
-				console.log("No se puede forzar la tarea porque es invalida");
+				console.log("Tiempo restante de ",
+												t.descripcion,
+												DateConvert.min_a_horario(tiempo_restante));
+				t.estado = t.accion;
+				t.temporizada = tiempo_restante;
+				this.ejecutarTarea(t);
 			}
 		};
 		this.ejecutarTarea = function(params, accion)

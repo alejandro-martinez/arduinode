@@ -70,6 +70,16 @@ module.exports = function()
 		{
 			return str.replace(/, +/g, ",").split(",").map(Number)
 		},
+		//Devuelve diferencia en minutos
+		diffHoras: function(hora1,hora2)
+		{
+			var date = new Date(),
+				hora_1 = this.parseTimeString(hora1),
+				hora_2 = this.parseTimeString(hora2),
+				now    = this.currentTime();
+
+			return Math.abs((((hora_1.getTime() - hora_2.getTime() ) / 1000) / 60));
+		},
 		// Chequea si fechaActual esta entre 2 fechas
 		fechaBetween: function(config)
 		{
@@ -125,8 +135,14 @@ module.exports = function()
 				hora_1 = this.parseTimeString(hora1),
 				hora_2 = this.parseTimeString(hora2),
 				now    = this.currentTime();
-
-			return (now >= hora_1.getTime() && now < hora_2.getTime());
+			if (hora_1.getTime() > hora_2.getTime())
+			{
+				return (now >= hora_1.getTime());
+			}
+			else
+			{
+				return (now >= hora_1.getTime() && now < hora_2.getTime());
+			}
 		},
 		addMinutosAHoraActual: function(minutos)
 		{
@@ -149,7 +165,11 @@ module.exports = function()
 		{
 			var minHora1 = this.horario_a_min(hora1);
 				minHora2 = this.horario_a_min(hora2);
-			return minHora1 + minHora2;
+
+			var ms = (minHora1 + minHora2) * 1000 * 60;
+			var a = new Date(ms);
+			return ((a.getTime() / 1000 ) /  60);
+
 		},
 		mayorAHoraActual: function(min)
 		{

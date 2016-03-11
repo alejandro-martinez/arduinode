@@ -138,11 +138,12 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$rootScope.currentMenu = (params.id_tarea != 9999) ? 'Edición de tareas' : 'Nueva tarea';
 	$scope.dispositivoSelected = {};
 	$scope.tarea = params;
+	$scope.tarea.dispositivosEliminados = [];
 	$scope.tarea.mes_inicio = params.mes_inicio - 1;
 	$scope.tarea.mes_fin = params.mes_fin - 1;
 	$scope.dias = [];
 	$scope.meses = [];
-	console.log($params)
+
 	$scope.switch = function(data)
 	{
 		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
@@ -246,6 +247,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		{
 			if (_disp == disp)
 			{
+				$scope.tarea.dispositivosEliminados.push(_disp);
 				$scope.tarea.dispositivos.splice(index,1);
 			}
 		})
