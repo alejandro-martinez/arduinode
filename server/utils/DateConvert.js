@@ -18,6 +18,10 @@ module.exports = function()
 			}
 			var hrs = Math.floor(min/60);
 			hrs = hrs % 60;
+			if (hrs >= 24)
+			{
+				hrs = hrs - 24;
+			}
 			if( hrs < 10 )
 			{
 				hrs = "0" + hrs;
@@ -97,17 +101,51 @@ module.exports = function()
 		//Retorna la diferencia en minutos, de la horaActual vs otra hora
 		difHoraConActual: function(hora)
 		{
-
 			var minHoraParam = this.horario_a_min(hora),
 				minHoraActual = this.horario_a_min(this.horarioEnHHMM());
 
 				return Math.abs(minHoraActual - minHoraParam);
 		},
-		horaActualBetween: function(horaIni, horaFin)
+		//Recibe 06:00 devuelve un Date Obj
+		parseTimeString: function(time)
 		{
-			var horaActual = this.horarioEnHHMM();
-			if (horaIni <= horaActual && horaActual < horaFin)
-				return true;
+			var date = new Date();
+			return new Date(date.getFullYear(),date.getMonth(),
+									   date.getDate(),parseInt(time.substr(0,2)),
+									   parseInt(time.substr(3,2)));
+		},
+		currentTime: function()
+		{
+			var date = new Date();
+			return date.getTime();
+		},
+		horaActualBetween: function(hora1, hora2)
+		{
+			var date = new Date(),
+				hora_1 = this.parseTimeString(hora1),
+				hora_2 = this.parseTimeString(hora2),
+				now    = this.currentTime();
+
+			return (now >= hora_1.getTime() && now < hora_2.getTime());
+			//Ej hora1 = 09:30 hora2 = 18:30
+			if (hora_1.getTime() > hora_2.getTime())
+			{
+				console.log("1")
+
+			}
+			else
+			{
+				console.log("hora 1,hora2",hora1,hora2)
+				if (now > hora_2.getTime())
+				{
+					return (now >= hora_1.getTime() && now < hora_2.getTime());
+				}
+				else
+				{
+					return (now >= hora_1.getTime() && now < hora_2.getTime());
+				}
+
+			}
 			return false;
 		},
 		addMinutosAHoraActual: function(minutos)

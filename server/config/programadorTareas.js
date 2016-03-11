@@ -62,7 +62,7 @@ var Programador = function()
 				rule.hour = parseInt(config.hora_ini);
 				rule.minute = parseInt(config.min_ini);
 
-			console.log("Forzando ejecucion de tarea",config.descripcion);
+			console.log("Forzando ejecucion de ",config.descripcion);
 
 			if (this.checkValidez(config))
 			{
@@ -115,11 +115,12 @@ var Programador = function()
 			if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
 			{
 				var tiempo_restante = DateConvert.restarHoras(hora_actual_HHMM,hora_fin_HHMM);
-				console.log("Tiempo restante de ",t.descripcion,DateConvert.min_a_horario(tiempo_restante));
 
 				if (tiempo_restante > 0)
 				{
-					console.log("Ejecutando la tarea forzada",t.descripcion);
+					console.log("Tiempo restante de ",
+								t.descripcion,
+								DateConvert.min_a_horario(tiempo_restante));
 					t.estado = t.accion;
 					t.temporizada = tiempo_restante;
 					this.ejecutarTarea(t);
@@ -128,17 +129,10 @@ var Programador = function()
 		};
 		this.ejecutarTarea = function(params, accion)
 		{
-
 			if (params.hasOwnProperty('dispositivos'))
 			{
-
-
 				params.dispositivos.forEach(function(d)
 				{
-					if (accion)
-					{
-						console.log("Apagando salida de ",d.ip, "nro: ",d.nro_salida);
-					}
 					d.noError = true;
 					d.estado = accion || params.accion;
 					d.temporizada = params.temporizada;
@@ -163,13 +157,13 @@ var Programador = function()
 			{
 				This.tareas.forEach(function(t)
 				{
+					This.forzarEjecucion(t);
+					/*
 					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.hora_inicio);
 					var tiempo_restante = DateConvert.horario_a_min(t.duracion) - tiempo_desde_inicio;
 					if (tiempo_restante > 0 && t.accion == 0)
 					{
 						//Relanzo la tarea con el tiempo restante
-						console.log("Relanzando tarea: ",t.descripcion
-									," con tiempo restante de:",tiempo_restante);
 						t.estado = t.accion;
 						t.temporizada = tiempo_restante;
 						This.ejecutarTarea(t);
@@ -177,7 +171,7 @@ var Programador = function()
 					else
 					{
 						console.log(t.descripcion, " no deberia estar en ejecucion");
-					}
+					}*/
 				})
 			},this.config.tiempoEscaneoTareas)
 		};
@@ -193,10 +187,9 @@ var Programador = function()
 		this.cargarEnScheduler = function()
 		{
 			var This = this;
+			console.log("Importando ",This.tareas.length, " tarea/s");
 			this.tareas.forEach(function(t)
 			{
-				This.apagarTarea(t.id_tarea);
-				console.log("Importando ",This.tareas.length, " tarea/s");
 				//Armo la config de la tarea y Creo la tarea
 				var configTarea = This.parseConfig(t);
 				This.nuevaTarea(configTarea);
