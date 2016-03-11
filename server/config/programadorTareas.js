@@ -14,6 +14,8 @@ var Programador = function()
 		{
 			var configTarea = this.parseConfig(_newValues);
 			this.nuevaTarea(configTarea);
+			var tarea = this.getTarea(configTarea.id_tarea);
+			this.forzarEjecucion(tarea);
 		};
 		this.getTarea = function(id)
 		{
@@ -160,26 +162,11 @@ var Programador = function()
 			console.log("Observando las tareas cada ",
 						parseInt((this.config.tiempoEscaneoTareas / 1000) / 60),
 						" minutos ...");
-			//Cada 5 min
 			setInterval(function()
 			{
 				This.tareas.forEach(function(t)
 				{
 					This.forzarEjecucion(This.parseConfig(t));
-					/*
-					var tiempo_desde_inicio = DateConvert.difHoraConActual(t.hora_inicio);
-					var tiempo_restante = DateConvert.horario_a_min(t.duracion) - tiempo_desde_inicio;
-					if (tiempo_restante > 0 && t.accion == 0)
-					{
-						//Relanzo la tarea con el tiempo restante
-						t.estado = t.accion;
-						t.temporizada = tiempo_restante;
-						This.ejecutarTarea(t);
-					}
-					else
-					{
-						console.log(t.descripcion, " no deberia estar en ejecucion");
-					}*/
 				})
 			},this.config.tiempoEscaneoTareas)
 		};
@@ -209,15 +196,10 @@ var Programador = function()
 		}
 }
 
-
-/* ************************************************************************
-SINGLETON CLASS DEFINITION
-************************************************************************ */
 Programador.instance = null;
 
 /**
  * Singleton getInstance definition
- * @return singleton class
  */
 Programador.getInstance = function(){
     if(this.instance === null){

@@ -18,17 +18,6 @@ var express = require('express'),
 	DataStore	= require('./config/db')(app, expressConfig);		// Conexión
 	require('./controllers')(app);									// Controladores
 
-// Argumentos pasados por linea de comandos
-process.argv.forEach(function (val, index, array)
-{
-	if (index >= 2)
-	{
-		serverInfo.host = array[2];
-		serverInfo.port = array[3];
-	}
-});
-
-
 //Crea o trae el archivo de configuracion para el servidor y Programador de tareas
 var path = './config/config.json';
 if (!fs.existsSync(path))
