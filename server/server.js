@@ -88,7 +88,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				});
 				sockets[key].on('error',function(_err)
 				{
-					if (key === array.length - 1){
+					if (key === array.length - 1)
+					{
 						socket.emit('salidasAux', []);
 					}
 
@@ -104,15 +105,17 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 					if (item.buffer.length > 0 && connectedSuccess)
 					{
 						//Reccorro buscando los encendidos
-						item.buffer.forEach( function( i ) {
-							if (i.indexOf( ':0' ) > 0 ){
+						item.buffer.forEach( function( i )
+						{
+							if (i.indexOf( ':0' ) > 0 )
+							{
 								encendidas.push( i )
 							}
 						});
-
 						params.salidasOrig = item.salidas;
 						item.buffer = "";
-						socket.emit('salidasAux', arduino.formatSalidas(params,encendidas));
+						var encendidasF = arduino.formatSalidas(params,encendidas);
+						socket.emit('salidasAux', ArrayUtils.unique(encendidasF));
 					}
 				});
 			});

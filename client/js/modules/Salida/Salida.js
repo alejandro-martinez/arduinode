@@ -228,8 +228,10 @@ angular.module('Arduinode.Salida',['Socket'])
 			$rootScope.currentMenu = "Luces encendidas";
 			Salida.getSalidasActivas(function(salida)
 			{
+				console.log("salida",salida);
 				if (salida.length > 0)
 				{
+					//Filtrar repetidas
 					$scope.salidas = $scope.salidas.concat(salida);
 				}
 			});

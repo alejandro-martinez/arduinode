@@ -113,7 +113,8 @@ module.exports = function()
 					{
 						infoSalida = params.salidasOrig.filter(function(s)
 						{
-							return s.nro_salida == nro_salida && s.ip == params.ip;
+							return s.nro_salida == nro_salida
+								&& s.ip == params.ip;
 						});
 					}
 					//Quitar repetidas
@@ -157,7 +158,8 @@ module.exports = function()
 				if (This.data.length > 0 && response != null)
 				{
 					delete params.decorator;
-					callback( This.formatSalidas(params, This.data.match(/[^\r\n]+/g)) );
+					callback( This.formatSalidas(params,
+							  This.data.match(/[^\r\n]+/g)) );
 				}
 				else
 				{
