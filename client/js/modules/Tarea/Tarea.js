@@ -72,7 +72,10 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 				else
 				{
 					$state.go('tareas');
-					callback();
+					if (callback)
+					{
+						callback();
+					}
 				}
 			}, function(error)
 			{
@@ -96,7 +99,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	{
 		Tarea.getAll(function(tareas)
 		{
-			console.log("Tareas",tareas);
 			$scope.tareas = tareas;
 		})
 	}
@@ -134,15 +136,14 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	}
 
 	var params = $params.params || def_model;
-
 	$rootScope.currentMenu = (params.id_tarea != 9999) ? 'Edición de tareas' : 'Nueva tarea';
 	$scope.dispositivoSelected = {};
 	$scope.tarea = params;
 	$scope.tarea.dispositivosEliminados = [];
 	$scope.tarea.mes_inicio = params.mes_inicio - 1;
-	$scope.tarea.mes_fin = params.mes_fin - 1;
-	$scope.dias = [];
-	$scope.meses = [];
+	$scope.tarea.mes_fin 	= params.mes_fin - 1;
+	$scope.dias 			= [];
+	$scope.meses 			= [];
 
 	$scope.switch = function(data)
 	{
@@ -204,13 +205,13 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	$scope.save = function()
 	{
-		$scope.tarea.dia_inicio = $('#dia_inicio').val();
-		$scope.tarea.mes_inicio = parseInt( $('#mes_inicio').val() ) + 1;
-		$scope.tarea.dia_fin  	= $('#dia_fin').val();
-		$scope.tarea.mes_fin  	= parseInt( $('#mes_fin').val() ) + 1;
+		$scope.tarea.dia_inicio  = $('#dia_inicio').val();
+		$scope.tarea.mes_inicio  = parseInt( $('#mes_inicio').val() ) + 1;
+		$scope.tarea.dia_fin  	 = $('#dia_fin').val();
+		$scope.tarea.mes_fin  	 = parseInt( $('#mes_fin').val() ) + 1;
 		$scope.tarea.hora_inicio = $('#horainicio').val();
-		$scope.tarea.duracion = $('#duracion').val();
-		Tarea.save( $scope.tarea, function(response){});
+		$scope.tarea.duracion 	 = $('#duracion').val();
+		Tarea.save( $scope.tarea );
 	}
 
 	$scope.deleteTarea = function()
@@ -224,7 +225,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			idx = dias.indexOf(String(key));
 		(idx > -1) ? dias.splice(idx, 1) : dias.push(key);
 		$scope.tarea.dias_ejecucion = dias.join(",");
-		console.log("dias eject",$scope.tarea.dias_ejecucion);
 	};
 
 	//Vincula nuevo dispositivo a la tarea
