@@ -126,9 +126,9 @@ var Programador = function()
 						//Verifico que se a un horario valido
 						if( DateConvert.horaActualValida( t.raw_hora_inicio, t.raw_duracion ) ){
 
-							var min_rest = DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion ) 
-							if ( min_rest > 0 ){
-
+							var min_rest = DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion )
+							if ( min_rest > 0 )
+							{
 								return min_rest;
 							}
 

@@ -3,12 +3,6 @@ module.exports = function()
 {
 	var DateConvert =
 	{
-		restarHoras: function(_inicio, _fin)
-		{
-			var inicio_min = this.horario_a_min(_inicio);
-				fin_min = this.horario_a_min(_fin);
-			return fin_min - inicio_min;
-		},
 		//Recibe 15, devuelve 00:15
 		min_a_horario: function(min)
 		{
@@ -48,22 +42,12 @@ module.exports = function()
 				return horario;
 			}
 		},
-		//Recibe "01-05" (mes-dia), devuelve 5
-		fechaADia: function(fecha)
-		{
-			return parseInt(fecha.substr(-2));
-		},
 		horarioEnHHMM: function()
 		{
 			var time = new Date();
 			var horario = ("0" + time.getHours()).slice(-2)
 						+ ":" + ("0" + time.getMinutes()).slice(-2);
 			return horario;
-		},
-		//Recibe DDMMAAAA devuelve MM
-		fechaAMes: function(fecha)
-		{
-			return parseInt(fecha.substr(5,2));
 		},
 		//Convierte "1,2,3,4,5" en [1,2,3,4,5]
 		strToArray: function(str)
@@ -109,13 +93,13 @@ module.exports = function()
 				}
 
 			}
-			
+
 			//Verifico el rango de dias (si esta dentro del rango de los meses)
 			if (valido){
 				valido = false;
 				if( config.dia_inicio > config.dia_fin ){
 					if( diaActual >= config.dia_inicio ){
-						valido = true; 
+						valido = true;
 					}else if( diaActual <= config.dia_fin ){
 						valido = true;
 					}
@@ -133,14 +117,6 @@ module.exports = function()
 			var fecha = new Date();
 			return (dias.indexOf(fecha.getDay()) > -1);
 		},
-		//Retorna la diferencia en minutos, de la horaActual vs otra hora
-		difHoraConActual: function(hora)
-		{
-			var minHoraParam = this.horario_a_min(hora),
-				minHoraActual = this.horario_a_min(this.horarioEnHHMM());
-
-				return Math.abs(minHoraActual - minHoraParam);
-		},
 		//Recibe 06:00 devuelve un Date Obj
 		parseTimeString: function(time)
 		{
@@ -154,28 +130,6 @@ module.exports = function()
 			var date = new Date();
 			return date.getTime();
 		},
-		horaActualBetween: function(hora1, hora2)
-		{
-			var date = new Date(),
-				hora_1 = this.parseTimeString(hora1),
-				hora_2 = this.parseTimeString(hora2),
-				now    = this.currentTime();
-			if (hora_1.getTime() > hora_2.getTime())
-			{
-				return (now >= hora_1.getTime());
-			}
-			else
-			{
-				return (now >= hora_1.getTime() && now < hora_2.getTime());
-			}
-		},
-		addMinutosAHoraActual: function(minutos)
-		{
-			minHoraActual = this.horario_a_min(this.horarioEnHHMM());
-			if (minutos.length == 5)
-				minutos = this.horario_a_min(minutos);
-			return this.min_a_horario(minHoraActual + minutos);
-		},
 		horario_a_ms: function(horario)
 		{
 			if (horario && horario.length == 5)
@@ -184,26 +138,6 @@ module.exports = function()
 				var min = parseInt( horario.substr(-2) );
 				return  ( (hs * 60) + min ) * 60000;
 			}
-		},
-		//Suma 2 horarios HH:MM y retorna la suma en minutos
-		sumarHoras: function(hora1, hora2)
-		{
-			var minHora1 = this.horario_a_min(hora1);
-				minHora2 = this.horario_a_min(hora2);
-
-			var ms = (minHora1 + minHora2) * 1000 * 60;
-			var a = new Date(ms);
-			return ((a.getTime() / 1000 ) /  60);
-
-		},
-		mayorAHoraActual: function(min)
-		{
-			var hora_actual_min = this.horario_a_min(this.horarioEnHHMM())
-			return min > hora_actual_min;
-		},
-		aMin: function(seg)
-		{
-			return parseInt(seg) / 60;
 		},
 		horaActualValida: function(horaIni, duracion)
 		{
@@ -223,7 +157,7 @@ module.exports = function()
 
 			//Verifico si la Hora inicial es mayor que la final (cambio de dia)
 			if( horaInicial.getHours() > horaFinal.getHours() && horaActual.getHours() <= horaFinal.getHours() ){
-		
+
 				//Atraso un dia
 				horaInicial.setDate( horaInicial.getDate() -1 )
 				horaFinal.setDate( horaFinal.getDate() -1 )
@@ -233,24 +167,24 @@ module.exports = function()
 			return ( horaActual >= horaInicial && horaActual <= horaFinal );
 		},
 		minutosRestantes: function(horaIni, duracion)
-                {
+		{
 
-                        //Tomo la Hora Actual
-                        var horaActual = new Date();
+			//Tomo la Hora Actual
+			var horaActual = new Date();
 
-                        //Calculo la hora inicial y seteo la hora y los minutos
-                        var horaInicial = new Date( horaActual );
-                        horaInicial.setHours( parseInt(horaIni.substr(0,2)) );
-                        horaInicial.setMinutes( parseInt( horaIni.substr(-2) ) );
+			//Calculo la hora inicial y seteo la hora y los minutos
+			var horaInicial = new Date( horaActual );
+			horaInicial.setHours( parseInt(horaIni.substr(0,2)) );
+			horaInicial.setMinutes( parseInt( horaIni.substr(-2) ) );
 
-                        //Calculo la hora de finalizacion
-                        var horaFinal = new Date( horaInicial );
-                        horaFinal.setHours( horaInicial.getHours() + parseInt( duracion.substr(0,2) ) );
-                        horaFinal.setMinutes( horaInicial.getMinutes() + parseInt( duracion.substr(-2) ) );
-			
+			//Calculo la hora de finalizacion
+			var horaFinal = new Date( horaInicial );
+			horaFinal.setHours( horaInicial.getHours() + parseInt( duracion.substr(0,2) ) );
+			horaFinal.setMinutes( horaInicial.getMinutes() + parseInt( duracion.substr(-2) ) );
+
 			//Verifico si la Hora inicial es mayor que la final (cambio de dia)
 			if( horaInicial.getHours() > horaFinal.getHours() && horaActual.getHours() <= horaFinal.getHours() ){
-		
+
 				//Atraso un dia
 				horaInicial.setDate( horaInicial.getDate() -1 )
 				horaFinal.setDate( horaFinal.getDate() -1 )
@@ -258,10 +192,9 @@ module.exports = function()
 			}
 
 			console.log( horaInicial, horaFinal,horaActual);
-	
-                        console.log( parseInt( (horaFinal - horaActual)/60/1000 ) );
-                        return  parseInt( (horaFinal - horaActual)/60/1000 );
-                }
+			console.log( parseInt( (horaFinal - horaActual)/60/1000 ) );
+            return  parseInt( (horaFinal - horaActual)/60/1000 );
+        }
 
 	}
 
