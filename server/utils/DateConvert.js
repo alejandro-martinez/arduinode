@@ -89,30 +89,49 @@ module.exports = function()
 		// Chequea si fechaActual esta entre 2 fechas
 		fechaBetween: function(config)
 		{
+			var valido = false
 			var fechaActual = new Date(),
 				diaActual = parseInt( fechaActual.getDate() ),
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
-			if (config.mes_inicio <= mesActual )
-			{
-				if (config.mes_inicio == mesActual)
-				{
-					return config.dia_inicio <= diaActual;
+
+			//Valido que rango de meses
+			if (config.mes_inicio > config.mes_fin){
+				if( mesActual >= config.mes_inicio ){
+					valido = true;
 				}
-				if (config.mes_fin >= mesActual )
-				{
-					if (config.mes_fin == mesActual)
-					{
-						return config.dia_fin >= diaActual;
-					}
-					return true;
+				else if( mesActual <= config.mes_fin ){
+					valido = true;
 				}
 			}
-			return false;
+			else{
+				if( mesActual >= config.mes_inicio && mesActual <= config.mes_fin ){
+					valido = true
+				}
+
+			}
+			
+			//Verifico el rango de dias (si esta dentro del rango de los meses)
+			if (valido){
+				valido = false;
+				if( config.dia_inicio > config.dia_fin ){
+					if( diaActual >= config.dia_inicio ){
+						valido = true; 
+					}else if( diaActual <= config.dia_fin ){
+						valido = true;
+					}
+				}
+				else {
+					if( diaActual >= config.dia_inicio && diaActual <= config.dia_fin ){
+						valido = true;
+					}
+				}
+			}
+			return valido;
 		},
 		diaActualValido: function(dias)
 		{
 			var fecha = new Date();
-			return (dias.indexOf((fecha.getDay() -1)) > -1);
+			return (dias.indexOf(fecha.getDay()) > -1);
 		},
 		//Retorna la diferencia en minutos, de la horaActual vs otra hora
 		difHoraConActual: function(hora)
@@ -185,7 +204,53 @@ module.exports = function()
 		aMin: function(seg)
 		{
 			return parseInt(seg) / 60;
-		}
+		},
+		horaActualValida: function(horaIni, duracion)
+		{
+
+			//Tomo la Hora Actual
+			var horaActual = new Date();
+
+			//Calculo la hora inicial y seteo la hora y los minutos
+			var horaInicial = new Date( horaActual );
+			horaInicial.setHours( parseInt(horaIni.substr(0,2)) );
+			horaInicial.setMinutes( parseInt( horaIni.substr(-2) ) );
+
+			//Calculo la hora de finalizacion
+			var horaFinal = new Date( horaInicial );
+			horaFinal.setHours( horaInicial.getHours() + parseInt( duracion.substr(0,2) ) );
+			horaFinal.setMinutes( horaInicial.getMinutes() + parseInt( duracion.substr(-2) ) );
+
+			//Verifico si la Hora inicial es mayor que la final (cambio de dia)
+			if( horaInicial.getHours() > horaFinal.getHours() && horaActual.getHours() <= horaFinal.getHours() ){
+		
+				//Atraso un dia
+				horaInicial.setDate( horaInicial.getDate() -1 )
+				horaFinal.setDate( horaFinal.getDate() -1 )
+
+			}
+
+			return ( horaActual >= horaInicial && horaActual <= horaFinal );
+		},
+		minutosRestantes: function(horaIni, duracion)
+                {
+
+                        //Tomo la Hora Actual
+                        var horaActual = new Date();
+
+                        //Calculo la hora inicial y seteo la hora y los minutos
+                        var horaInicial = new Date( horaActual );
+                        horaInicial.setHours( parseInt(horaIni.substr(0,2)) );
+                        horaInicial.setMinutes( parseInt( horaIni.substr(-2) ) );
+
+                        //Calculo la hora de finalizacion
+                        var horaFinal = new Date( horaInicial );
+                        horaFinal.setHours( horaInicial.getHours() + parseInt( duracion.substr(0,2) ) );
+                        horaFinal.setMinutes( horaInicial.getMinutes() + parseInt( duracion.substr(-2) ) );
+
+                        return  parseInt( (horaFinal - horaActual)/60/1000 );
+                }
+
 	}
 
 	return DateConvert;

@@ -117,21 +117,21 @@ var Programador = function()
 			//Tarea activa o no?
 			if (t.activa)
 			{
+				//Verifico el rango de fechas
 				if (DateConvert.fechaBetween(t))
 				{
+					//Verifico que el dia sea valido
 					if (DateConvert.diaActualValido(t.dias_ejecucion))
 					{
-						var hora_fin_min = DateConvert.sumarHoras(t.raw_hora_inicio, t.raw_duracion);
-						var hora_fin_HHMM = DateConvert.min_a_horario(hora_fin_min);
-						var hora_actual_HHMM = DateConvert.horarioEnHHMM();
-						if (DateConvert.horaActualBetween( t.raw_hora_inicio, hora_fin_HHMM ))
-						{
-							var tiempo_restante = DateConvert.diffHoras(hora_actual_HHMM,hora_fin_HHMM);
-							
-							if (tiempo_restante > 0)
-							{
-								return tiempo_restante;
+						//Verifico que se a un horario valido
+						if( DateConvert.horaActualValida( t.raw_hora_inicio, t.raw_duracion ) ){
+
+							var min_rest = DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion ) 
+							if ( min_rest > 0 ){
+
+								return min_rest;
 							}
+
 						}
 						else
 						{

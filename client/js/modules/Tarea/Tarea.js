@@ -118,8 +118,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			function ( $scope, $rootScope, $params, Dispositivo, Salida,
 					   Tarea, SwitchButton, Popup )
 {
-	$scope.diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves',
-							'Viernes','Sabado','Domingo'];
+	$scope.diasSemana = ['Domingo','Lunes', 'Martes', 'Miercoles', 'Jueves','Viernes','Sabado'];
 
 	$scope.mesesTxt = ["Enero", "Febrero", "Marzo", "Abril",
 					   "Mayo", "Junio", "Julio","Agosto", "Septiembre",
