@@ -125,6 +125,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.mesesTxt = ["Enero", "Febrero", "Marzo", "Abril",
 					   "Mayo", "Junio", "Julio","Agosto", "Septiembre",
 					   "Octubre", "Noviembre", "Diciembre"];
+
 	var def_model = {
 		id_tarea: 9999,
 		dias_ejecucion:"",
@@ -132,7 +133,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		fecha_inicio: "",
 		fecha_fin: "",
 		accion: 0,
-		activa: 0
+		activa: 1
 	}
 
 	var params = $params.params || def_model;
