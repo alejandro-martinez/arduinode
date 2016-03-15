@@ -82,7 +82,7 @@
 		</div>
 		<div class="fechaPicker">Fecha fin
 			<label>
-				<select id="dia_fin" ng-model="tarea.dia_fin">
+				<select id="dia_fin">
 					<option ng-selected="{{dia == tarea.dia_fin}}"
 							ng-repeat="dia in dias"
 							value="{{dia}}">
@@ -113,7 +113,7 @@
 		</div>
 		<div class="duracion" ng-show="tarea.accion == 0">Duración<br>
 			<input required type="text" class="clockpicker" id="duracion"
-			readonly value="{{duracion}}" ng-model="tarea.duracion"
+			readonly value="{{duracion}}" ng-min-length="5" ng-model="tarea.duracion"
 			ng-change="calcularHoraFinalTarea()"/>
 			<span>Finaliza: {{tarea.hora_fin | date: 'HH:mm'}}</span>
 		</div>

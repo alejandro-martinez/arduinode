@@ -118,7 +118,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 .controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',
 			'DispositivoFct','SalidaFct','TareaFct','ngDialog',
 			function ( $scope, $rootScope, $params, Dispositivo, Salida,
-					   Tarea, SwitchButton, Popup )
+					   Tarea, Popup )
 {
 	$scope.diasSemana = ['Domingo','Lunes', 'Martes', 'Miercoles', 'Jueves','Viernes','Sabado'];
 
@@ -128,10 +128,13 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	var def_model = {
 		id_tarea: 9999,
-		dias_ejecucion:"",
+		dias_ejecucion:"1,2,3,4,5",
 		dispositivos:[],
-		fecha_inicio: "",
-		fecha_fin: "",
+		mes_inicio: 1,
+		mes_fin: 12,
+		duracion: "",
+		dia_inicio: 1,
+		dia_fin: 1,
 		accion: 0,
 		activa: 1
 	}
@@ -206,6 +209,32 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			}
 		});
 	}
+	$scope.isModelValid = function()
+	{
+		var model = $scope.tarea;
+		$scope.errors = [];
+		if (model.dispositivos.length == 0)
+		{
+			$scope.errors.push("No se vinculó ningun dispositivo a la tarea");
+		}
+		if (model.dias_ejecucion.length == 0)
+		{
+			$scope.errors.push("No se seleccionaron los dias de ejecucion");
+		}
+		if (model.dia_inicio.length == 0 || model.dia_fin.length == 0)
+		{
+			$scope.errors.push("No se seleccionaron los dias de inicio/fin");
+		}
+		if (model.hora_inicio.length == 0)
+		{
+			$scope.errors.push("No se seleccionó la hora de ejecución");
+		}
+		if (model.duracion.length == 0 && model.accion == 0)
+		{
+			$scope.errors.push("No se seleccionó duración de la tarea");
+		}
+		return $scope.errors.length == 0;
+	}
 
 	$scope.save = function()
 	{
@@ -215,7 +244,18 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		$scope.tarea.mes_inicio  = parseInt( $('#mes_inicio').val() ) + 1;
 		$scope.tarea.dia_fin  	 = $('#dia_fin').val();
 		$scope.tarea.mes_fin  	 = parseInt( $('#mes_fin').val() ) + 1;
-		Tarea.save( $scope.tarea );
+		if ($scope.isModelValid())
+		{
+			Tarea.save( $scope.tarea );
+		}
+		else
+		{
+			Popup.open({
+				template: "js/modules/Tarea/form_errors.html",
+				data: $scope.errors
+			});
+		}
+
 	}
 
 	$scope.calcularHoraFinalTarea = function()

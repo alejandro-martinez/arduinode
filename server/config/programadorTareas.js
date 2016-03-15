@@ -1,7 +1,7 @@
 // Tarea programadas
-schedule = require('node-schedule');
 var socketArduino = require('../Arduino')(),
-	DateConvert = require('../utils/DateConvert')();
+	DateConvert = require('../utils/DateConvert')(),
+	schedule = require('node-schedule');
 
 var Programador = function()
 {
@@ -223,5 +223,4 @@ Programador.getInstance = function(){
     }
     return this.instance;
 }
-
 module.exports = Programador.getInstance();
