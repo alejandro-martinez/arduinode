@@ -133,10 +133,6 @@ var Programador = function()
 							}
 
 						}
-						else
-						{
-							console.log("Hora actual no esta en rango horario de tarea");
-						}
 					}
 				}
 			}

@@ -16,7 +16,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			templateUrl: "js/modules/Tarea/_form.html"
 		})
 })
-.factory('TareaFct', ['$http','$state','ngDialog','$window',function($http,$state, Popup, $window)
+.factory('TareaFct', ['$http','$state','ngDialog',function($http,$state, Popup)
 {
 	var Tarea = {
 		getAll: function(callback)
@@ -150,6 +150,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	{
 		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
 	}
+
 	$scope.setActiva = function(activa)
 	{
 		$scope.tarea.activa = ($scope.tarea.activa == 0) ? 1 : 0;
@@ -163,6 +164,12 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			$scope.meses.push(i - 1);
 		}
 	}
+
+	$scope.tarea = params;
+	$('.clockpicker').clockpicker({ autoclose: true });
+	$('#horainicio').val( $scope.tarea.hora_inicio )
+	$('#duracion').val( $scope.tarea.duracion );
+
 	Dispositivo.getAll(function(dispositivos)
 	{
 			dispositivos.forEach(function(j)
@@ -172,7 +179,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 					if (j.ip == e.ip)
 					{
 						e.note = j.note;
-						e.salidaNote = Salida.findSalida( j.salidas,e.nro_salida)[0].note;
+						e.salidaNote = Salida.findSalida( j.salidas,
+														  e.nro_salida)[0].note;
 					}
 				});
 			})
@@ -199,21 +207,42 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		});
 	}
 
-	$scope.tarea = params;
-	$('.clockpicker').clockpicker({ autoclose: true });
-	$('#horainicio').val( $scope.tarea.hora_inicio )
-	$('#duracion').val( $scope.tarea.duracion );
-
 	$scope.save = function()
 	{
+		$scope.tarea.hora_inicio = $('#horainicio').val();
+		$scope.tarea.duracion 	 = $('#duracion').val();
 		$scope.tarea.dia_inicio  = $('#dia_inicio').val();
 		$scope.tarea.mes_inicio  = parseInt( $('#mes_inicio').val() ) + 1;
 		$scope.tarea.dia_fin  	 = $('#dia_fin').val();
 		$scope.tarea.mes_fin  	 = parseInt( $('#mes_fin').val() ) + 1;
-		$scope.tarea.hora_inicio = $('#horainicio').val();
-		$scope.tarea.duracion 	 = $('#duracion').val();
 		Tarea.save( $scope.tarea );
 	}
+
+	$scope.calcularHoraFinalTarea = function()
+	{
+		$scope.tarea.hora_inicio = $('#horainicio').val();
+		$scope.tarea.duracion 	 = $('#duracion').val();
+        if ($scope.tarea.duracion)
+		{
+			var date = new Date();
+			var hora_i = new Date(date.getFullYear(),
+								  date.getMonth(),
+								  date.getDate(),
+								  $scope.tarea.hora_inicio.substr(0,2),
+								  $scope.tarea.hora_inicio.substr(-2));
+
+			var duracion = new Date(date.getFullYear(),
+								  date.getMonth(),
+								  date.getDate(),
+								  $scope.tarea.duracion.substr(0,2),
+								  $scope.tarea.duracion.substr(-2));
+
+			date.setTime(hora_i.getTime());
+			date.setTime(date.getTime() + duracion.getTime());
+			date.setHours(date.getHours() - 3);
+			$scope.tarea.hora_fin = date;
+		}
+    };
 
 	$scope.deleteTarea = function()
 	{
