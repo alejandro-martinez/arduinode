@@ -21,7 +21,6 @@ angular.module('Arduinode',
 		$rootScope.previousState = from.name;
 		$rootScope.currentState = to.name;
 	});
-
 	$rootScope.goBack = function()
 	{
 		if ($rootScope.previousState == 'estados'

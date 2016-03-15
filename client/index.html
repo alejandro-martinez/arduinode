@@ -5,13 +5,13 @@
 		<!--Previene request de favicon-->
 		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 		<meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1">
-		<script src="js/jsmin.js"></script>
 		<link rel="stylesheet" href="css/cssmin.css" media="all">
+		<script src="js/jsmin.js"></script>
 	</head>
 	<body ng-controller="MainCtrl">
 		<div id="all" ng-class="{hide:showmenu,slide:!showmenu}">
 			<div id="header">
-				<a class="sprite back" ng-show="previousState" ng-click="goBack()"></a>
+				<a class="sprite back" ng-show="currentMenu != 'Home'" ng-click="goBack()"></a>
 				<a ui-sref="home" class="sprite home"></a>
 				<h1>{{currentMenu}}</h1>
 			</div>
