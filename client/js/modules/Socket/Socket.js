@@ -37,7 +37,6 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 			$rootScope.socket.on(param, function(data)
 			{
 				$rootScope.loading = false;
-				$('#loadingDiv').hide();
 				callback(data);
 			});
 		}

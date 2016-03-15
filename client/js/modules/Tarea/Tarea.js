@@ -235,7 +235,6 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		}
 		return $scope.errors.length == 0;
 	}
-
 	$scope.save = function()
 	{
 		$scope.tarea.hora_inicio = $('#horainicio').val();
