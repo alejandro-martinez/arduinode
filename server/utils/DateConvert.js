@@ -247,7 +247,19 @@ module.exports = function()
                         var horaFinal = new Date( horaInicial );
                         horaFinal.setHours( horaInicial.getHours() + parseInt( duracion.substr(0,2) ) );
                         horaFinal.setMinutes( horaInicial.getMinutes() + parseInt( duracion.substr(-2) ) );
+			
+			//Verifico si la Hora inicial es mayor que la final (cambio de dia)
+			if( horaInicial.getHours() > horaFinal.getHours() && horaActual.getHours() <= horaFinal.getHours() ){
+		
+				//Atraso un dia
+				horaInicial.setDate( horaInicial.getDate() -1 )
+				horaFinal.setDate( horaFinal.getDate() -1 )
 
+			}
+
+			console.log( horaInicial, horaFinal,horaActual);
+	
+                        console.log( parseInt( (horaFinal - horaActual)/60/1000 ) );
                         return  parseInt( (horaFinal - horaActual)/60/1000 );
                 }
 
