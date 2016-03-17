@@ -257,24 +257,25 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 	}
 
+	var parseHour = function(horaStr)
+	{
+		var date = new Date();
+		return new Date(date.getFullYear(),
+						date.getMonth(),
+						date.getDate(),
+						horaStr.substr(0,2),
+						horaStr.substr(-2));
+	}
+
 	$scope.calcularHoraFinalTarea = function()
 	{
 		$scope.tarea.hora_inicio = $('#horainicio').val();
 		$scope.tarea.duracion 	 = $('#duracion').val();
         if ($scope.tarea.duracion)
 		{
-			var date = new Date();
-			var hora_i = new Date(date.getFullYear(),
-								  date.getMonth(),
-								  date.getDate(),
-								  $scope.tarea.hora_inicio.substr(0,2),
-								  $scope.tarea.hora_inicio.substr(-2));
-
-			var duracion = new Date(date.getFullYear(),
-								  date.getMonth(),
-								  date.getDate(),
-								  $scope.tarea.duracion.substr(0,2),
-								  $scope.tarea.duracion.substr(-2));
+			var date = new Date(),
+				hora_i = parseHour($scope.tarea.hora_inicio),
+				duracion = parseHour($scope.tarea.duracion);
 
 			date.setTime(hora_i.getTime());
 			date.setTime(date.getTime() + duracion.getTime());
