@@ -233,13 +233,12 @@ angular.module('Arduinode.Salida',['Socket'])
 					//Filtrar repetidas
 					$scope.salidas = $scope.salidas.concat(salida);
 				}
-				setTimeout(function()
-				{
-					$rootScope.loading = false;
-					$rootScope.$digest();
-				},1000);
 			});
-			setTimeout(function(){ $scope.$digest() },1000);
+			setTimeout(function()
+			{
+				$rootScope.loading = false;
+				$rootScope.$digest();
+			},1000);
 		}
 
 		$scope.refreshEstados = function()
