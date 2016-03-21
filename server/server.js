@@ -60,6 +60,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		//Configuracion
 		arduino.init();
 
+		programadorTareas.socketClient = socket;
+
 		//Devuelve lista de salidas activas (con estado == 0
 		socket.on('getSalidasActivas', function()
 		{
@@ -153,6 +155,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			params.noError = true;
 			arduino.switchSalida(params, function(response)
 			{
+
+				socket.broadcast.emit('salidaSwitched');
 				socket.emit('switchResponse',
 							(response === null) ? params.estado_orig : response);
 

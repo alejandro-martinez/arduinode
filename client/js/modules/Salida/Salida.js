@@ -29,6 +29,13 @@ angular.module('Arduinode.Salida',['Socket'])
 {
 	var Salida =
 	{
+		listenSwitchEvent: function(callback)
+		{
+			Socket.listen('salidaSwitched', function()
+			{
+				callback();
+			});
+		},
 		switchSalida: function(params, callback)
 		{
 			//Seteo el estado al que quiero cambiar la salida
@@ -225,7 +232,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.refreshLucesEncendidas = function()
 		{
 			$scope.salidas = [];
-			$rootScope.currentMenu = "Luces encendidas";
+
 			Salida.getSalidasActivas(function(salida)
 			{
 				if (salida.length > 0)
@@ -257,8 +264,13 @@ angular.module('Arduinode.Salida',['Socket'])
 		}
 		$scope.refresh = function()
 		{
+			Salida.listenSwitchEvent(function()
+			{
+				$scope.refresh();
+			});
 			if (params.estado == 0)
 			{
+				$rootScope.currentMenu = "Luces encendidas";
 				$scope.refreshLucesEncendidas();
 			}
 			else
