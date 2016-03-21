@@ -1,4 +1,5 @@
 var programadorTareas = require('../config/programadorTareas');
+
 module.exports = function(app)
 {
 	//Devuelve todos las tareas
@@ -12,6 +13,7 @@ module.exports = function(app)
 	{
 		DataStore.saveTarea(req.body, function(response, params)
 		{
+			programadorTareas.socketClient.emit('tareasChanged');
 			if (req.body.id_tarea === 9999)
 			{
 				programadorTareas.importar();

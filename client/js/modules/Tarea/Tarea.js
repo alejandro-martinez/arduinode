@@ -16,11 +16,17 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			templateUrl: "js/modules/Tarea/_form.html"
 		})
 })
-.factory('TareaFct', ['$http','$state','ngDialog',function($http,$state, Popup)
+.factory('TareaFct', ['$http','$state','SocketIO','ngDialog',
+		function($http,$state,SocketIO, Popup)
 {
 	var Tarea = {
 		getAll: function(callback)
 		{
+			SocketIO.listen('tareasChanged', function()
+			{
+				localStorage.setItem('tareas', undefined);
+			});
+			
 			if ( localStorage.getItem('tareas'))
 			{
 				callback(JSON.parse(localStorage.getItem("tareas")));
@@ -235,6 +241,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		}
 		return $scope.errors.length == 0;
 	}
+
 	$scope.save = function()
 	{
 		$scope.tarea.hora_inicio = $('#horainicio').val();

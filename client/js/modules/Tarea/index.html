@@ -2,7 +2,10 @@
 	<li ng-repeat="t in tareas">
 		<a ui-sref="editarTarea({ params: {{t}} })">{{t.descripcion}}
 		<span ng-class="activa{{t.activa}}">{{(t.activa) ? "Activa" : "Inactiva"}}</span>
-		<span ng-class="horafin">Finaliza: {{t.hora_fin | date:'HH:mm'}}</span>
+		<span ng-class="horafin" ng-show="{{t.accion == 0}}">
+			Hora: {{t.hora_inicio | date:'HH:mm'}} - {{t.hora_fin | date:'HH:mm'}}</span>
+		<span ng-class="horafin" ng-show="{{t.accion == 1}}">
+			Hora: {{t.hora_inicio | date:'HH:mm'}}</span>
 		</a>
 		<a class="sprite duplicate" ng-click="duplicateTarea(t)"></a>
 	</li>
