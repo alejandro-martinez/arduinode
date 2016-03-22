@@ -1,5 +1,5 @@
 <ul id="tareas">
-	<li ng-repeat="t in tareas">
+	<li ng-repeat="t in tareas  | orderBy: 'descripcion' track by t.id_tarea">
 		<a ui-sref="editarTarea({ params: {{t}} })">{{t.descripcion}}
 		<span ng-class="activa{{t.activa}}">{{(t.activa) ? "Activa" : "Inactiva"}}</span>
 		<span ng-class="horafin" ng-show="{{t.accion == 0}}">
