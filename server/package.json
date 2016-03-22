@@ -4,9 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "buildrun": "gulp && node server",
-    "run": "node server",
-    "start": "npm run-script buildrun"
+    "compile": "gulp && node server",
+    "start": "node server"
   },
   "author": "",
   "license": "ISC",

@@ -155,7 +155,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			params.noError = true;
 			arduino.switchSalida(params, function(response)
 			{
-
+				//Le aviso a todos los clientes conectados
+				//Que se cambio el estado de una salida
 				socket.broadcast.emit('salidaSwitched');
 				socket.emit('switchResponse',
 							(response === null) ? params.estado_orig : response);
