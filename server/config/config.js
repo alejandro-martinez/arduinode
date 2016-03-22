@@ -1,5 +1,4 @@
 var session = require('express-session'),
-	minify = require('express-minify'),
 	bodyParser = require('body-parser');
 
 module.exports.config = function( app, express) {
