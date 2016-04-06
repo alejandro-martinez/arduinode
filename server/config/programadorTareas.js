@@ -86,9 +86,9 @@ var Programador = function()
 				rule.hour = parseInt(config.hora_ini);
 				rule.minute = parseInt(config.min_ini);
 
-			console.log("Forzando ejecucion de ",config.descripcion);
 
-			if (this.checkValidez(config))
+
+			if (this.checkValidez(config) && config.accion == 1)
 			{
 				this.forzarEjecucion(config);
 			}
@@ -124,6 +124,12 @@ var Programador = function()
 					if (DateConvert.diaActualValido(t.dias_ejecucion))
 					{
 						//Verifico que se a un horario valido
+						if (t.accion == 1) {
+							if( DateConvert.horaActualValida( t.raw_hora_inicio, '00:00' ) ) {
+								return true;
+							};
+						}
+
 						if( DateConvert.horaActualValida( t.raw_hora_inicio, t.raw_duracion ) ){
 
 							var min_rest = DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion )
@@ -131,7 +137,6 @@ var Programador = function()
 							{
 								return min_rest;
 							}
-
 						}
 					}
 				}
@@ -140,16 +145,19 @@ var Programador = function()
 		};
 		this.forzarEjecucion = function(t)
 		{
-			var tiempo_restante = this.checkValidez(t);
+			if (t.accion == 0) {
 
-			if (tiempo_restante)
-			{
-				console.log("Tiempo restante de ",
-												t.descripcion,
-												DateConvert.min_a_horario(tiempo_restante));
-				t.estado = t.accion;
-				t.temporizada = tiempo_restante;
-				this.ejecutarTarea(t);
+				var tiempo_restante = this.checkValidez(t);
+
+				if (tiempo_restante)
+				{
+					console.log("Tiempo restante de ",
+													t.descripcion,
+													DateConvert.min_a_horario(tiempo_restante));
+					t.estado = t.accion;
+					t.temporizada = tiempo_restante;
+					this.ejecutarTarea(t);
+				}
 			}
 		};
 		this.ejecutarTarea = function(params, accion)

@@ -73,40 +73,53 @@ module.exports = function()
 		// Chequea si fechaActual esta entre 2 fechas
 		fechaBetween: function(config)
 		{
-			var valido = false
 			var fechaActual = new Date(),
 				diaActual = parseInt( fechaActual.getDate() ),
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
 
-			//Valido que rango de meses
-			if (config.mes_inicio > config.mes_fin){
-				if( mesActual >= config.mes_inicio ){
+			//Valido rango de meses
+			if (config.mes_inicio > config.mes_fin) {
+
+				if( mesActual >= config.mes_inicio ) {
 					valido = true;
 				}
 				else if( mesActual <= config.mes_fin ){
 					valido = true;
 				}
 			}
-			else{
-				if( mesActual >= config.mes_inicio && mesActual <= config.mes_fin ){
-					valido = true
-				}
+			else {
 
+				if( mesActual >= config.mes_inicio && mesActual <= config.mes_fin ){
+
+					valido = true;
+				}
 			}
 
 			//Verifico el rango de dias (si esta dentro del rango de los meses)
 			if (valido){
 				valido = false;
 				if( config.dia_inicio > config.dia_fin ){
+
 					if( diaActual >= config.dia_inicio ){
+
 						valido = true;
 					}else if( diaActual <= config.dia_fin ){
+
 						valido = true;
 					}
 				}
 				else {
-					if( diaActual >= config.dia_inicio && diaActual <= config.dia_fin ){
-						valido = true;
+					if (config.mes_inicio < config.mes_fin) {
+
+						if( diaActual >= config.dia_inicio){
+							valido = true;
+						}
+					}
+					else if (config.mes_inicio == config.mes_fin) {
+
+						if (diaActual <= config.dia_fin) {
+							valido = true;
+						}
 					}
 				}
 			}
