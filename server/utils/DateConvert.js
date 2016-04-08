@@ -75,6 +75,7 @@ module.exports = function()
 		{
 			var fechaActual = new Date(),
 				diaActual = parseInt( fechaActual.getDate() ),
+				valido = false,
 				mesActual = parseInt( fechaActual.getMonth()) + 1;
 
 			//Valido rango de meses
