@@ -132,12 +132,11 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 					   "Mayo", "Junio", "Julio","Agosto", "Septiembre",
 					   "Octubre", "Noviembre", "Diciembre"];
 
-	var dia_valido = function(mes, dia) {
+	var dia_valido = function(dia, mes) {
 		var fecha = new Date();
 		fecha.setMonth(parseInt(mes) - 1);
-		fecha.setDate(parseInt(dia) - 1);
-
-		return (fecha.getDate() == dia && fecha.getMonth() == mes);
+		fecha.setDate(parseInt(dia));
+		return (fecha.getDate() == parseInt(dia) && fecha.getMonth() == parseInt(mes)-1);
 	}
 
 
