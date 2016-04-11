@@ -26,7 +26,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			{
 				localStorage.setItem('tareas', undefined);
 			});
-			
+
 			if ( localStorage.getItem('tareas'))
 			{
 				callback(JSON.parse(localStorage.getItem("tareas")));
@@ -131,6 +131,15 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.mesesTxt = ["Enero", "Febrero", "Marzo", "Abril",
 					   "Mayo", "Junio", "Julio","Agosto", "Septiembre",
 					   "Octubre", "Noviembre", "Diciembre"];
+
+	var dia_valido = function(mes, dia) {
+		var fecha = new Date();
+		fecha.setMonth(parseInt(mes) - 1);
+		fecha.setDate(parseInt(dia) - 1);
+
+		return (fecha.getDate() == dia && fecha.getMonth() == mes);
+	}
+
 
 	var def_model = {
 		id_tarea: 9999,
@@ -238,6 +247,9 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		if (model.duracion.length == 0 && model.accion == 0)
 		{
 			$scope.errors.push("No se seleccionó duración de la tarea");
+		}
+		if (!dia_valido(model.dia_inicio, model.mes_inicio)) {
+			$scope.errors.push("Dia / Mes inválido para la tarea");
 		}
 		return $scope.errors.length == 0;
 	}

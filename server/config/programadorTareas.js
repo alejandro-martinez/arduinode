@@ -86,9 +86,7 @@ var Programador = function()
 				rule.hour = parseInt(config.hora_ini);
 				rule.minute = parseInt(config.min_ini);
 
-
-
-			if (this.checkValidez(config) && config.accion == 1)
+			if (this.checkValidez(config) && config.accion == 0)
 			{
 				this.forzarEjecucion(config);
 			}
@@ -114,6 +112,7 @@ var Programador = function()
 		};
 		this.checkValidez = function(t)
 		{
+
 			//Tarea activa o no?
 			if (t.activa)
 			{
@@ -129,7 +128,6 @@ var Programador = function()
 								return true;
 							};
 						}
-
 						if( DateConvert.horaActualValida( t.raw_hora_inicio, t.raw_duracion ) ){
 
 							var min_rest = DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion )
@@ -148,7 +146,6 @@ var Programador = function()
 			if (t.accion == 0) {
 
 				var tiempo_restante = this.checkValidez(t);
-
 				if (tiempo_restante)
 				{
 					console.log("Tiempo restante de ",
@@ -162,6 +159,7 @@ var Programador = function()
 		};
 		this.ejecutarTarea = function(params, accion)
 		{
+
 			if (params.hasOwnProperty('dispositivos'))
 			{
 				params.dispositivos.forEach(function(d)
@@ -211,6 +209,7 @@ var Programador = function()
 			{
 				//Armo la config de la tarea y Creo la tarea
 				var configTarea = This.parseConfig(t);
+
 				This.nuevaTarea(configTarea);
 			})
 		};

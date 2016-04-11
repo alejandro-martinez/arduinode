@@ -74,57 +74,33 @@ module.exports = function()
 		fechaBetween: function(config)
 		{
 			var fechaActual = new Date(),
-				diaActual = parseInt( fechaActual.getDate() ),
-				valido = false,
-				mesActual = parseInt( fechaActual.getMonth()) + 1;
+			desde = new Date(),
+			hasta = new Date();
 
-			//Valido rango de meses
-			if (config.mes_inicio > config.mes_fin) {
+			//desde y hasta pertenecen a la tarea
+			//se usan para comparar con fecha Actual
+			desde.setDate(config.dia_inicio);
 
-				if( mesActual >= config.mes_inicio ) {
-					valido = true;
-				}
-				else if( mesActual <= config.mes_fin ){
-					valido = true;
-				}
+			//Resto 1 ya que los meses arrancan en 0
+			desde.setMonth( parseInt( config.mes_inicio) - 1);
+			hasta.setDate(config.dia_fin);
+			hasta.setMonth( parseInt( config.mes_fin) - 1);
+
+			// valida tareas que arrancan en año actual y terminan en el siguiente
+			// suma 1 año a desde para comparar inicio y fin
+			if (fechaActual > desde) {
+				hasta.setYear( desde.getFullYear() + 1);
 			}
 			else {
-
-				if( mesActual >= config.mes_inicio && mesActual <= config.mes_fin ){
-
-					valido = true;
-				}
+				desde.setYear( desde.getFullYear() - 1);
 			}
 
-			//Verifico el rango de dias (si esta dentro del rango de los meses)
-			if (valido){
-				valido = false;
-				if( config.dia_inicio > config.dia_fin ){
-
-					if( diaActual >= config.dia_inicio ){
-
-						valido = true;
-					}else if( diaActual <= config.dia_fin ){
-
-						valido = true;
-					}
-				}
-				else {
-					if (config.mes_inicio < config.mes_fin) {
-
-						if( diaActual >= config.dia_inicio){
-							valido = true;
-						}
-					}
-					else if (config.mes_inicio == config.mes_fin) {
-
-						if (diaActual <= config.dia_fin) {
-							valido = true;
-						}
-					}
-				}
+			if (fechaActual > hasta) {
+				hasta.setYear( hasta.getFullYear() + 1);
+				desde.setYear( desde.getFullYear() + 1);
 			}
-			return valido;
+
+			return (fechaActual >= desde && fechaActual <= hasta);
 		},
 		diaActualValido: function(dias)
 		{
@@ -205,8 +181,6 @@ module.exports = function()
 
 			}
 
-			console.log( horaInicial, horaFinal,horaActual);
-			console.log( parseInt( (horaFinal - horaActual)/60/1000 ) );
             return  parseInt( (horaFinal - horaActual)/60/1000 );
         }
 
