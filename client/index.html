@@ -9,11 +9,13 @@
 		<script src="js/jsmin.js"></script>
 	</head>
 	<body ng-controller="MainCtrl">
+
 		<div id="all" ng-class="{hide:showmenu,slide:!showmenu}">
 			<div id="header">
 				<a class="sprite back" ng-show="currentMenu != 'Home'" ng-click="goBack()"></a>
 				<a ui-sref="home" class="sprite home"></a>
 				<h1>{{currentMenu}}</h1>
+				<span id="horaServidor">{{horaServidor | date:"HH:mm:ss"}}</span>
 			</div>
 
 			<div id="wrapper"></div>

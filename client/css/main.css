@@ -797,7 +797,13 @@ div.dispositivosAdded ul li a
 		-moz-animation: cssload-rotate 2300ms linear infinite;
 }
 
-
+#horaServidor {
+	position:absolute;
+	top:12px;
+	right:60px;
+	font-size:22px;
+	color:#fff;
+}
 
 @keyframes cssload-rotate {
 	100% {
