@@ -88,14 +88,10 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				{
 					item.buffer+= _data;
 				});
+				//Si fallo la conexión, aviso al cliente con un array nulo
 				sockets[key].on('error',function(_err)
 				{
-					if (key === array.length - 1)
-					{
-						socket.emit('salidasAux', []);
-					}
-
-					console.log("Error al conectarse a", item.ip);
+					socket.emit('salidasAux', []);
 				});
 				sockets[key].on('end',function()
 				{

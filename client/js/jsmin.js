@@ -585,12 +585,13 @@ angular.module('Arduinode.Salida',['Socket'])
 	}
 })
 .controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton',
-			'$rootScope','$stateParams','ngDialog','$scope', 'SalidaFct',
-	function (config,Dispositivo,SwitchButton,$rootScope,params, Popup,
-			  $scope, Salida)
+			'$rootScope','$stateParams','SalidaFct','ngDialog','$scope', '$interval','SalidaFct',
+	function (config,Dispositivo,SwitchButton,$rootScope,params,SalidaFct, Popup,
+			  $scope, $interval, Salida)
 	{
 		$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {};
+		$scope.dispositivosCount = undefined;
 		$scope.salida = {};
 		$rootScope.currentMenu = 'Salidas de: ' + params.note;
 		$scope.ipDispositivo = params.ip;
@@ -668,21 +669,24 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		$scope.refreshLucesEncendidas = function()
 		{
-			$scope.salidas = [];
+			$scope.dispositivosCount = 0;
+			Salida.getSalidasActivas(function(salidasActivas) {
 
-			Salida.getSalidasActivas(function(salida)
-			{
-				if (salida.length > 0)
-				{
-					//Filtrar repetidas
-					$scope.salidas = $scope.salidas.concat(salida);
+				$scope.dispositivosCount++;
+				if (salidasActivas.length > 0) {
+
+					$scope.salidas = [];
+					var i = 0;
+
+					//Agrego progresivamente las salidas
+					$interval(function(){
+						if (i < salidasActivas.length && salidasActivas.length > 0) {
+							$scope.salidas.push(salidasActivas[i]);
+							i++;
+						}
+					}, 175)
 				}
 			});
-			setTimeout(function()
-			{
-				$rootScope.loading = false;
-				$rootScope.$digest();
-			},1000);
 		}
 
 		$scope.refreshEstados = function()
@@ -701,14 +705,23 @@ angular.module('Arduinode.Salida',['Socket'])
 		}
 		$scope.refresh = function()
 		{
+			var dispositivosActivos = JSON.parse(localStorage.dispositivos).length;
 			Salida.listenSwitchEvent(function()
 			{
 				$scope.refresh();
 			});
+
 			if (params.estado == 0)
 			{
-				$rootScope.currentMenu = "Luces encendidas";
-				$scope.refreshLucesEncendidas();
+				//Refresco solo si termino de recibir los datos de todos los dispositivos
+				if( !$scope.dispositivosCount
+					|| $scope.dispositivosCount == dispositivosActivos ) {
+
+					if ($rootScope.currentMenu != "Luces encendidas") {
+						$rootScope.currentMenu = "Luces encendidas";
+					}
+					$scope.refreshLucesEncendidas();
+				}
 			}
 			else
 			{
