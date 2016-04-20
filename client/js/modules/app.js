@@ -46,9 +46,11 @@ angular.module('Arduinode',
 
 	var updateTime = function(time)
 	{
-		//Actualizo la vista con la hora del servidor
-		var date = new Date(time);
-		$rootScope.horaServidor = date.getTime();
+		if (time) {
+			//Actualizo la vista con la hora del servidor
+			var date = new Date(time);
+			$rootScope.horaServidor = date.getTime();
+		}
 	};
 
     return {
