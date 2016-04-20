@@ -50,7 +50,7 @@ angular.module('Arduinode',
 		var date = new Date(time);
 		$rootScope.horaServidor = date.getTime();
 	};
-	
+
     return {
         request: function (config) {
             $rootScope.loading = true;
@@ -62,7 +62,6 @@ angular.module('Arduinode',
             return response || $q.when(response);
         },
         responseError: function (response) {
-			updateTime(response.headers().date);
             $rootScope.loading = false;
             return $q.reject(response);
         }
