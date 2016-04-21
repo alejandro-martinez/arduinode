@@ -88,6 +88,7 @@ body {
     font-family: Arial;
     overflow-x: hidden;
     padding: 0 !important;
+	font-size:18px;
 }
 ul {
     list-style: none;
@@ -228,7 +229,7 @@ ul.inlineButtons .button {
     height: 32px;
     background-position: -45px -43px;
 	position: absolute;
-    right: 3px;
+    right: 5px;
     top: 9px;
 }
 
@@ -569,6 +570,11 @@ ul#tareas li {
     border: 1px solid #ccc;
     padding: 10px;
     position: relative;
+}
+ul#tareas li span {
+	display:block;
+	padding-top:10px;
+	color:red;
 }
 form #duracion
 {
