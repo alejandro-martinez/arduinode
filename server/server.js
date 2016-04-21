@@ -1,13 +1,21 @@
 'use strict';
 
+//Timeout global del servidor
 //Dependencias
 var express = require('express'),
 	app 	= express(),
+	timeout = 0,
+	salidasState = {
+		salidas: [],
+		timestamp: new Date().getTime()
+	},
+	intervalo = 0,
 	serverInfo = {host: "localhost", port:8888 },
 	fs		= require('fs'),
 	compress = require('compression');
 	app.use(compress());
 	var http 	= require('http').Server(app),
+	notBroadcasted = true,
 	programadorTareas = require('./config/programadorTareas'),
 	serverConfig = {},
 	ArrayUtils = require('./utils/ArrayUtils')(),
@@ -65,7 +73,12 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		//Devuelve lista de salidas activas (con estado == 0
 		socket.on('getSalidasActivas', function(params)
 		{
-			this.salidasAux = [];
+			sendSalidasActivas(params, false);
+		});
+
+		var sendSalidasActivas = function(params, broadcast) {
+			console.log("haciendo broadcast",broadcast)
+			var salidasAux = [];
 			var sockets = [];
 			DataStore.currentFiles[0].forEach(function(item, key, array)
 			{
@@ -88,7 +101,14 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				})
 				sockets[key].on('timeout',function(_err)
 				{
-					socket.emit('salidasAux', []);
+					if (broadcast) {
+						socket.broadcast.emit('salidasAux', []);
+					}
+					else {
+						socket.emit('salidasAux', []);
+					}
+					salidasState.salidas = [];
+					salidasState.timestamp = new Date().getTime();
 				});
 
 				sockets[key].on('data',function(_data)
@@ -99,7 +119,14 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				//Si fallo la conexión, aviso al cliente con un array nulo
 				sockets[key].on('error',function(_err)
 				{
-					socket.emit('salidasAux', []);
+					if (broadcast) {
+						socket.broadcast.emit('salidasAux', []);
+					}
+					else {
+						socket.emit('salidasAux', []);
+					}
+					salidasState.salidas = [];
+					salidasState.timestamp = new Date().getTime();
 				});
 				sockets[key].on('end',function()
 				{
@@ -121,12 +148,19 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 						params.salidasOrig = item.salidas;
 						item.buffer = "";
 						var encendidasF = arduino.formatSalidas(params,encendidas);
-						socket.emit('salidasAux', ArrayUtils.unique(encendidasF));
+
+						if (broadcast) {
+							socket.broadcast.emit('salidasAux', ArrayUtils.unique(encendidasF));
+						}
+						else {
+							socket.emit('salidasAux', ArrayUtils.unique(encendidasF));
+						}
+						salidasState.salidas = ArrayUtils.unique(encendidasF);
+						salidasState.timestamp = new Date().getTime();
 					}
 				});
 			});
-		});
-
+		}
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
@@ -153,15 +187,33 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			});
 		});
 
+		var broadcastSalidasState = function(params) {
+			//Espera 5 segundos para el broadcast
+			intervalo = setInterval (function() {
+				if ((salidasState.timestamp + 5000) > new Date().getTime()) {
+					console.log("Faltan ", new Date().getTime() - (salidasState.timestamp + 5000) +" ms para el broadcast")
+				}
+				else {
+					//Hago broadcast
+					sendSalidasActivas(params, true);
+					clearInterval(intervalo)
+				}
+			},500);
+
+		}
+
 		//Setea el estado de una salida, ON/OFF
 		socket.on('switchSalida', function(params)
 		{
+			if (intervalo)
+			clearInterval(intervalo);
+			var broadcasted = false;
+			timeout = new Date().getTime();
 			params.noError = true;
+			salidasState.timestamp = new Date().getTime();
 			arduino.switchSalida(params, function(response)
 			{
-				//Le aviso a todos los clientes conectados
-				//Que se cambio el estado de una salida
-				socket.broadcast.emit('salidaSwitched');
+				broadcastSalidasState(params);
 				socket.emit('switchResponse',
 							(response === null) ? params.estado_orig : response);
 
