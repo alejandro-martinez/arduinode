@@ -63,7 +63,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		programadorTareas.socketClient = socket;
 
 		//Devuelve lista de salidas activas (con estado == 0
-		socket.on('getSalidasActivas', function()
+		socket.on('getSalidasActivas', function(params)
 		{
 			this.salidasAux = [];
 			var sockets = [];
@@ -78,16 +78,24 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 					id_disp: item.id_disp,
 					filterByEstado: '0'
 				}
+
 				sockets[key] = new net.Socket();
+				sockets[key].setTimeout(1000);
 				sockets[key].connect(8000, item.ip, function(response)
 				{
 					connectedSuccess = true;
 					sockets[key].write('G')
 				})
+				sockets[key].on('timeout',function(_err)
+				{
+					socket.emit('salidasAux', []);
+				});
+
 				sockets[key].on('data',function(_data)
 				{
 					item.buffer+= _data;
 				});
+
 				//Si fallo la conexión, aviso al cliente con un array nulo
 				sockets[key].on('error',function(_err)
 				{

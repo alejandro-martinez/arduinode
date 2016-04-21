@@ -419,16 +419,13 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 	return {
 		send: function(param, _data)
 		{
-			$rootScope.loading = true;
 			$rootScope.socket.emit(param, _data || {});
 		},
 		listen: function(param, callback)
 		{
 			$rootScope.socket.removeListener(param);
-
 			$rootScope.socket.on(param, function(data)
 			{
-				$rootScope.loading = false;
 				callback(data);
 			});
 		}
@@ -509,9 +506,9 @@ angular.module('Arduinode.Salida',['Socket'])
 		getSalidasActivas: function(callback)
 		{
 			Socket.send('getSalidasActivas');
-			Socket.listen('salidasAux', function(salida)
+			Socket.listen('salidasAux', function(salidas)
 			{
-				callback(salida)
+				callback(salidas)
 			});
 		},
 		deleteSalida: function(id, callback)
@@ -572,26 +569,39 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.showDispositivos = $scope.showSalidas = true;
 	}
 ])
-.directive('onFinishRender', function ($timeout) {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attr) {
-            if (scope.$last === true) {
-                $timeout(function () {
-                    scope.$emit('ngRepeatFinished');
-                });
-            }
-        }
-	}
+.directive("repeatEnd", function(){
+	return {
+		restrict: "A",
+		link: function (scope, element, attrs) {
+			if (scope.$last) {
+				scope.$eval(attrs.repeatEnd);
+			}
+		}
+	};
 })
-.controller('EstadosCtrl', ['SalidaConfig','DispositivoFct','SwitchButton',
+.filter('unique', function() {
+   return function(collection, keyname) {
+      var output = [],
+          keys = [];
+
+      angular.forEach(collection, function(item) {
+          var key = item[keyname];
+          if(keys.indexOf(key) === -1) {
+              keys.push(key);
+              output.push(item);
+          }
+      });
+
+      return output;
+   };
+})
+.controller('EstadosCtrl', ['orderByFilter','$timeout','SalidaConfig','DispositivoFct','SwitchButton',
 			'$rootScope','$stateParams','SalidaFct','ngDialog','$scope', '$interval','SalidaFct',
-	function (config,Dispositivo,SwitchButton,$rootScope,params,SalidaFct, Popup,
+	function (orderByFilter, $timeout,config,Dispositivo,SwitchButton,$rootScope,params,SalidaFct, Popup,
 			  $scope, $interval, Salida)
 	{
 		$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {};
-		$scope.dispositivosCount = undefined;
 		$scope.salida = {};
 		$rootScope.currentMenu = 'Salidas de: ' + params.note;
 		$scope.ipDispositivo = params.ip;
@@ -669,22 +679,24 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		$scope.refreshLucesEncendidas = function()
 		{
-			$scope.dispositivosCount = 0;
-			Salida.getSalidasActivas(function(salidasActivas) {
+			Salida.getSalidasActivas(function(salidas) {
 
-				$scope.dispositivosCount++;
-				if (salidasActivas.length > 0) {
+				if (salidas.length > 0) {
 
 					$scope.salidas = [];
 					var i = 0;
 
 					//Agrego progresivamente las salidas
 					$interval(function(){
-						if (i < salidasActivas.length && salidasActivas.length > 0) {
-							$scope.salidas.push(salidasActivas[i]);
+
+						if (i < salidas.length && salidas.length > 0) {
+
+							$scope.salidas.push(salidas[i]);
+
 							i++;
 						}
-					}, 175)
+					}, 800)
+
 				}
 			});
 		}
@@ -705,7 +717,6 @@ angular.module('Arduinode.Salida',['Socket'])
 		}
 		$scope.refresh = function()
 		{
-			var dispositivosActivos = JSON.parse(localStorage.dispositivos).length;
 			Salida.listenSwitchEvent(function()
 			{
 				$scope.refresh();
@@ -713,25 +724,30 @@ angular.module('Arduinode.Salida',['Socket'])
 
 			if (params.estado == 0)
 			{
-				//Refresco solo si termino de recibir los datos de todos los dispositivos
-				if( !$scope.dispositivosCount
-					|| $scope.dispositivosCount == dispositivosActivos ) {
-
-					if ($rootScope.currentMenu != "Luces encendidas") {
-						$rootScope.currentMenu = "Luces encendidas";
-					}
-					$scope.refreshLucesEncendidas();
+				if ($rootScope.currentMenu != "Luces encendidas") {
+					$rootScope.currentMenu = "Luces encendidas";
 				}
+				$scope.refreshLucesEncendidas();
 			}
 			else
 			{
 				$scope.refreshEstados();
 			}
 		}
+
+		//Ordena las salidas activas alfabeticamente de forma ascendente
+		$scope.onEnd = function(){
+			$timeout(function(){
+				$scope.salidas = orderByFilter($scope.salidas, '+note');
+			}, 1);
+		};
+
 		if (Dispositivo.hayDispositivosDisponibles() )
 		{
 			$scope.refresh();
 		}
+
+
 	}
 ])
 

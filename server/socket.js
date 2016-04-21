@@ -21,6 +21,7 @@ module.exports = function()
 
 			timer = setTimeout(function()
 			{
+
 				if (!params.noError)
 				{
 					This.socketClient.emit('Error', This.errors['TIMEOUT']);
@@ -30,13 +31,13 @@ module.exports = function()
 					callback(0);
 				}
 			}, timeout);
-
 			var client = net.connect(
 			{
 				host: params.ip,
 				port: 8000
 			},function()
 			{
+			
 				clearTimeout(timer);
 				callback(1, client)
 			});
