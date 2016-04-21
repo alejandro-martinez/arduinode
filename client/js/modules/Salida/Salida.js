@@ -247,23 +247,19 @@ angular.module('Arduinode.Salida',['Socket'])
 		{
 			Salida.getSalidasActivas(function(salidas) {
 
-				if (salidas.length > 0) {
+				$scope.salidas = [];
+				var i = 0;
 
-					$scope.salidas = [];
-					var i = 0;
+				//Agrego progresivamente las salidas
+				$interval(function(){
 
-					//Agrego progresivamente las salidas
-					$interval(function(){
+					if (i < salidas.length && salidas.length > 0) {
 
-						if (i < salidas.length && salidas.length > 0) {
+						$scope.salidas.push(salidas[i]);
 
-							$scope.salidas.push(salidas[i]);
-
-							i++;
-						}
-					}, 800)
-
-				}
+						i++;
+					}
+				}, 1500);
 			});
 		}
 
@@ -281,13 +277,16 @@ angular.module('Arduinode.Salida',['Socket'])
 				$scope.$digest();
 			});
 		}
+
+		Salida.listenSwitchEvent(function()
+		{
+			console.log("se accionó",params.estado)
+			$scope.refresh();
+		});
+
 		$scope.refresh = function()
 		{
-			Salida.listenSwitchEvent(function()
-			{
-				$scope.refresh();
-			});
-
+			console.log("Refresh")
 			if (params.estado == 0)
 			{
 				if ($rootScope.currentMenu != "Luces encendidas") {
