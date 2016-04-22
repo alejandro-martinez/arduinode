@@ -7,7 +7,10 @@ var express = require('express'),
 	timeout = 0,
 	salidasState = {
 		salidas: [],
-		timestamp: new Date().getTime()
+		timestamp: new Date().getTime(),
+		updateTimeStamp: function() {
+			this.timestamp = new Date().getTime();
+		}
 	},
 	intervalo = 0,
 	serverInfo = {host: "localhost", port:8888 },
@@ -70,12 +73,16 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 
 		programadorTareas.socketClient = socket;
 
-		//Devuelve lista de salidas activas (con estado == 0
+		//Escucha evento para obtener listado de luces encendidas
+		//no se provoca el broadcast
 		socket.on('getSalidasActivas', function(params)
 		{
 			sendSalidasActivas(params, false);
 		});
 
+		//Envia listado de salidas activas al cliente
+		//broadcast = true actualiza la vista de luces encendidas a todos los
+		//sockets conectados
 		var sendSalidasActivas = function(params, broadcast) {
 			console.log("haciendo broadcast",broadcast)
 			var salidasAux = [];
@@ -102,16 +109,17 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				sockets[key].on('timeout',function(_err)
 				{
 					if (broadcast) {
-						socket.broadcast.emit('salidasAux', []);
+						socket.broadcast.emit('salidasActivas', []);
 					}
 					else {
-						socket.emit('salidasAux', []);
+						socket.emit('salidasActivas', []);
 					}
 					salidasState.salidas = [];
-					salidasState.timestamp = new Date().getTime();
+					salidasState.updateTimeStamp();
 				});
 
 				sockets[key].on('data',function(_data)
+
 				{
 					item.buffer+= _data;
 				});
@@ -120,13 +128,13 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				sockets[key].on('error',function(_err)
 				{
 					if (broadcast) {
-						socket.broadcast.emit('salidasAux', []);
+						socket.broadcast.emit('salidasActivas', []);
 					}
 					else {
-						socket.emit('salidasAux', []);
+						socket.emit('salidasActivas', []);
 					}
 					salidasState.salidas = [];
-					salidasState.timestamp = new Date().getTime();
+					salidasState.updateTimeStamp();
 				});
 				sockets[key].on('end',function()
 				{
@@ -147,16 +155,17 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 						});
 						params.salidasOrig = item.salidas;
 						item.buffer = "";
-						var encendidasF = arduino.formatSalidas(params,encendidas);
+						var encendidasF = arduino.formatSalidas(params,encendidas),
+							uniqueEncendidas = ArrayUtils.unique(encendidasF);
 
 						if (broadcast) {
-							socket.broadcast.emit('salidasAux', ArrayUtils.unique(encendidasF));
+							socket.broadcast.emit('salidasActivas',uniqueEncendidas);
 						}
 						else {
-							socket.emit('salidasAux', ArrayUtils.unique(encendidasF));
+							socket.emit('salidasActivas', uniqueEncendidas);
 						}
 						salidasState.salidas = ArrayUtils.unique(encendidasF);
-						salidasState.timestamp = new Date().getTime();
+						salidasState.updateTimeStamp();
 					}
 				});
 			});
@@ -164,6 +173,10 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		socket.on('getSalidas', function(params)
 		{
+			sendSalidas(params);
+		});
+
+		var sendSalidas = function( params ) {
 			params.noError = true;
 			var dispositivo = DataStore.findDispositivo('id_disp',params.id_disp);
 
@@ -173,10 +186,15 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				{
 					var salidas = ArrayUtils.mixArrays(dispositivo[0].salidas, salidas);
 					dispositivo[0].salidas = salidas;
-					socket.emit('salidas', dispositivo[0]);
+					if (params.broadcast) {
+						socket.broadcast.emit('salidas', dispositivo[0]);
+					}
+					else {
+						socket.emit('salidas', dispositivo[0]);
+					}
 				});
 			}
-		});
+		}
 
 		//Sube,baja o detiene las persianas
 		socket.on('movePersiana', function(params)
@@ -187,33 +205,40 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			});
 		});
 
+		//Envia broadcast para actualizar la vista de luces encendidas
+		//si pasaron 5 segundos desde la ultima accion sobre una salida
 		var broadcastSalidasState = function(params) {
-			//Espera 5 segundos para el broadcast
+
+			//chequea cada 1 segundo si es momento de hacer broadcast
 			intervalo = setInterval (function() {
 				if ((salidasState.timestamp + 5000) > new Date().getTime()) {
-					console.log("Faltan ", new Date().getTime() - (salidasState.timestamp + 5000) +" ms para el broadcast")
+					console.log("Faltan ", new Date().getTime()-(salidasState.timestamp
+								+ 5000) +" ms para el broadcast")
 				}
 				else {
-					//Hago broadcast
+					//refresca pagina luces encendidas
 					sendSalidasActivas(params, true);
-					clearInterval(intervalo)
-				}
-			},500);
 
+					//refresca pagina salidas de dispositivo
+					sendSalidas(params, true);
+
+					clearInterval(intervalo);
+				}
+			},1000);
 		}
 
 		//Setea el estado de una salida, ON/OFF
 		socket.on('switchSalida', function(params)
 		{
-			if (intervalo)
-			clearInterval(intervalo);
-			var broadcasted = false;
+			//Si habia una peticion de broadcast, la elimina
+			if (intervalo) clearInterval(intervalo);
 			timeout = new Date().getTime();
 			params.noError = true;
 			salidasState.timestamp = new Date().getTime();
 			arduino.switchSalida(params, function(response)
 			{
 				broadcastSalidasState(params);
+
 				socket.emit('switchResponse',
 							(response === null) ? params.estado_orig : response);
 

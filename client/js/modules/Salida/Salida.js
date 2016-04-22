@@ -54,14 +54,6 @@ angular.module('Arduinode.Salida',['Socket'])
 				callback(response);
 			});
 		},
-		getSalidasArduino: function(params, callback)
-		{
-			Socket.send('getSalidas',params);
-			Socket.listen('salidas', function(data)
-			{
-				callback(data);
-			});
-		},
 		deleteSalida: function(id, callback)
 		{
 			$http.get('/salida/delete/'+id).then(function(response)
@@ -154,7 +146,11 @@ angular.module('Arduinode.Salida',['Socket'])
 		$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {};
 		$scope.salida = {};
-		$rootScope.currentMenu = 'Salidas de: ' + params.note;
+		$scope.page = (params.estado == 0) ? 'salidasActivas' : 'salidas';
+
+		$rootScope.currentMenu = (params.estado == 0) ? 'Luces encendidas'
+													  : 'Salidas de: ' + params.note;
+
 		$scope.ipDispositivo = params.ip;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 		$scope.showDescripcion = $scope.editing = true;
@@ -227,64 +223,55 @@ angular.module('Arduinode.Salida',['Socket'])
 				}, 3000);
 			});
 		}
-		SocketIO.listen('salidasAux', function(salidas)
+		SocketIO.listen('salidasActivas', function(salidas)
 		{
-			$scope.salidas = [];
-			var i = 0;
+			//Solo refresco si estoy en luces encendidas
+			if ($scope.page == 'salidasActivas') {
+				$scope.salidas = [];
+				var i = 0;
 
-			//Agrego progresivamente las salidas
-			$interval(function(){
+				//Agrego progresivamente las salidas
+				$interval(function(){
 
-				if (i < salidas.length && salidas.length > 0) {
+					if (i < salidas.length && salidas.length > 0) {
 
-					$scope.salidas.push(salidas[i]);
+						$scope.salidas.push(salidas[i]);
 
-					i++;
-				}
-			}, 1000);
-
+						i++;
+					}
+				}, 1000);
+			}
+			else {
+				$scope.refreshEstados(salidas);
+			}
 		});
-		$scope.refreshLucesEncendidas = function()
+
+		SocketIO.listen('salidas', function(data)
 		{
-			SocketIO.send('getSalidasActivas');
+			$scope.ipDispositivo = data.ip;
+			$scope.salidas = data.salidas;
+			$scope.$digest();
+		});
 
-
-
-			/*Salida.getSalidasActivas(function(salidas) {
-
-
-			});*/
-		}
-
+		//Actualiza estados de salidas en la pagina "salidas del dispositivo x"
 		$scope.refreshEstados = function()
 		{
-			Salida.getSalidasArduino(
-			{
+			SocketIO.send('getSalidas',{
 				ip		: $scope.ipDispositivo,
 				id_disp : params.id_disp
-			},
-			function(data)
-			{
-				$scope.ipDispositivo = data.ip;
-				$scope.salidas = data.salidas;
-				$scope.$digest();
 			});
+		}
+
+		$scope.refreshSalidas = {
+			salidasActivas: function() {
+				SocketIO.send('getSalidasActivas');
+			},
+			salidas: $scope.refreshEstados
 		}
 
 		$scope.refresh = function()
 		{
-			console.log("Refresh")
-			if (params.estado == 0)
-			{
-				if ($rootScope.currentMenu != "Luces encendidas") {
-					$rootScope.currentMenu = "Luces encendidas";
-				}
-				$scope.refreshLucesEncendidas();
-			}
-			else
-			{
-				$scope.refreshEstados();
-			}
+			$scope.refreshSalidas[ $scope.page ]();
 		}
 
 		//Ordena las salidas activas alfabeticamente de forma ascendente
@@ -298,7 +285,5 @@ angular.module('Arduinode.Salida',['Socket'])
 		{
 			$scope.refresh();
 		}
-
-
 	}
 ])
