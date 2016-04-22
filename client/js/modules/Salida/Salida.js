@@ -1,27 +1,21 @@
 angular.module('Arduinode.Salida',['Socket'])
-.constant('SalidaConfig',{
-		rootFolder: 'js/modules/Salida/'
-})
-.config(function( $stateProvider, $urlRouterProvider )
+.constant('SalidaConfig',{ rootFolder: 'js/modules/Salida/' })
+.config(function( $stateProvider, $urlRouterProvider, SalidaConfig )
 {
-
+	// Definicion de rutas y paths
 	$urlRouterProvider.otherwise("/");
 
 	$stateProvider
 		.state('salidas',
 		{
-			params: {
-				params: null
-			},
-			templateUrl: "js/modules/Salida/_salidas.html",
+			params: { params: null },
+			templateUrl: SalidaConfig.rootFolder + "_salidas.html",
 			controller: 'SalidaCtrl'
 		})
 		.state('estados',
 		{
-			params: {
-				params: null
-			},
-			templateUrl: "js/modules/Salida/_estados.html",
+			params: { params: null },
+			templateUrl:  SalidaConfig.rootFolder + "_estados.html",
 			controller: 'EstadosCtrl'
 		})
 })
@@ -29,15 +23,16 @@ angular.module('Arduinode.Salida',['Socket'])
 {
 	var Salida =
 	{
+		// Setea el estado de una salida
 		switchSalida: function(params, callback)
 		{
-			//Seteo el estado al que quiero cambiar la salida
 			Socket.send('switchSalida',params);
 			Socket.listen('switchResponse', function(estado)
 			{
 				callback(estado);
 			});
 		},
+		// Busca una salida en un array
 		findSalida: function(_array, nro_salida)
 		{
 			var salida = _array.filter(function(s)
@@ -54,26 +49,7 @@ angular.module('Arduinode.Salida',['Socket'])
 				callback(response);
 			});
 		},
-		deleteSalida: function(id, callback)
-		{
-			$http.get('/salida/delete/'+id).then(function(response)
-			{
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
-			});
-		},
-		get: function(id, callback)
-		{
-			$http.get('/salida/id/'+id).then(function(response)
-			{
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
-			});
-		},
+		// Guarda descripcion de una salida
 		save: function( salida, callback)
 		{
 			$http.post('/salida/save/', salida).then(function(response)
@@ -90,6 +66,8 @@ angular.module('Arduinode.Salida',['Socket'])
 }])
 .factory('SwitchButton',['SalidaConfig', function(config)
 {
+	// Devuelve template de boton para una salida segun el tipo
+	// Luz o persiana
 	var Factory =
 	{
 		getTemplate: function(tipo)
@@ -100,10 +78,23 @@ angular.module('Arduinode.Salida',['Socket'])
 	}
 	return Factory;
 }])
-.controller('SalidaCtrl', ['$stateParams','SwitchButton','SalidaConfig','$rootScope',
-			'ngDialog','DispositivoFct','$scope','SalidaFct',
-	function (params,SwitchButton,config,$rootScope, Popup,Dispositivo,
-			  $scope,Salida)
+.controller('SalidaCtrl',
+			['$rootScope',		//Se usa para cambiar el titulo de la pagina
+			 '$scope',
+			 '$stateParams',	//Parametros pasados al controlador
+			 'ngDialog',		//Para mostrar mensajes en Popup
+			 'SwitchButton',	//Control del boton de switch de la salida
+			 'SalidaConfig',	//Constantes de path
+			 'DispositivoFct',	//Funciones de Dispositivo
+			 'SalidaFct',		//Funciones de Salida
+	function ($rootScope,
+			  $scope,
+			  params,
+			  Popup,
+			  SwitchButton,
+			  config,
+			  Dispositivo,
+			  Salida )
 	{
 		var params = params.params || {};
 		$scope.models = {};
@@ -112,6 +103,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.showDispositivos = $scope.showSalidas = true;
 	}
 ])
+// Se ejecuta cuando terminó de renderizarse un ng-repeat
 .directive("repeatEnd", function(){
 	return {
 		restrict: "A",
@@ -122,6 +114,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		}
 	};
 })
+// Filtra items en base a una clave para evitar duplicados
 .filter('unique', function() {
    return function(collection, keyname) {
       var output = [],
@@ -138,10 +131,31 @@ angular.module('Arduinode.Salida',['Socket'])
       return output;
    };
 })
-.controller('EstadosCtrl', ['SocketIO','orderByFilter','$timeout','SalidaConfig','DispositivoFct','SwitchButton',
-			'$rootScope','$stateParams','SalidaFct','ngDialog','$scope', '$interval','SalidaFct',
-	function (SocketIO,orderByFilter, $timeout,config,Dispositivo,SwitchButton,$rootScope,params,SalidaFct, Popup,
-			  $scope, $interval, Salida)
+.controller('EstadosCtrl',
+			['$rootScope',		//Se usa para cambiar el titulo de la pagina
+			 '$scope',
+			 '$timeout',		//Para ejecutar algo luego de x tiempo
+			 '$interval',		//Para ejecutar algo cada x tiempo
+			 'SalidaConfig',	//Constantes de path
+			 'orderByFilter',	//Para ordenar items por clave en un ng-repeat
+			 '$stateParams',	//Parametros pasados al controlador
+			 'SocketIO',		//SocketIO para comunicarme con el servidor
+			 'DispositivoFct',	//Funciones de Dispositivo
+			 'SwitchButton',	//Control del boton de switch de la salida
+			 'SalidaFct',		//Funciones de Salida
+			 'ngDialog',		//Para mostrar mensajes en Popup
+	function ( $rootScope,
+			   $scope,
+			   $timeout,
+			   $interval,
+			   config,
+			   orderByFilter,
+			   params,
+			   SocketIO,
+			   Dispositivo,
+			   SwitchButton,
+			   Salida,
+			   Popup )
 	{
 		$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {};
@@ -156,6 +170,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.showDescripcion = $scope.editing = true;
 		$scope.showDispositivos = $scope.showSalidas = false;
 
+		//Abre popup para editar la descripcion de una salida
 		$scope.edit = function(salida)
 		{
 			$scope.salida = salida;
@@ -167,6 +182,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			});
 		}
 
+		//Guarda descripcion de salida editada
 		$scope.save = function(salida)
 		{
 			$scope.salida.id_disp = params.id_disp;
@@ -176,14 +192,16 @@ angular.module('Arduinode.Salida',['Socket'])
 			});
 		}
 
+		//Accion sobre una salida (on / off)
 		$scope.switch = function(data)
 		{
 			data.estado_orig = data.estado;
-			data.ip = data.ip || $scope.ipDispositivo;
-			data.estado = (data.estado == 0) ? 1 : 0;
-			var tiempo = $('.clockpicker').val();
+			data.ip 		 = data.ip || $scope.ipDispositivo;
+			data.estado 	 = (data.estado == 0) ? 1 : 0;
+			var tiempo 		 = $('.clockpicker').val();
 			data.temporizada = (tiempo != '') ? tiempo : null;
 
+			//Envia orden al socketArduino
 			Salida.switchSalida( data, function(_estado)
 			{
 				data.estado = _estado;
@@ -191,6 +209,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			});
 		}
 
+		//Actualiza el estado de una salida específica
 		$scope.updateSalida = function(params)
 		{
 			$scope.salidas.forEach(function(s)
@@ -214,54 +233,57 @@ angular.module('Arduinode.Salida',['Socket'])
 			}
 			Salida.movePersiana(params, function(_response)
 			{
+				//Muestra estado de boton indicando la accion
+				//de subir o bajar la persiana
 				var boton = $('#'.concat(nro_salida,action));
 				$('.active').removeClass('active');
 				boton.addClass('active');
+
+				//Espera 3 segundos y resetea el estado del boton
 				setTimeout(function()
 				{
  					boton.removeClass('active');
 				}, 3000);
 			});
 		}
+
+		// El servidor envia listado de luces encendidas
+		// a) cuando alguien acciona una salida
+		// b) cuando se pide listado de luces encendidas
+
 		SocketIO.listen('salidasActivas', function(salidas)
 		{
 			//Solo refresco si estoy en luces encendidas
-			if ($scope.page == 'salidasActivas') {
-				$scope.salidas = [];
-				var i = 0;
 
-				//Agrego progresivamente las salidas
-				$interval(function(){
+			$scope.salidas = [];
+			var i = 0;
+			//Agrego progresivamente las salidas cada 1 segundo
+			//para no atorar la vista
+			$interval(function(){
+				if (i < salidas.length && salidas.length > 0) {
 
-					if (i < salidas.length && salidas.length > 0) {
-
-						$scope.salidas.push(salidas[i]);
-
-						i++;
-					}
-				}, 1000);
-			}
-			else {
-				$scope.refreshEstados(salidas);
-			}
+					$scope.salidas.push(salidas[i]);
+					i++;
+				}
+			}, 1000);
 		});
 
+		// Escucha evento cuando el servidor envia listado de salidas
+		// en la pagina "Salidas del dispositivo x"
 		SocketIO.listen('salidas', function(data)
 		{
 			$scope.ipDispositivo = data.ip;
-			$scope.salidas = data.salidas;
+			$scope.salidas 		 = data.salidas;
 			$scope.$digest();
 		});
 
-		//Actualiza estados de salidas en la pagina "salidas del dispositivo x"
+		// Solicita listado de salidas en la pagina "salidas del dispositivo x"
 		$scope.refreshEstados = function()
 		{
-			SocketIO.send('getSalidas',{
-				ip		: $scope.ipDispositivo,
-				id_disp : params.id_disp
-			});
+			SocketIO.send('getSalidas',{ip: $scope.ipDispositivo, id_disp: params.id_disp});
 		}
 
+		// Determina que funcion usar para actualizar en base a la pagina actual
 		$scope.refreshSalidas = {
 			salidasActivas: function() {
 				SocketIO.send('getSalidasActivas');
@@ -269,18 +291,21 @@ angular.module('Arduinode.Salida',['Socket'])
 			salidas: $scope.refreshEstados
 		}
 
+		// Se dispara al hacer click en el titulo superior
 		$scope.refresh = function()
 		{
 			$scope.refreshSalidas[ $scope.page ]();
 		}
 
-		//Ordena las salidas activas alfabeticamente de forma ascendente
+		// Ordena las salidas activas alfabeticamente de forma ascendente
+		// al actualizar la pagina Luces encendidas
 		$scope.onEnd = function(){
 			$timeout(function(){
 				$scope.salidas = orderByFilter($scope.salidas, '+note');
-			}, 1);
+			}, 50);
 		};
 
+		// Solo si existen dispositivos, refresca pagina actual al inicio
 		if (Dispositivo.hayDispositivosDisponibles() )
 		{
 			$scope.refresh();

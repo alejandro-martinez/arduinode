@@ -84,7 +84,6 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		//broadcast = true actualiza la vista de luces encendidas a todos los
 		//sockets conectados
 		var sendSalidasActivas = function(params, broadcast) {
-			console.log("haciendo broadcast",broadcast)
 			var salidasAux = [];
 			var sockets = [];
 			DataStore.currentFiles[0].forEach(function(item, key, array)
@@ -212,8 +211,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			//chequea cada 1 segundo si es momento de hacer broadcast
 			intervalo = setInterval (function() {
 				if ((salidasState.timestamp + 5000) > new Date().getTime()) {
-					console.log("Faltan ", new Date().getTime()-(salidasState.timestamp
-								+ 5000) +" ms para el broadcast")
+					/*console.log("Faltan ", new Date().getTime()-(salidasState.timestamp
+								+ 5000) +" ms para el broadcast")*/
 				}
 				else {
 					//refresca pagina luces encendidas

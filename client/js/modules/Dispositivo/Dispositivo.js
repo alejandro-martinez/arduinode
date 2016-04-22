@@ -3,36 +3,43 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 .constant('DispositivoConfig',{
 		rootFolder: 'js/modules/Dispositivo/'
 })
-.config(function( $stateProvider, $urlRouterProvider )
+.config(function( $stateProvider, $urlRouterProvider, DispositivoConfig )
 {
 
 	$stateProvider
 		.state('dispositivos',
 		{
-			templateUrl: "js/modules/Dispositivo/_dispositivos.html",
+			templateUrl: DispositivoConfig.rootFolder + "_dispositivos.html",
 			controller: 'DispositivoCtrl'
 		})
 		.state('updateDispositivo',
 		{
-			params: {
-				params: null
-			},
-			templateUrl: "js/modules/Dispositivo/_form.html",
+			params: { params: null },
+			templateUrl: DispositivoConfig.rootFolder + "_form.html",
 			controller: 'DispositivoFormCtrl'
 		})
 		.state('create',
 		{
-			templateUrl: "js/modules/Dispositivo/_form.html",
+			templateUrl: DispositivoConfig.rootFolder + "_form.html",
 			controller: 'DispositivoFormCtrl'
 		})
 })
-.factory('DispositivoFct', ['$rootScope','$http','$state','ngDialog',
-		 function($rootScope, $http, $state, Popup)
-	{
+.factory('DispositivoFct',
+				 ['$rootScope',
+				  '$http',
+				  '$state',
+				  'ngDialog',
+		function(  $rootScope,
+				   $http,
+				   $state,
+				   Popup)
+		{
 	var Dispositivo = {
+
+		//Chequea si existen dispositivos en el caché
 		hayDispositivosDisponibles: function()
 		{
-			if (JSON.parse(localStorage.getItem("dispositivos")).length > 0)
+			if ( JSON.parse( localStorage.getItem("dispositivos") ).length > 0 )
 			{
 				return true;
 			}
@@ -46,14 +53,20 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				});
 			}
 		},
+		// Devuelve un dispositivo por ID
 		get: function(params)
 		{
 			var dispositivos = JSON.parse(localStorage.getItem("dispositivos"));
-			return dispositivos.filter(function(disp)
-			{
-				return disp.id_disp == params.id_disp;
-			});
+			if (dispositivos.length > 0) {
+				return dispositivos.filter(function(disp)
+				{
+					return disp.id_disp == params.id_disp;
+				});
+			}
 		},
+		// Devuelve todos los Dispositivos
+		// Primero busca en caché, si está vacio, los pide al servidor
+		// y los almacena en caché
 		getAll: function(callback)
 		{
 			if (localStorage.getItem('dispositivos'))
@@ -72,12 +85,14 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				});
 			}
 		},
+		// Elimina un dispositivo
 		remove: function(id)
 		{
 			$http.get('/dispositivo/delete/'+id).then(function(response)
 			{
 				localStorage.removeItem('dispositivos');
 				$state.go('dispositivos');
+
 			}, function(error)
 			{
 				if (response.data)
@@ -89,6 +104,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				}
 			});
 		},
+		// Crea o actualiza dispositivos
 		save: function( dispositivo )
 		{
 			$http.post('/dispositivo/save/',dispositivo).then(function(response)
@@ -116,38 +132,59 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 	}
 	return Dispositivo;
 }])
-.controller('DispositivoCtrl', ['$rootScope','$scope', 'SocketIO','DispositivoFct',
-	function ($rootScope,$scope,Socket, Dispositivo)
+.controller('DispositivoCtrl',
+			['$rootScope',
+			 '$scope',
+			 'DispositivoFct',
+	function ($rootScope,
+			  $scope,
+			  Dispositivo)
 	{
 		$rootScope.currentMenu = 'Dispositivos';
+
+		// Obtiene listado de dispositivos
 		Dispositivo.getAll(function(dispositivos)
 		{
 			$scope.dispositivos = dispositivos;
 		})
 	}
 ])
-.controller('DispositivoFormCtrl', ['$stateParams','$scope',
-			'SocketIO','DispositivoFct','ngDialog',
-	function ($params, $scope, Socket, Dispositivo, Popup)
+.controller('DispositivoFormCtrl',
+			['$stateParams',
+			 '$scope',
+			 'DispositivoConfig',
+			 'DispositivoFct',
+			 'ngDialog',
+	function ($params,
+			  $scope,
+			  config,
+			  Dispositivo,
+			  Popup)
 	{
 		var params = $params.params;
+
+		// Datos para el nuevo dispositivo
 		$scope.model = {};
 
+		// Edición de un dispositivo
 		if (params && params.id_disp)
 		{
 			$scope.model = Dispositivo.get(params)[0];
 		}
 
+		// Guarda datos del dispositivo
 		$scope.save = function(model)
 		{
 			if (!$scope.dispositivoForm.$invalid)
 				Dispositivo.save(model);
 		};
 
+		// Elimina un dispositivo
 		$scope.delete = function(id)
 		{
+			// Lanza popup para la confirmación de eliminar dispositivo
 			Popup.openConfirm({
-				template: "js/modules/Dispositivo/confirm_popup.html",
+				template: config.rootFolder + "confirm_popup.html",
 			}).then(function (success) {
 				Dispositivo.remove(id);
 			});

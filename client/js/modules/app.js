@@ -9,39 +9,6 @@ angular.module('Arduinode',
 	'Arduinode.Dispositivo',
 	'Arduinode.Tarea'
 ])
-.controller('MainCtrl', ['$state','$rootScope',
-			function ($state, $rootScope )
-{
-	$rootScope.currentMenu = 'Home';
-	$rootScope.previousState;
-	$rootScope.currentState;
-	$rootScope.$on('$stateChangeSuccess',
-	function(ev, to, toParams, from, fromParams)
-	{
-		$rootScope.previousState = from.name;
-		$rootScope.currentState = to.name;
-	});
-	$rootScope.goBack = function()
-	{
-		if ($rootScope.previousState == 'estados'
-			|| $rootScope.currentState == 'tareas'
-		)
-		{
-			$state.go('home');
-		}
-		else
-		{
-			$state.go($rootScope.previousState);
-		}
-	}
-
-	//Config Lib Fastclick para eliminar delay botones en mobile
-	$(function()
-	{
-		FastClick.attach(document.body);
-	});
-
-}])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 
 	var updateTime = function(time)

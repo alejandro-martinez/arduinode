@@ -321,39 +321,6 @@ angular.module('Arduinode',
 	'Arduinode.Dispositivo',
 	'Arduinode.Tarea'
 ])
-.controller('MainCtrl', ['$state','$rootScope',
-			function ($state, $rootScope )
-{
-	$rootScope.currentMenu = 'Home';
-	$rootScope.previousState;
-	$rootScope.currentState;
-	$rootScope.$on('$stateChangeSuccess',
-	function(ev, to, toParams, from, fromParams)
-	{
-		$rootScope.previousState = from.name;
-		$rootScope.currentState = to.name;
-	});
-	$rootScope.goBack = function()
-	{
-		if ($rootScope.previousState == 'estados'
-			|| $rootScope.currentState == 'tareas'
-		)
-		{
-			$state.go('home');
-		}
-		else
-		{
-			$state.go($rootScope.previousState);
-		}
-	}
-
-	//Config Lib Fastclick para eliminar delay botones en mobile
-	$(function()
-	{
-		FastClick.attach(document.body);
-	});
-
-}])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 
 	var updateTime = function(time)
@@ -391,13 +358,15 @@ angular.module('Arduinode',
 	Dispositivo.getAll(function(){});
 }]);
 var socketIOModule = angular.module('Socket',[]);
+
 socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScope, Popup )
 {
 	if (!$rootScope.socket)
 	{
+		// Lanza el socket en la ip origen actual
 		$rootScope.socket = io(window.location.origin);
 
-		//Listen for errors
+		// Escucha errores del servidor
 		$rootScope.socket.on('Error', function(error)
 		{
 			if ( Object.getOwnPropertyNames(error).length == 0 )
@@ -409,18 +378,20 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 				$rootScope.error = error;
 			}
 			$rootScope.loading = false;
-			Popup.open({
-				template: '<h1>' + error + '</h1>',
-				plain: true
-			});
+			Popup.open({ template: '<h1>' + error + '</h1>', plain: true });
 		});
 	}
 
+	// Métodos disponibles del Socket
 	return {
+
+		// Envia un parametro
 		send: function(param, _data)
 		{
 			$rootScope.socket.emit(param, _data || {});
 		},
+		
+		// Escucha un evento
 		listen: function(param, callback)
 		{
 			$rootScope.socket.removeListener(param);
@@ -433,29 +404,23 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 }]);
 
 angular.module('Arduinode.Salida',['Socket'])
-.constant('SalidaConfig',{
-		rootFolder: 'js/modules/Salida/'
-})
-.config(function( $stateProvider, $urlRouterProvider )
+.constant('SalidaConfig',{ rootFolder: 'js/modules/Salida/' })
+.config(function( $stateProvider, $urlRouterProvider, SalidaConfig )
 {
-
+	// Definicion de rutas y paths
 	$urlRouterProvider.otherwise("/");
 
 	$stateProvider
 		.state('salidas',
 		{
-			params: {
-				params: null
-			},
-			templateUrl: "js/modules/Salida/_salidas.html",
+			params: { params: null },
+			templateUrl: SalidaConfig.rootFolder + "_salidas.html",
 			controller: 'SalidaCtrl'
 		})
 		.state('estados',
 		{
-			params: {
-				params: null
-			},
-			templateUrl: "js/modules/Salida/_estados.html",
+			params: { params: null },
+			templateUrl:  SalidaConfig.rootFolder + "_estados.html",
 			controller: 'EstadosCtrl'
 		})
 })
@@ -463,15 +428,16 @@ angular.module('Arduinode.Salida',['Socket'])
 {
 	var Salida =
 	{
+		// Setea el estado de una salida
 		switchSalida: function(params, callback)
 		{
-			//Seteo el estado al que quiero cambiar la salida
 			Socket.send('switchSalida',params);
 			Socket.listen('switchResponse', function(estado)
 			{
 				callback(estado);
 			});
 		},
+		// Busca una salida en un array
 		findSalida: function(_array, nro_salida)
 		{
 			var salida = _array.filter(function(s)
@@ -488,26 +454,7 @@ angular.module('Arduinode.Salida',['Socket'])
 				callback(response);
 			});
 		},
-		deleteSalida: function(id, callback)
-		{
-			$http.get('/salida/delete/'+id).then(function(response)
-			{
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
-			});
-		},
-		get: function(id, callback)
-		{
-			$http.get('/salida/id/'+id).then(function(response)
-			{
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
-			});
-		},
+		// Guarda descripcion de una salida
 		save: function( salida, callback)
 		{
 			$http.post('/salida/save/', salida).then(function(response)
@@ -524,6 +471,8 @@ angular.module('Arduinode.Salida',['Socket'])
 }])
 .factory('SwitchButton',['SalidaConfig', function(config)
 {
+	// Devuelve template de boton para una salida segun el tipo
+	// Luz o persiana
 	var Factory =
 	{
 		getTemplate: function(tipo)
@@ -534,10 +483,23 @@ angular.module('Arduinode.Salida',['Socket'])
 	}
 	return Factory;
 }])
-.controller('SalidaCtrl', ['$stateParams','SwitchButton','SalidaConfig','$rootScope',
-			'ngDialog','DispositivoFct','$scope','SalidaFct',
-	function (params,SwitchButton,config,$rootScope, Popup,Dispositivo,
-			  $scope,Salida)
+.controller('SalidaCtrl',
+			['$rootScope',		//Se usa para cambiar el titulo de la pagina
+			 '$scope',
+			 '$stateParams',	//Parametros pasados al controlador
+			 'ngDialog',		//Para mostrar mensajes en Popup
+			 'SwitchButton',	//Control del boton de switch de la salida
+			 'SalidaConfig',	//Constantes de path
+			 'DispositivoFct',	//Funciones de Dispositivo
+			 'SalidaFct',		//Funciones de Salida
+	function ($rootScope,
+			  $scope,
+			  params,
+			  Popup,
+			  SwitchButton,
+			  config,
+			  Dispositivo,
+			  Salida )
 	{
 		var params = params.params || {};
 		$scope.models = {};
@@ -546,6 +508,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.showDispositivos = $scope.showSalidas = true;
 	}
 ])
+// Se ejecuta cuando terminó de renderizarse un ng-repeat
 .directive("repeatEnd", function(){
 	return {
 		restrict: "A",
@@ -556,6 +519,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		}
 	};
 })
+// Filtra items en base a una clave para evitar duplicados
 .filter('unique', function() {
    return function(collection, keyname) {
       var output = [],
@@ -572,10 +536,31 @@ angular.module('Arduinode.Salida',['Socket'])
       return output;
    };
 })
-.controller('EstadosCtrl', ['SocketIO','orderByFilter','$timeout','SalidaConfig','DispositivoFct','SwitchButton',
-			'$rootScope','$stateParams','SalidaFct','ngDialog','$scope', '$interval','SalidaFct',
-	function (SocketIO,orderByFilter, $timeout,config,Dispositivo,SwitchButton,$rootScope,params,SalidaFct, Popup,
-			  $scope, $interval, Salida)
+.controller('EstadosCtrl',
+			['$rootScope',		//Se usa para cambiar el titulo de la pagina
+			 '$scope',
+			 '$timeout',		//Para ejecutar algo luego de x tiempo
+			 '$interval',		//Para ejecutar algo cada x tiempo
+			 'SalidaConfig',	//Constantes de path
+			 'orderByFilter',	//Para ordenar items por clave en un ng-repeat
+			 '$stateParams',	//Parametros pasados al controlador
+			 'SocketIO',		//SocketIO para comunicarme con el servidor
+			 'DispositivoFct',	//Funciones de Dispositivo
+			 'SwitchButton',	//Control del boton de switch de la salida
+			 'SalidaFct',		//Funciones de Salida
+			 'ngDialog',		//Para mostrar mensajes en Popup
+	function ( $rootScope,
+			   $scope,
+			   $timeout,
+			   $interval,
+			   config,
+			   orderByFilter,
+			   params,
+			   SocketIO,
+			   Dispositivo,
+			   SwitchButton,
+			   Salida,
+			   Popup )
 	{
 		$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {};
@@ -590,6 +575,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.showDescripcion = $scope.editing = true;
 		$scope.showDispositivos = $scope.showSalidas = false;
 
+		//Abre popup para editar la descripcion de una salida
 		$scope.edit = function(salida)
 		{
 			$scope.salida = salida;
@@ -601,6 +587,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			});
 		}
 
+		//Guarda descripcion de salida editada
 		$scope.save = function(salida)
 		{
 			$scope.salida.id_disp = params.id_disp;
@@ -610,14 +597,16 @@ angular.module('Arduinode.Salida',['Socket'])
 			});
 		}
 
+		//Accion sobre una salida (on / off)
 		$scope.switch = function(data)
 		{
 			data.estado_orig = data.estado;
-			data.ip = data.ip || $scope.ipDispositivo;
-			data.estado = (data.estado == 0) ? 1 : 0;
-			var tiempo = $('.clockpicker').val();
+			data.ip 		 = data.ip || $scope.ipDispositivo;
+			data.estado 	 = (data.estado == 0) ? 1 : 0;
+			var tiempo 		 = $('.clockpicker').val();
 			data.temporizada = (tiempo != '') ? tiempo : null;
 
+			//Envia orden al socketArduino
 			Salida.switchSalida( data, function(_estado)
 			{
 				data.estado = _estado;
@@ -625,6 +614,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			});
 		}
 
+		//Actualiza el estado de una salida específica
 		$scope.updateSalida = function(params)
 		{
 			$scope.salidas.forEach(function(s)
@@ -648,54 +638,57 @@ angular.module('Arduinode.Salida',['Socket'])
 			}
 			Salida.movePersiana(params, function(_response)
 			{
+				//Muestra estado de boton indicando la accion
+				//de subir o bajar la persiana
 				var boton = $('#'.concat(nro_salida,action));
 				$('.active').removeClass('active');
 				boton.addClass('active');
+
+				//Espera 3 segundos y resetea el estado del boton
 				setTimeout(function()
 				{
  					boton.removeClass('active');
 				}, 3000);
 			});
 		}
+
+		// El servidor envia listado de luces encendidas
+		// a) cuando alguien acciona una salida
+		// b) cuando se pide listado de luces encendidas
+
 		SocketIO.listen('salidasActivas', function(salidas)
 		{
 			//Solo refresco si estoy en luces encendidas
-			if ($scope.page == 'salidasActivas') {
-				$scope.salidas = [];
-				var i = 0;
 
-				//Agrego progresivamente las salidas
-				$interval(function(){
+			$scope.salidas = [];
+			var i = 0;
+			//Agrego progresivamente las salidas cada 1 segundo
+			//para no atorar la vista
+			$interval(function(){
+				if (i < salidas.length && salidas.length > 0) {
 
-					if (i < salidas.length && salidas.length > 0) {
-
-						$scope.salidas.push(salidas[i]);
-
-						i++;
-					}
-				}, 1000);
-			}
-			else {
-				$scope.refreshEstados(salidas);
-			}
+					$scope.salidas.push(salidas[i]);
+					i++;
+				}
+			}, 1000);
 		});
 
+		// Escucha evento cuando el servidor envia listado de salidas
+		// en la pagina "Salidas del dispositivo x"
 		SocketIO.listen('salidas', function(data)
 		{
 			$scope.ipDispositivo = data.ip;
-			$scope.salidas = data.salidas;
+			$scope.salidas 		 = data.salidas;
 			$scope.$digest();
 		});
 
-		//Actualiza estados de salidas en la pagina "salidas del dispositivo x"
+		// Solicita listado de salidas en la pagina "salidas del dispositivo x"
 		$scope.refreshEstados = function()
 		{
-			SocketIO.send('getSalidas',{
-				ip		: $scope.ipDispositivo,
-				id_disp : params.id_disp
-			});
+			SocketIO.send('getSalidas',{ip: $scope.ipDispositivo, id_disp: params.id_disp});
 		}
 
+		// Determina que funcion usar para actualizar en base a la pagina actual
 		$scope.refreshSalidas = {
 			salidasActivas: function() {
 				SocketIO.send('getSalidasActivas');
@@ -703,18 +696,21 @@ angular.module('Arduinode.Salida',['Socket'])
 			salidas: $scope.refreshEstados
 		}
 
+		// Se dispara al hacer click en el titulo superior
 		$scope.refresh = function()
 		{
 			$scope.refreshSalidas[ $scope.page ]();
 		}
 
-		//Ordena las salidas activas alfabeticamente de forma ascendente
+		// Ordena las salidas activas alfabeticamente de forma ascendente
+		// al actualizar la pagina Luces encendidas
 		$scope.onEnd = function(){
 			$timeout(function(){
 				$scope.salidas = orderByFilter($scope.salidas, '+note');
-			}, 1);
+			}, 50);
 		};
 
+		// Solo si existen dispositivos, refresca pagina actual al inicio
 		if (Dispositivo.hayDispositivosDisponibles() )
 		{
 			$scope.refresh();
@@ -725,56 +721,93 @@ angular.module('Arduinode.Salida',['Socket'])
 angular.module('Arduinode.Home',[])
 .config(function( $stateProvider, $urlRouterProvider )
 {
-
 	$urlRouterProvider.otherwise("/");
-
 	$stateProvider
 		.state('home',
 		{
-				url: "/",
-				templateUrl: "js/modules/Home/home.html",
-				controller: 'MainCtrl'
+			url: "/",
+			templateUrl: "js/modules/Home/home.html",
+			controller: 'MainCtrl'
 		})
 })
-.controller('HomeCtrl', ['$scope',function ($scope )
-{
-}])
+.controller('MainCtrl', [ '$state', '$rootScope',
+	function ( $state, $rootScope ) {
 
+	$rootScope.currentMenu = 'Home';
+	$rootScope.previousState;
+	$rootScope.currentState;
+
+	//Setea las rutas anterior y actual, al navegar
+	$rootScope.$on('$stateChangeSuccess',function(ev, to, toParams, from, fromParams)
+	{
+		$rootScope.previousState = from.name;
+		$rootScope.currentState = to.name;
+	});
+
+	//Control de navegación hacia atrás
+	$rootScope.goBack = function()
+	{
+		if ($rootScope.previousState == 'estados'
+		 || $rootScope.currentState == 'tareas'
+		)
+		{
+			$state.go('home');
+		}
+		else
+		{
+			$state.go($rootScope.previousState);
+		}
+	}
+
+	//Componente Fastclick para eliminar delay de botones en smarphones
+	$(function()
+	{
+		FastClick.attach(document.body);
+	});
+
+}])
 'use strict';
 angular.module('Arduinode.Dispositivo',['Socket'])
 .constant('DispositivoConfig',{
 		rootFolder: 'js/modules/Dispositivo/'
 })
-.config(function( $stateProvider, $urlRouterProvider )
+.config(function( $stateProvider, $urlRouterProvider, DispositivoConfig )
 {
 
 	$stateProvider
 		.state('dispositivos',
 		{
-			templateUrl: "js/modules/Dispositivo/_dispositivos.html",
+			templateUrl: DispositivoConfig.rootFolder + "_dispositivos.html",
 			controller: 'DispositivoCtrl'
 		})
 		.state('updateDispositivo',
 		{
-			params: {
-				params: null
-			},
-			templateUrl: "js/modules/Dispositivo/_form.html",
+			params: { params: null },
+			templateUrl: DispositivoConfig.rootFolder + "_form.html",
 			controller: 'DispositivoFormCtrl'
 		})
 		.state('create',
 		{
-			templateUrl: "js/modules/Dispositivo/_form.html",
+			templateUrl: DispositivoConfig.rootFolder + "_form.html",
 			controller: 'DispositivoFormCtrl'
 		})
 })
-.factory('DispositivoFct', ['$rootScope','$http','$state','ngDialog',
-		 function($rootScope, $http, $state, Popup)
-	{
+.factory('DispositivoFct',
+				 ['$rootScope',
+				  '$http',
+				  '$state',
+				  'ngDialog',
+		function(  $rootScope,
+				   $http,
+				   $state,
+				   Popup)
+		{
 	var Dispositivo = {
+
+		//Chequea si existen dispositivos en el caché
 		hayDispositivosDisponibles: function()
 		{
-			if (JSON.parse(localStorage.getItem("dispositivos")).length > 0)
+			if ( JSON.parse( localStorage.getItem("dispositivos") ).length > 0 )
 			{
 				return true;
 			}
@@ -788,14 +821,20 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				});
 			}
 		},
+		// Devuelve un dispositivo por ID
 		get: function(params)
 		{
 			var dispositivos = JSON.parse(localStorage.getItem("dispositivos"));
-			return dispositivos.filter(function(disp)
-			{
-				return disp.id_disp == params.id_disp;
-			});
+			if (dispositivos.length > 0) {
+				return dispositivos.filter(function(disp)
+				{
+					return disp.id_disp == params.id_disp;
+				});
+			}
 		},
+		// Devuelve todos los Dispositivos
+		// Primero busca en caché, si está vacio, los pide al servidor
+		// y los almacena en caché
 		getAll: function(callback)
 		{
 			if (localStorage.getItem('dispositivos'))
@@ -814,12 +853,14 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				});
 			}
 		},
+		// Elimina un dispositivo
 		remove: function(id)
 		{
 			$http.get('/dispositivo/delete/'+id).then(function(response)
 			{
 				localStorage.removeItem('dispositivos');
 				$state.go('dispositivos');
+
 			}, function(error)
 			{
 				if (response.data)
@@ -831,6 +872,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				}
 			});
 		},
+		// Crea o actualiza dispositivos
 		save: function( dispositivo )
 		{
 			$http.post('/dispositivo/save/',dispositivo).then(function(response)
@@ -858,38 +900,59 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 	}
 	return Dispositivo;
 }])
-.controller('DispositivoCtrl', ['$rootScope','$scope', 'SocketIO','DispositivoFct',
-	function ($rootScope,$scope,Socket, Dispositivo)
+.controller('DispositivoCtrl',
+			['$rootScope',
+			 '$scope',
+			 'DispositivoFct',
+	function ($rootScope,
+			  $scope,
+			  Dispositivo)
 	{
 		$rootScope.currentMenu = 'Dispositivos';
+
+		// Obtiene listado de dispositivos
 		Dispositivo.getAll(function(dispositivos)
 		{
 			$scope.dispositivos = dispositivos;
 		})
 	}
 ])
-.controller('DispositivoFormCtrl', ['$stateParams','$scope',
-			'SocketIO','DispositivoFct','ngDialog',
-	function ($params, $scope, Socket, Dispositivo, Popup)
+.controller('DispositivoFormCtrl',
+			['$stateParams',
+			 '$scope',
+			 'DispositivoConfig',
+			 'DispositivoFct',
+			 'ngDialog',
+	function ($params,
+			  $scope,
+			  config,
+			  Dispositivo,
+			  Popup)
 	{
 		var params = $params.params;
+
+		// Datos para el nuevo dispositivo
 		$scope.model = {};
 
+		// Edición de un dispositivo
 		if (params && params.id_disp)
 		{
 			$scope.model = Dispositivo.get(params)[0];
 		}
 
+		// Guarda datos del dispositivo
 		$scope.save = function(model)
 		{
 			if (!$scope.dispositivoForm.$invalid)
 				Dispositivo.save(model);
 		};
 
+		// Elimina un dispositivo
 		$scope.delete = function(id)
 		{
+			// Lanza popup para la confirmación de eliminar dispositivo
 			Popup.openConfirm({
-				template: "js/modules/Dispositivo/confirm_popup.html",
+				template: config.rootFolder + "confirm_popup.html",
 			}).then(function (success) {
 				Dispositivo.remove(id);
 			});
@@ -908,40 +971,53 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		})
 		.state('editarTarea',
 		{
-			params: {
-				params: null
-			},
+			params: { params: null },
 			controller: 'TareaFormCtrl',
 			templateUrl: "js/modules/Tarea/_form.html"
 		})
 })
-.factory('TareaFct', ['$http','$state','SocketIO','ngDialog',
-		function($http,$state,SocketIO, Popup)
+.factory('TareaFct',
+		['$http',
+		 '$state',
+		 'SocketIO',
+		 'ngDialog',
+function($http,
+		 $state,
+		 SocketIO,
+		 Popup)
 {
 	var Tarea = {
+
+		// Obtiene listado de tareas
 		getAll: function(callback)
 		{
+			// Escucha evento que se dispara si alguien crea o modifica una tarea,
+			// si esto sucede borra el cache para reflejar los cambios
 			SocketIO.listen('tareasChanged', function()
 			{
 				localStorage.setItem('tareas', undefined);
 			});
 
+			// Chequea si hay tareas en el caché
 			if ( localStorage.getItem('tareas'))
 			{
 				callback(JSON.parse(localStorage.getItem("tareas")));
 			}
 			else
 			{
+				// Pide tareas al servidor
 				$http.get('/tareas/').then(function(response)
 				{
 					localStorage.setItem('tareas',JSON.stringify(response.data));
 					callback(response.data || response);
+
 				}, function(error)
 				{
 					callback(error)
 				});
 			}
 		},
+		// Elimina una tarea
 		remove: function(tarea)
 		{
 			$http.post('/tarea/delete/',tarea).then(function(response)
@@ -962,6 +1038,7 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 				}
 			});
 		},
+		// Guarda una tarea
 		save: function( tarea, callback )
 		{
 			$http.post('/tarea/save/',tarea).then(function(response)
@@ -993,44 +1070,72 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	}
 	return Tarea;
 }])
-.controller('TareaCtrl', ['$rootScope','$scope','TareaFct','DispositivoFct',
-		function ($rootScope,$scope, Tarea, Dispositivo )
-{
-	$rootScope.currentMenu = "Tareas programadas";
-	$scope.tareas = []
-	$scope.sinDispositivos = Dispositivo.hayDispositivosDisponibles();
-
-	$scope.loadTareas = function()
-	{
-		Tarea.getAll(function(tareas)
+.controller('TareaCtrl',
+				['$rootScope',
+				 '$scope',
+				 'TareaFct',
+				 'DispositivoFct',
+		function ($rootScope,
+				  $scope,
+				  Tarea,
+				  Dispositivo )
 		{
-			$scope.tareas = tareas;
-		})
-	}
-	$scope.loadTareas();
-	$scope.duplicateTarea = function(tarea)
-	{
-		tarea.id_tarea = -1;
-		tarea.dia_inicio = tarea.dia_fin;
-		tarea.mes_inicio = tarea.mes_fin;
-		Tarea.save(tarea, function(res)
-		{
-			$scope.loadTareas();
-		});
-	}
+		$rootScope.currentMenu = "Tareas programadas";
+		$scope.tareas = []
 
+		// Chequea si existen dispositivos
+		$scope.sinDispositivos = Dispositivo.hayDispositivosDisponibles();
+
+		// Carga listado de tareas
+		$scope.loadTareas = function()
+		{
+			Tarea.getAll(function(tareas)
+			{
+				$scope.tareas = tareas;
+			})
+		}
+
+		$scope.loadTareas();
+
+		// Duplica una tarea
+		$scope.duplicateTarea = function(tarea)
+		{
+			// Setea la fecha de la tarea duplicada
+			tarea.id_tarea = -1;
+			tarea.dia_inicio = tarea.dia_fin;
+			tarea.mes_inicio = tarea.mes_fin;
+
+			// Guarda la tarea y refresca
+			Tarea.save(tarea, function(res)
+			{
+				$scope.loadTareas();
+			});
+		}
 }])
-.controller('TareaFormCtrl', ['$scope','$rootScope','$stateParams',
-			'DispositivoFct','SalidaFct','TareaFct','ngDialog',
-			function ( $scope, $rootScope, $params, Dispositivo, Salida,
-					   Tarea, Popup )
-{
-	$scope.diasSemana = ['Domingo','Lunes', 'Martes', 'Miercoles', 'Jueves','Viernes','Sabado'];
+.controller('TareaFormCtrl',
+			['$scope',
+			 '$rootScope',
+			 '$stateParams',
+			 'DispositivoFct',
+			 'SalidaFct',
+			 'TareaFct',
+			 'ngDialog',
+		function ( $scope,
+				   $rootScope,
+				   $params,
+				   Dispositivo,
+				   Salida,
+				   Tarea,
+				   Popup )
+	{
+	$scope.diasSemana = ['Domingo','Lunes', 'Martes', 'Miercoles',
+							'Jueves','Viernes','Sabado'];
 
 	$scope.mesesTxt = ["Enero", "Febrero", "Marzo", "Abril",
-					   "Mayo", "Junio", "Julio","Agosto", "Septiembre",
-					   "Octubre", "Noviembre", "Diciembre"];
+						"Mayo", "Junio", "Julio","Agosto", "Septiembre",
+						"Octubre", "Noviembre", "Diciembre"];
 
+	// Devuelve true si el par (dia/mes) es valido
 	var dia_valido = function(dia, mes) {
 		var fecha = new Date();
 		fecha.setMonth(parseInt(mes) - 1);
@@ -1038,7 +1143,17 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		return (fecha.getDate() == parseInt(dia) && fecha.getMonth() == parseInt(mes)-1);
 	}
 
+	// Devuelve objeto Date a partir de un String (ej; '14:59')
+	var parseHour = function(horaStr) {
+		var date = new Date();
+		return new Date(date.getFullYear(),
+						date.getMonth(),
+						date.getDate(),
+						horaStr.substr(0,2),
+						horaStr.substr(-2));
+	}
 
+	// Modelo por defecto para nuevas tareas
 	var def_model = {
 		id_tarea: 9999,
 		dias_ejecucion:"1,2,3,4,5",
@@ -1052,26 +1167,30 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		activa: 1
 	}
 
-	var params = $params.params || def_model;
-	$rootScope.currentMenu = (params.id_tarea != 9999) ? 'Edición de tareas' : 'Nueva tarea';
+	var params 				   = $params.params || def_model;
+	$rootScope.currentMenu 	   = 'Edición de tareas';
 	$scope.dispositivoSelected = {};
-	$scope.tarea = params;
+	$scope.tarea 			   = params;
 	$scope.tarea.dispositivosEliminados = [];
-	$scope.tarea.mes_inicio = params.mes_inicio - 1;
-	$scope.tarea.mes_fin 	= params.mes_fin - 1;
-	$scope.dias 			= [];
-	$scope.meses 			= [];
+	$scope.tarea.mes_inicio    = params.mes_inicio - 1;
+	$scope.tarea.mes_fin 	   = params.mes_fin - 1;
+	$scope.dias 			   = [];
+	$scope.meses 			   = [];
 
+	// Setea la acción que debe realizar la tarea sobre las salidas
+	// Encender o apagar
 	$scope.switch = function(data)
 	{
 		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
 	}
 
+	// Cambia a "Activa" o "Inactiva" la tarea
 	$scope.setActiva = function(activa)
 	{
 		$scope.tarea.activa = ($scope.tarea.activa == 0) ? 1 : 0;
 	}
 
+	// Llena los selects Dia y Mes
 	for (i = 1; i < 32; i++)
 	{
 		$scope.dias.push(i);
@@ -1082,27 +1201,13 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	}
 
 	$scope.tarea = params;
+
+	// Configura el componente para seleccionar horario y duracion
 	$('.clockpicker').clockpicker({ autoclose: true });
 	$('#horainicio').val( $scope.tarea.hora_inicio )
 	$('#duracion').val( $scope.tarea.duracion );
 
-	Dispositivo.getAll(function(dispositivos)
-	{
-			dispositivos.forEach(function(j)
-			{
-				$scope.tarea.dispositivos.forEach(function(e)
-				{
-					if (j.ip == e.ip)
-					{
-						e.note = j.note;
-						e.salidaNote = Salida.findSalida( j.salidas,
-														  e.nro_salida)[0].note;
-					}
-				});
-			})
-		$scope.dispositivos = dispositivos;
-	});
-
+	// LLena el select de dispositivos
 	$scope.loadSelect = function()
 	{
 		Dispositivo.getAll(function(dispositivos)
@@ -1111,8 +1216,30 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		});
 	}
 
+	// Solicita todos los dispositivos existentes
+	Dispositivo.getAll(function(dispositivos)
+	{
+		// Añade descripciones de dispositivos y sus salidas
+		dispositivos.forEach(function(j)
+		{
+			$scope.tarea.dispositivos.forEach(function(e)
+			{
+				if (j.ip == e.ip)
+				{
+					e.note = j.note;
+					e.salidaNote = Salida.findSalida( j.salidas,
+														e.nro_salida)[0].note;
+				}
+			});
+		})
+		$scope.dispositivos = dispositivos;
+	});
+
+	// Se dispara al elegir un dispositivo desde el select
 	$scope.changeDispositivo = function()
 	{
+		// Busca el dispositivo en la lista y carga sus salidas
+		// en el combo de salidas
 		var disp = $scope.dispositivos.filter(function(e)
 		{
 			if (e.id_disp == $scope.dispositivoSelected.id_disp)
@@ -1122,6 +1249,8 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 			}
 		});
 	}
+
+	// Validacion de la tarea
 	$scope.isModelValid = function()
 	{
 		var model = $scope.tarea;
@@ -1152,14 +1281,18 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 		return $scope.errors.length == 0;
 	}
 
+	// Guarda una tarea nueva
 	$scope.save = function()
 	{
+		// Parseo de fechas
 		$scope.tarea.hora_inicio = $('#horainicio').val();
 		$scope.tarea.duracion 	 = $('#duracion').val();
 		$scope.tarea.dia_inicio  = $('#dia_inicio').val();
 		$scope.tarea.mes_inicio  = parseInt( $('#mes_inicio').val() ) + 1;
 		$scope.tarea.dia_fin  	 = $('#dia_fin').val();
 		$scope.tarea.mes_fin  	 = parseInt( $('#mes_fin').val() ) + 1;
+
+		// Si los datos son validos
 		if ($scope.isModelValid())
 		{
 			Tarea.save( $scope.tarea );
@@ -1171,23 +1304,14 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 				data: $scope.errors
 			});
 		}
-
 	}
 
-	var parseHour = function(horaStr)
-	{
-		var date = new Date();
-		return new Date(date.getFullYear(),
-						date.getMonth(),
-						date.getDate(),
-						horaStr.substr(0,2),
-						horaStr.substr(-2));
-	}
-
+	//Calcula la hora de fin de tarea en base a hora inicio y duración
 	$scope.calcularHoraFinalTarea = function()
 	{
 		$scope.tarea.hora_inicio = $('#horainicio').val();
 		$scope.tarea.duracion 	 = $('#duracion').val();
+
         if ($scope.tarea.duracion)
 		{
 			var date = new Date(),
@@ -1196,16 +1320,20 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 
 			date.setTime(hora_i.getTime());
 			date.setTime(date.getTime() + duracion.getTime());
+
+			// UTC parse
 			date.setHours(date.getHours() - 3);
 			$scope.tarea.hora_fin = date;
 		}
     };
 
+	// Elimina una tarea
 	$scope.deleteTarea = function()
 	{
 		Tarea.remove( $scope.tarea );
 	}
 
+	// Control de checkbox de selección de dias de ejecución
 	$scope.checkear_dia = function(key)
 	{
 		var dias = $scope.tarea.dias_ejecucion.split(","),
@@ -1218,12 +1346,13 @@ angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 	$scope.addDispositivo = function()
 	{
 		var dispositivo = {
-			note: $scope.dispositivoSelected.note,
-			ip: $scope.dispositivoSelected.ip,
+			note	  : $scope.dispositivoSelected.note,
+			ip		  : $scope.dispositivoSelected.ip,
 			nro_salida: $scope.tarea.nro_salida,
 			salidaNote: Salida.findSalida($scope.dispositivoSelected.salidas,
 										  $scope.tarea.nro_salida)[0].note
 		}
+		// Añade dispositivo a la lista superior
 		$scope.tarea.dispositivos.push( dispositivo );
 	}
 
