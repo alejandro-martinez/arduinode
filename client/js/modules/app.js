@@ -11,22 +11,12 @@ angular.module('Arduinode',
 ])
 .factory('httpInterceptor', function ($q, $rootScope, $log) {
 
-	var updateTime = function(time)
-	{
-		if (time) {
-			//Actualizo la vista con la hora del servidor
-			var date = new Date(time);
-			$rootScope.horaServidor = date.getTime();
-		}
-	};
-
     return {
         request: function (config) {
             $rootScope.loading = true;
             return config || $q.when(config)
         },
         response: function (response) {
-			updateTime(response.headers().date);
             $rootScope.loading = false;
             return response || $q.when(response);
         },

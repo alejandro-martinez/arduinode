@@ -21,6 +21,10 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 			$rootScope.loading = false;
 			Popup.open({ template: '<h1>' + error + '</h1>', plain: true });
 		});
+
+		$rootScope.socket.on('horaServidor', function(hora) {
+			$rootScope.horaServidor = hora;
+		})
 	}
 
 	// Métodos disponibles del Socket
@@ -31,7 +35,7 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 		{
 			$rootScope.socket.emit(param, _data || {});
 		},
-		
+
 		// Escucha un evento
 		listen: function(param, callback)
 		{

@@ -13,6 +13,7 @@ var express = require('express'),
 		}
 	},
 	intervalo = 0,
+	middleware = require('socketio-wildcard')(),
 	serverInfo = {host: "localhost", port:8888 },
 	fs		= require('fs'),
 	compress = require('compression');
@@ -46,7 +47,6 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	{
 		console.log(err)
 	});
-
 	//Abre el archivo json, y cargo campos temporales
 	DataStore.getFile('dispositivos',function()
 	{
@@ -60,10 +60,15 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			programadorTareas.observarCambios();
 		});
 	});
-
+	io.use(middleware);
 	//Socket.IO CLIENTE
 	io.on('connection', function(socket)
 	{
+		//Envio hora del servidor en cada pedido
+		socket.on('*', function(){
+			socket.emit('horaServidor', new Date().getTime());
+		});
+
 		//Paso el handler del socket del usuario
 		//para emitir errores directamente
 		arduino.socketClient = socket;
