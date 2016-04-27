@@ -95,7 +95,7 @@ body {
     line-height: 1;
     font-family: Arial;
     overflow-x: hidden;
-    padding: 0 !important;
+    padding: 50px 10px !important;
 	font-size:18px;
 }
 ul {
@@ -109,6 +109,12 @@ table {
 /*FIN RESET*/
 #content {
     padding: 19px 10px;
+}
+#all {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
 }
 th,
 td {
