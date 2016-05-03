@@ -161,7 +161,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		var params = params.params || {};
 		$scope.salida = {};
 		$scope.page = (params.estado == 0) ? 'salidasActivas' : 'salidas';
-
+		$scope.salidas = [];
 		$rootScope.currentMenu = (params.estado == 0) ? 'Luces encendidas'
 													  : 'Salidas de: ' + params.note;
 
@@ -254,18 +254,17 @@ angular.module('Arduinode.Salida',['Socket'])
 		SocketIO.listen('salidasActivas', function(salidas)
 		{
 			//Solo refresco si estoy en luces encendidas
-
-			$scope.salidas = [];
-			var i = 0;
+			var salidasAux = salidas;
+			i = 0;
 			//Agrego progresivamente las salidas cada 1 segundo
 			//para no atorar la vista
 			$interval(function(){
-				if (i < salidas.length && salidas.length > 0) {
+				if (i < salidasAux.length && salidasAux.length > 0) {
 
-					$scope.salidas.push(salidas[i]);
+					$scope.salidas.push(salidasAux[i]);
 					i++;
 				}
-			}, 1000);
+			}, 100);
 		});
 
 		// Escucha evento cuando el servidor envia listado de salidas
@@ -286,6 +285,7 @@ angular.module('Arduinode.Salida',['Socket'])
 		// Determina que funcion usar para actualizar en base a la pagina actual
 		$scope.refreshSalidas = {
 			salidasActivas: function() {
+				$scope.salidas = [];
 				SocketIO.send('getSalidasActivas');
 			},
 			salidas: $scope.refreshEstados
