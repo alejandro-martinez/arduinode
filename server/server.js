@@ -180,17 +180,16 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			sendSalidas(params);
 		});
 
-		var sendSalidas = function( params ) {
+		var sendSalidas = function( params, broadcast ) {
 			params.noError = true;
-			var dispositivo = DataStore.findDispositivo('id_disp',params.id_disp);
-
+			var dispositivo = DataStore.findDispositivo('ip',params.ip);
 			if (dispositivo.length > 0)
 			{
 				arduino.getSalidas(params, function(salidas)
 				{
 					var salidas = ArrayUtils.mixArrays(dispositivo[0].salidas, salidas);
 					dispositivo[0].salidas = salidas;
-					if (params.broadcast) {
+					if (broadcast) {
 						socket.broadcast.emit('salidas', dispositivo[0]);
 					}
 					else {
@@ -212,12 +211,11 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		//Envia broadcast para actualizar la vista de luces encendidas
 		//si pasaron 5 segundos desde la ultima accion sobre una salida
 		var broadcastSalidasState = function(params) {
-
 			//chequea cada 1 segundo si es momento de hacer broadcast
 			intervalo = setInterval (function() {
 				if ((salidasState.timestamp + 5000) > new Date().getTime()) {
-					/*console.log("Faltan ", new Date().getTime()-(salidasState.timestamp
-								+ 5000) +" ms para el broadcast")*/
+					console.log("Faltan ", new Date().getTime()-(salidasState.timestamp
+								+ 5000) +" ms para el broadcast")
 				}
 				else {
 					//refresca pagina luces encendidas
@@ -242,7 +240,6 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			arduino.switchSalida(params, function(response)
 			{
 				broadcastSalidasState(params);
-
 				socket.emit('switchResponse',
 							(response === null) ? params.estado_orig : response);
 

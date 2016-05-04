@@ -382,7 +382,6 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 		// Envia un parametro
 		send: function(param, _data)
 		{
-			console.log("param",param)
 			$rootScope.socket.emit(param, _data || {});
 		},
 
@@ -657,45 +656,48 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		SocketIO.listen('salidasActivas', function(salidas)
 		{
-			i = 0;
-			// Resetea el contador de dispositivos procesados
-			// y el buffer de salidas recibidas
-			if ($scope.processed == numDispositivos) {
-				$scope.processed = 0;
-				$scope.buffer = [];
-			}
-			//Flag para controlar que recibi datos de todos los dispositivos
-			$scope.processed++;
-
-			//Guardo en buffer las salidas recibidas
-			salidas.forEach(function(s){ $scope.buffer.push(s) });
-
-			var salidasAux = salidas;
-
-			//Agrego progresivamente las salidas a la vista
-			var promise = $interval(function(){
-				if (i < salidasAux.length && salidasAux.length > 0) {
-					$scope.salidas.push( salidasAux[i] );
-					i++;
-				}
-				//Si recibi los datos de todos los dispositivos
-				//Controlo que la cantidad de salidas activas
-				//sea igual a las de la vista
+			if ($scope.page == 'salidasActivas') {
+				i = 0;
+				// Resetea el contador de dispositivos procesados
+				// y el buffer de salidas recibidas
 				if ($scope.processed == numDispositivos) {
-					$interval.cancel( promise );
-
-					//Si la cantidad es distinta, actualizo
-					if ( $scope.buffer.length != $scope.salidas.length ) {
-						$scope.salidas = $scope.buffer;
-					}
+					$scope.processed = 0;
+					$scope.buffer = [];
 				}
-			}, 100);
+				//Flag para controlar que recibi datos de todos los dispositivos
+				$scope.processed++;
+
+				//Guardo en buffer las salidas recibidas
+				salidas.forEach(function(s){ $scope.buffer.push(s) });
+
+				var salidasAux = salidas;
+
+				//Agrego progresivamente las salidas a la vista
+				var promise = $interval(function(){
+					if (i < salidasAux.length && salidasAux.length > 0) {
+						$scope.salidas.push( salidasAux[i] );
+						i++;
+					}
+					//Si recibi los datos de todos los dispositivos
+					//Controlo que la cantidad de salidas activas
+					//sea igual a las de la vista
+					if ($scope.processed == numDispositivos) {
+						$interval.cancel( promise );
+
+						//Si la cantidad es distinta, actualizo
+						if ( $scope.buffer.length != $scope.salidas.length ) {
+							$scope.salidas = $scope.buffer;
+						}
+					}
+				}, 100);
+			}
 		});
 
 		// Escucha evento cuando el servidor envia listado de salidas
 		// en la pagina "Salidas del dispositivo x"
 		SocketIO.listen('salidas', function(data)
 		{
+			console.log("data",data)
 			$scope.ipDispositivo = data.ip;
 			$scope.salidas 		 = data.salidas;
 			$scope.$digest();
@@ -704,7 +706,10 @@ angular.module('Arduinode.Salida',['Socket'])
 		// Solicita listado de salidas en la pagina "salidas del dispositivo x"
 		$scope.refreshEstados = function()
 		{
-			SocketIO.send('getSalidas',{ip: $scope.ipDispositivo, id_disp: params.id_disp});
+			SocketIO.send('getSalidas', {
+				ip		: $scope.ipDispositivo,
+				id_disp	: params.id_disp
+			});
 		}
 
 		// Determina que funcion usar para actualizar en base a la pagina actual
