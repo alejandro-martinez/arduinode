@@ -33,7 +33,6 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 		// Envia un parametro
 		send: function(param, _data)
 		{
-			console.log("param",param)
 			$rootScope.socket.emit(param, _data || {});
 		},
 

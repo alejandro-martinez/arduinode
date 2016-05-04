@@ -558,7 +558,10 @@ angular.module('Arduinode.Salida',['Socket'])
 			   Popup )
 	{
 		$('.clockpicker').clockpicker({autoclose: true});
-		var params = params.params || {};
+		var params = params.params || {},
+			numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
+		$scope.processed = 0;
+		$scope.buffer = [];
 		$scope.salida = {};
 		$scope.page = (params.estado == 0) ? 'salidasActivas' : 'salidas';
 		$scope.salidas = [];
@@ -598,6 +601,7 @@ angular.module('Arduinode.Salida',['Socket'])
 			data.estado_orig = data.estado;
 			data.ip 		 = data.ip || $scope.ipDispositivo;
 			data.estado 	 = (data.estado == 0) ? 1 : 0;
+
 			var tiempo 		 = $('.clockpicker').val();
 			data.temporizada = (tiempo != '') ? tiempo : null;
 
@@ -653,16 +657,37 @@ angular.module('Arduinode.Salida',['Socket'])
 
 		SocketIO.listen('salidasActivas', function(salidas)
 		{
-			//Solo refresco si estoy en luces encendidas
-			var salidasAux = salidas;
 			i = 0;
-			//Agrego progresivamente las salidas cada 1 segundo
-			//para no atorar la vista
-			$interval(function(){
-				if (i < salidasAux.length && salidasAux.length > 0) {
+			// Resetea el contador de dispositivos procesados
+			// y el buffer de salidas recibidas
+			if ($scope.processed == numDispositivos) {
+				$scope.processed = 0;
+				$scope.buffer = [];
+			}
+			//Flag para controlar que recibi datos de todos los dispositivos
+			$scope.processed++;
 
-					$scope.salidas.push(salidasAux[i]);
+			//Guardo en buffer las salidas recibidas
+			salidas.forEach(function(s){ $scope.buffer.push(s) });
+
+			var salidasAux = salidas;
+
+			//Agrego progresivamente las salidas a la vista
+			var promise = $interval(function(){
+				if (i < salidasAux.length && salidasAux.length > 0) {
+					$scope.salidas.push( salidasAux[i] );
 					i++;
+				}
+				//Si recibi los datos de todos los dispositivos
+				//Controlo que la cantidad de salidas activas
+				//sea igual a las de la vista
+				if ($scope.processed == numDispositivos) {
+					$interval.cancel( promise );
+
+					//Si la cantidad es distinta, actualizo
+					if ( $scope.buffer.length != $scope.salidas.length ) {
+						$scope.salidas = $scope.buffer;
+					}
 				}
 			}, 100);
 		});
