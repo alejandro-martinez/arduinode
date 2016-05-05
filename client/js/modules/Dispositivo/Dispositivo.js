@@ -54,15 +54,22 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 			}
 		},
 		// Devuelve un dispositivo por ID
-		get: function(params)
+		get: function(params, callback)
 		{
-			var dispositivos = JSON.parse(localStorage.getItem("dispositivos"));
-			if (dispositivos.length > 0) {
-				return dispositivos.filter(function(disp)
-				{
-					return disp.id_disp == params.id_disp;
-				});
-			}
+			this.getAll(function(models) {
+				var dispositivos = models;
+				if ( dispositivos.length > 0 ) {
+					var disp = dispositivos.filter( function( disp) {
+						//return (disp.ip == params.ip);
+						//Para testing
+						return (disp.ip == '192.168.20.11');
+					});
+					if (disp.length)
+						callback(disp[0]);
+				}
+			});
+
+
 		},
 		// Devuelve todos los Dispositivos
 		// Primero busca en caché, si está vacio, los pide al servidor

@@ -1,4 +1,4 @@
-angular.module('Arduinode.Salida',['Socket'])
+angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 .constant('SalidaConfig',{ rootFolder: 'js/modules/Salida/' })
 .config(function( $stateProvider, $urlRouterProvider, SalidaConfig )
 {
@@ -19,7 +19,8 @@ angular.module('Arduinode.Salida',['Socket'])
 			controller: 'EstadosCtrl'
 		})
 })
-.factory('SalidaFct', ['$http','SocketIO', function($http, Socket)
+.factory('SalidaFct', ['$http','SocketIO','DispositivoFct',
+	function($http, Socket, DispositivoFct)
 {
 	var Salida =
 	{
@@ -61,6 +62,16 @@ angular.module('Arduinode.Salida',['Socket'])
 				callback(error)
 			});
 		},
+		//Devuelve salida a partir de ip_dispositivo y nro_salida
+		getSalida: function( params, callback ) {
+			var This = this;
+			DispositivoFct.get(params, function(disp) {
+				if (disp.salidas.length) {
+					var salida = This.findSalida(disp.salidas, params.nro_salida);
+					callback(salida);
+				}
+			});
+		}
 	}
 	return Salida;
 }])
@@ -173,12 +184,22 @@ angular.module('Arduinode.Salida',['Socket'])
 		$scope.showDescripcion = $scope.editing = true;
 		$scope.showDispositivos = $scope.showSalidas = false;
 
+		SocketIO.listen('switchBroadcast', function(data) {
+			//Traigo descripcion de la salida
+			Salida.getSalida(data, function(salida) {
+				// Actualiza la vista: si la salida existe, cambia el estado
+				// sino, agrega la salida
+				salida[0].estado 	  = data.estado;
+				salida[0].temporizada = data.temporizada;
+				$scope.updateSalida( salida[0] );
+			});
+		})
+
 		//Abre popup para editar la descripcion de una salida
 		$scope.edit = function(salida)
 		{
 			$scope.salida = salida;
-			Popup.open(
-			{
+			Popup.open({
 				template: config.rootFolder+'_form.html',
 				data: salida,
 				scope: $scope
@@ -201,7 +222,6 @@ angular.module('Arduinode.Salida',['Socket'])
 			data.estado_orig = data.estado;
 			data.ip 		 = data.ip || $scope.ipDispositivo;
 			data.estado 	 = (data.estado == 0) ? 1 : 0;
-
 			var tiempo 		 = $('.clockpicker').val();
 			data.temporizada = (tiempo != '') ? tiempo : null;
 
@@ -216,15 +236,26 @@ angular.module('Arduinode.Salida',['Socket'])
 		//Actualiza el estado de una salida específica
 		$scope.updateSalida = function(params)
 		{
-			$scope.salidas.forEach(function(s)
-			{
-				if (s.nro_salida == params.nro_salida
-					&& s.ip == params.ip)
+			//Si la salida existe se actualiza el estado
+			params.ip = '192.168.20.11';
+			if ( Salida.findSalida($scope.salidas,params.nro_salida).length > 0 ) {
+				$scope.salidas.forEach(function(s)
 				{
-					s.estado = params.estado;
-					$scope.$digest();
-				}
-			});
+					if (s.nro_salida == params.nro_salida
+					 && s.ip == params.ip)
+					{
+						s.estado 		= params.estado;
+						s.temporizada 	= params.temporizada;
+					}
+				});
+				$scope.$digest();
+			}
+			//Agrego la salida
+			else {
+				$scope.salidas.push(params);
+				$scope.$digest();
+			}
+
 		}
 
 		//Funcionamiento Persianas
@@ -298,10 +329,11 @@ angular.module('Arduinode.Salida',['Socket'])
 		// en la pagina "Salidas del dispositivo x"
 		SocketIO.listen('salidas', function(data)
 		{
-			console.log("data",data)
-			$scope.ipDispositivo = data.ip;
-			$scope.salidas 		 = data.salidas;
-			$scope.$digest();
+			if ($scope.page == 'salidas') {
+				$scope.ipDispositivo = data.ip;
+				$scope.salidas 		 = data.salidas;
+				$scope.$digest();
+			}
 		});
 
 		// Solicita listado de salidas en la pagina "salidas del dispositivo x"

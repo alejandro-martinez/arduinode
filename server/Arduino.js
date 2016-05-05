@@ -76,8 +76,38 @@ module.exports = function()
 				return found(false);
 			}
 		},
+		parseSalida: function( params, salidaStr ) {
+			var posGuion = salidaStr.indexOf("-"),
+				posDospuntos = salidaStr.indexOf(":"),
+				posPunto = salidaStr.indexOf(".");
+				switch (salidaStr[0])
+				{
+					case 'B':
+					case 'L':
+					case 'P':
+						var nro_salida = salidaStr[posGuion+1] + salidaStr[posGuion+2],
+							estado = salidaStr[posDospuntos+1],
+							tipo = salidaStr[0];
+							if (posPunto > -1) {
+								var temporizada = DateConvert.min_a_horario(salidaStr.substr( posPunto + 1));
+							}
+						break;
+					default:
+						return;
+				}
+			return {
+				nro_salida: parseInt(nro_salida),
+				tipo: tipo,
+				ip: params.ip,
+				estado: parseInt(estado),
+				temporizada: temporizada
+			};
+
+		},
 		formatSalidas: function(params, _salidas)
 		{
+			console.log("params",params)
+			console.log("_salidas",_salidas)
 			var This = this;
 			var infoSalida = [];
 			params.formatted = [];
@@ -94,7 +124,7 @@ module.exports = function()
 						case 'P':
 							var nro_salida = s[posGuion+1] + s[posGuion+2],
 								estado = s[posDospuntos+1],
-								tipo = s[0],
+								tipo = s[0];
 								temporizada = DateConvert.min_a_horario(s.substr( posPunto + 1));
 							break;
 						default:

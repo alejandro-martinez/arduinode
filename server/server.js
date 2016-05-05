@@ -12,6 +12,8 @@ var express = require('express'),
 			this.timestamp = new Date().getTime();
 		}
 	},
+	DateConvert = require('./utils/DateConvert')(),
+	socketListen = null,
 	intervalo = 0,
 	middleware = require('socketio-wildcard')(),
 	serverInfo = {host: "localhost", port:8888 },
@@ -31,16 +33,21 @@ var express = require('express'),
 	require('./controllers')(app);									// Controladores
 
 //Crea o trae el archivo de configuracion para el servidor y Programador de tareas
+
 var path = './config/config.json';
+
 if (!fs.existsSync(path))
 {
 	fs.writeFileSync(path, '{"ip":"localhost","port":8888,"tiempoEscaneoTareas":300000}');
 }
+
 serverConfig = require(path);
+
 //Server HTTP
 http.listen(serverConfig.port, serverConfig.ip, function()
 {
 	console.log("Server iniciado en: ", serverConfig.ip +":"+serverConfig.port);
+
 
 	//Captura excepciones para no detener el servidor
 	process.on('uncaughtException', function (err)
@@ -60,27 +67,51 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			programadorTareas.observarCambios();
 		});
 	});
+
 	io.use(middleware);
+
 	//Socket.IO CLIENTE
-	io.on('connection', function(socket)
+	io.on('connection', function( sCliente )
 	{
+		//Crea el socket para escuchar los arduinos, solo si no fue levantado
+		if (!socketListen) {
+
+			socketListen = net.createServer(function( socket ) {
+				socket.on('data', function( data ) {
+					var data = data.toString().replace('\r\n',''),
+						salida = arduino.parseSalida({
+							ip:socket.remoteAddress
+						}, data);
+					sCliente.broadcast.emit('switchBroadcast', salida);
+				});
+			});
+
+			socketListen.listen({ host:serverConfig.ip, port: serverConfig.port + 1},
+				function(){
+					console.log('socket escuchando arduinos en',
+								socketListen.address(),
+								serverConfig.port + 1);
+			});
+		}
+
 		//Envio hora del servidor en cada pedido
-		socket.on('*', function(){
-			socket.emit('horaServidor', new Date().getTime());
+		sCliente.on('*', function(){
+			sCliente.emit('horaServidor', new Date().getTime());
+
 		});
 
 		//Paso el handler del socket del usuario
 		//para emitir errores directamente
-		arduino.socketClient = socket;
+		arduino.socketClient = sCliente;
 
 		//Configuracion
 		arduino.init();
 
-		programadorTareas.socketClient = socket;
+		programadorTareas.socketClient = sCliente;
 
 		//Escucha evento para obtener listado de luces encendidas
 		//no se provoca el broadcast
-		socket.on('getSalidasActivas', function(params)
+		sCliente.on('getSalidasActivas', function(params)
 		{
 			sendSalidasActivas(params, false);
 		});
@@ -89,8 +120,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		//broadcast = true actualiza la vista de luces encendidas a todos los
 		//sockets conectados
 		var sendSalidasActivas = function(params, broadcast) {
-			var salidasAux = [];
-			var sockets = [];
+			var salidasAux = [],
+				sockets = [];
 			DataStore.currentFiles[0].forEach(function(item, key, array)
 			{
 				var salidas,
@@ -113,10 +144,10 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				sockets[key].on('timeout',function(_err)
 				{
 					if (broadcast) {
-						socket.broadcast.emit('salidasActivas', []);
+						sCliente.broadcast.emit('salidasActivas', []);
 					}
 					else {
-						socket.emit('salidasActivas', []);
+						sCliente.emit('salidasActivas', []);
 					}
 					salidasState.salidas = [];
 					salidasState.updateTimeStamp();
@@ -132,10 +163,10 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				sockets[key].on('error',function(_err)
 				{
 					if (broadcast) {
-						socket.broadcast.emit('salidasActivas', []);
+						sCliente.broadcast.emit('salidasActivas', []);
 					}
 					else {
-						socket.emit('salidasActivas', []);
+						sCliente.emit('salidasActivas', []);
 					}
 					salidasState.salidas = [];
 					salidasState.updateTimeStamp();
@@ -163,10 +194,10 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 							uniqueEncendidas = ArrayUtils.unique(encendidasF);
 
 						if (broadcast) {
-							socket.broadcast.emit('salidasActivas',uniqueEncendidas);
+							sCliente.broadcast.emit('salidasActivas',uniqueEncendidas);
 						}
 						else {
-							socket.emit('salidasActivas', uniqueEncendidas);
+							sCliente.emit('salidasActivas', uniqueEncendidas);
 						}
 						salidasState.salidas = ArrayUtils.unique(encendidasF);
 						salidasState.updateTimeStamp();
@@ -175,7 +206,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			});
 		}
 		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
-		socket.on('getSalidas', function(params)
+		sCliente.on('getSalidas', function(params)
 		{
 			sendSalidas(params);
 		});
@@ -190,21 +221,21 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 					var salidas = ArrayUtils.mixArrays(dispositivo[0].salidas, salidas);
 					dispositivo[0].salidas = salidas;
 					if (broadcast) {
-						socket.broadcast.emit('salidas', dispositivo[0]);
+						sCliente.broadcast.emit('salidas', dispositivo[0]);
 					}
 					else {
-						socket.emit('salidas', dispositivo[0]);
+						sCliente.emit('salidas', dispositivo[0]);
 					}
 				});
 			}
 		}
 
 		//Sube,baja o detiene las persianas
-		socket.on('movePersiana', function(params)
+		sCliente.on('movePersiana', function(params)
 		{
 			arduino.movePersiana(params, function(response)
 			{
-				socket.emit('moveResponse', response);
+				sCliente.emit('moveResponse', response);
 			});
 		});
 
@@ -230,8 +261,14 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		}
 
 		//Setea el estado de una salida, ON/OFF
-		socket.on('switchSalida', function(params)
+		sCliente.on('switchSalida', function(params)
 		{
+			switchSalida( params );
+		});
+
+		// Se llama cuando se acciona una salida
+		// Desde la aplicacion y desde un switch real
+		var switchSalida = function( params ) {
 			//Si habia una peticion de broadcast, la elimina
 			if (intervalo) clearInterval(intervalo);
 			timeout = new Date().getTime();
@@ -240,10 +277,10 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			arduino.switchSalida(params, function(response)
 			{
 				broadcastSalidasState(params);
-				socket.emit('switchResponse',
+				sCliente.emit('switchResponse',
 							(response === null) ? params.estado_orig : response);
 
 			});
-		});
+		}
 	});
 });
