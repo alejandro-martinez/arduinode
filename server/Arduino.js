@@ -106,8 +106,6 @@ module.exports = function()
 		},
 		formatSalidas: function(params, _salidas)
 		{
-			console.log("params",params)
-			console.log("_salidas",_salidas)
 			var This = this;
 			var infoSalida = [];
 			params.formatted = [];

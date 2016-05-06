@@ -88,9 +88,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 
 			socketListen.listen({ host:serverConfig.ip, port: serverConfig.port + 1},
 				function(){
-					console.log('socket escuchando arduinos en',
-								socketListen.address(),
-								serverConfig.port + 1);
+					console.log('Socket escuchando arduinos en:',
+								socketListen.address().address,':',socketListen.address().port);
 			});
 		}
 
@@ -276,7 +275,13 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			salidasState.timestamp = new Date().getTime();
 			arduino.switchSalida(params, function(response)
 			{
-				broadcastSalidasState(params);
+				//broadcastSalidasState(params);
+				/*var data = data.toString().replace('\r\n',''),
+					salida = arduino.parseSalida({
+						ip:socket.remoteAddress
+					}, data);*/
+				sCliente.broadcast.emit('switchBroadcast', params);
+
 				sCliente.emit('switchResponse',
 							(response === null) ? params.estado_orig : response);
 

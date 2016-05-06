@@ -184,11 +184,11 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		$scope.showDescripcion = $scope.editing = true;
 		$scope.showDispositivos = $scope.showSalidas = false;
 
+		//Escucha evento broadcast para actualizar estado de salidas
 		SocketIO.listen('switchBroadcast', function(data) {
-			//Traigo descripcion de la salida
+			//Trae descripcion de la salida
 			Salida.getSalida(data, function(salida) {
-				// Actualiza la vista: si la salida existe, cambia el estado
-				// sino, agrega la salida
+				// si la salida existe, cambia el estado, sino, agrega la salida
 				salida[0].estado 	  = data.estado;
 				salida[0].temporizada = data.temporizada;
 				$scope.updateSalida( salida[0] );
@@ -237,6 +237,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		$scope.updateSalida = function(params)
 		{
 			//Si la salida existe se actualiza el estado
+			//remover para produccion
 			params.ip = '192.168.20.11';
 			if ( Salida.findSalida($scope.salidas,params.nro_salida).length > 0 ) {
 				$scope.salidas.forEach(function(s)
