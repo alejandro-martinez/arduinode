@@ -5,13 +5,6 @@
 var express = require('express'),
 	app 	= express(),
 	timeout = 0,
-	salidasState = {
-		salidas: [],
-		timestamp: new Date().getTime(),
-		updateTimeStamp: function() {
-			this.timestamp = new Date().getTime();
-		}
-	},
 	DateConvert = require('./utils/DateConvert')(),
 	socketListen = null,
 	intervalo = 0,
@@ -21,7 +14,6 @@ var express = require('express'),
 	compress = require('compression');
 	app.use(compress());
 	var http 	= require('http').Server(app),
-	notBroadcasted = true,
 	programadorTareas = require('./config/programadorTareas'),
 	serverConfig = {},
 	ArrayUtils = require('./utils/ArrayUtils')(),
@@ -109,16 +101,14 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		programadorTareas.socketClient = sCliente;
 
 		//Escucha evento para obtener listado de luces encendidas
-		//no se provoca el broadcast
 		sCliente.on('getSalidasActivas', function(params)
 		{
-			sendSalidasActivas(params, false);
+			sendSalidasActivas(params);
 		});
 
 		//Envia listado de salidas activas al cliente
-		//broadcast = true actualiza la vista de luces encendidas a todos los
 		//sockets conectados
-		var sendSalidasActivas = function(params, broadcast) {
+		var sendSalidasActivas = function(params) {
 			var salidasAux = [],
 				sockets = [];
 			DataStore.currentFiles[0].forEach(function(item, key, array)
@@ -142,14 +132,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				})
 				sockets[key].on('timeout',function(_err)
 				{
-					if (broadcast) {
-						sCliente.broadcast.emit('salidasActivas', []);
-					}
-					else {
-						sCliente.emit('salidasActivas', []);
-					}
-					salidasState.salidas = [];
-					salidasState.updateTimeStamp();
+					sCliente.emit('salidasActivas', []);
 				});
 
 				sockets[key].on('data',function(_data)
@@ -161,14 +144,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				//Si fallo la conexión, aviso al cliente con un array nulo
 				sockets[key].on('error',function(_err)
 				{
-					if (broadcast) {
-						sCliente.broadcast.emit('salidasActivas', []);
-					}
-					else {
-						sCliente.emit('salidasActivas', []);
-					}
-					salidasState.salidas = [];
-					salidasState.updateTimeStamp();
+					sCliente.emit('salidasActivas', []);
 				});
 				sockets[key].on('end',function()
 				{
@@ -192,14 +168,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 						var encendidasF = arduino.formatSalidas(params,encendidas),
 							uniqueEncendidas = ArrayUtils.unique(encendidasF);
 
-						if (broadcast) {
-							sCliente.broadcast.emit('salidasActivas',uniqueEncendidas);
-						}
-						else {
-							sCliente.emit('salidasActivas', uniqueEncendidas);
-						}
-						salidasState.salidas = ArrayUtils.unique(encendidasF);
-						salidasState.updateTimeStamp();
+						sCliente.emit('salidasActivas', uniqueEncendidas);
 					}
 				});
 			});
@@ -210,7 +179,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			sendSalidas(params);
 		});
 
-		var sendSalidas = function( params, broadcast ) {
+		var sendSalidas = function( params ) {
 			params.noError = true;
 			var dispositivo = DataStore.findDispositivo('ip',params.ip);
 			if (dispositivo.length > 0)
@@ -219,12 +188,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				{
 					var salidas = ArrayUtils.mixArrays(dispositivo[0].salidas, salidas);
 					dispositivo[0].salidas = salidas;
-					if (broadcast) {
-						sCliente.broadcast.emit('salidas', dispositivo[0]);
-					}
-					else {
-						sCliente.emit('salidas', dispositivo[0]);
-					}
+					sCliente.emit('salidas', dispositivo[0]);
 				});
 			}
 		}
@@ -238,27 +202,6 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			});
 		});
 
-		//Envia broadcast para actualizar la vista de luces encendidas
-		//si pasaron 5 segundos desde la ultima accion sobre una salida
-		var broadcastSalidasState = function(params) {
-			//chequea cada 1 segundo si es momento de hacer broadcast
-			intervalo = setInterval (function() {
-				if ((salidasState.timestamp + 5000) > new Date().getTime()) {
-					console.log("Faltan ", new Date().getTime()-(salidasState.timestamp
-								+ 5000) +" ms para el broadcast")
-				}
-				else {
-					//refresca pagina luces encendidas
-					sendSalidasActivas(params, true);
-
-					//refresca pagina salidas de dispositivo
-					sendSalidas(params, true);
-
-					clearInterval(intervalo);
-				}
-			},1000);
-		}
-
 		//Setea el estado de una salida, ON/OFF
 		sCliente.on('switchSalida', function(params)
 		{
@@ -268,18 +211,9 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		// Se llama cuando se acciona una salida
 		// Desde la aplicacion y desde un switch real
 		var switchSalida = function( params ) {
-			//Si habia una peticion de broadcast, la elimina
-			if (intervalo) clearInterval(intervalo);
-			timeout = new Date().getTime();
 			params.noError = true;
-			salidasState.timestamp = new Date().getTime();
 			arduino.switchSalida(params, function(response)
 			{
-				//broadcastSalidasState(params);
-				/*var data = data.toString().replace('\r\n',''),
-					salida = arduino.parseSalida({
-						ip:socket.remoteAddress
-					}, data);*/
 				sCliente.broadcast.emit('switchBroadcast', params);
 
 				sCliente.emit('switchResponse',
