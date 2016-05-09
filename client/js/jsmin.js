@@ -637,7 +637,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		{
 			//Si la salida existe se actualiza el estado
 			//remover para produccion
-			params.ip = '192.168.20.11';
+			//params.ip = '192.168.20.11';
 			if ( Salida.findSalida($scope.salidas,params.nro_salida).length > 0 ) {
 				$scope.salidas.forEach(function(s)
 				{
@@ -887,8 +887,8 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				if ( dispositivos.length > 0 ) {
 					var disp = dispositivos.filter( function( disp) {
 						//remover para produccion
-						return (disp.ip == '192.168.20.11');
-						//return (disp.ip == params.ip);
+						//return (disp.ip == '192.168.20.11');
+						return (disp.ip == params.ip);
 					});
 					if (disp.length)
 						callback(disp[0]);
