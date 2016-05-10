@@ -176,7 +176,9 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		// Edición de un dispositivo
 		if (params && params.id_disp)
 		{
-			$scope.model = Dispositivo.get(params)[0];
+			Dispositivo.get(params, function(model){
+				$scope.model = model;
+			});
 		}
 
 		// Guarda datos del dispositivo
