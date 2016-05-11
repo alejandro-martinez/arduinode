@@ -12,9 +12,11 @@ var Programador = function()
 		this.tareas = [];
 		this.reprogramarTarea = function(_newValues)
 		{
+			console.log("Reprogramando tarea");
 			var configTarea = this.parseConfig(_newValues);
 			this.nuevaTarea(configTarea);
 			var tarea = this.getTarea(configTarea.id_tarea);
+			console.log("Forzando ejecucion de ",tarea.descripcion);
 			this.forzarEjecucion(tarea);
 		};
 		this.getTarea = function(id)
@@ -93,7 +95,6 @@ var Programador = function()
 		};
 		this.checkValidez = function(t)
 		{
-
 			//Tarea activa o no?
 			if (t.activa)
 			{
@@ -137,10 +138,12 @@ var Programador = function()
 					this.ejecutarTarea(t);
 				}
 			}
+			else {
+				console.log("La tarea '" + t.descripcion + "' es de apagado, no se obliga la ejecucion");
+			}
 		};
 		this.ejecutarTarea = function(params, accion)
 		{
-
 			if (params.hasOwnProperty('dispositivos'))
 			{
 				params.dispositivos.forEach(function(d)
@@ -148,7 +151,7 @@ var Programador = function()
 					d.noError = true;
 					d.estado = accion || params.accion;
 					d.temporizada = params.temporizada;
-
+					console.log("Enviando comando switch a:",d.ip,d,estado);
 					socketArduino.switchSalida(d, function(response)
 					{
 						if (response === null)
@@ -157,6 +160,9 @@ var Programador = function()
 						}
 					})
 				})
+			}
+			else {
+				console.log("La tarea no tiene dispositivos asociados");
 			}
 		};
 		this.observarCambios = function()

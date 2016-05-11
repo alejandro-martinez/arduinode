@@ -31,6 +31,10 @@ module.exports = function()
 			{
 				if (This.data)
 				{
+					//Actualizo la salida switcheada a todos los sockets
+					params.estado = parseInt(This.data);
+					This.socketClient.broadcast.emit('switchBroadcast', params);
+					
 					callback( parseInt(This.data) );
 				}
 				else

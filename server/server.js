@@ -202,13 +202,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			arduino.switchSalida(params, function(response)
 			{
 				var estadoFinal = (response === null) ? params.estado_orig : response;
-				params.estado = estadoFinal;
-
-				//Actualizo la salida switcheada a todos los sockets
-				sCliente.broadcast.emit('switchBroadcast', params);
 				//Aviso el resultado del switch al socket que hizo switch
 				sCliente.emit('switchResponse', estadoFinal);
-
 			});
 		});
 	});

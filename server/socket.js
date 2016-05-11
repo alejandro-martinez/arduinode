@@ -37,7 +37,6 @@ module.exports = function()
 				port: 8000
 			},function()
 			{
-
 				clearTimeout(timer);
 				callback(1, client)
 			});
