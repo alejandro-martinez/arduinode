@@ -119,14 +119,13 @@ module.exports = function(app, config)
 				{
 					This.currentFiles[0].splice(key, 1);
 				}
-			})
+			});
 			this.writeToJson(this.filesPaths.dispositivos, this.currentFiles[0],
 				function(err)
 				{
 					callback(err)
 				}
-			)
-
+			);
 		},
 		getNewIDTarea: function()
 		{

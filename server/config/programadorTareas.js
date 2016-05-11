@@ -15,25 +15,6 @@ var Programador = function()
 			var configTarea = this.parseConfig(_newValues);
 			this.nuevaTarea(configTarea);
 			var tarea = this.getTarea(configTarea.id_tarea);
-
-
-			/*if (_newValues.dispositivosEliminados.length > 0)
-			{
-				//Si la tarea es valida (está en ejecución)
-				if (this.checkValidez(configTarea))
-				{
-					_newValues.dispositivosEliminados.forEach(function(disp)
-					{
-						console.log("Apagando salida de disp eliminado",disp);
-						console.log("Consultando estado de salida",disp.nro_salida);
-						socketArduino.getEstadoSalida(disp, function(response)
-						{
-							console.log("Resp",response);
-						})
-					});
-				}
-			}*/
-
 			this.forzarEjecucion(tarea);
 		};
 		this.getTarea = function(id)

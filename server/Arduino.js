@@ -39,23 +39,6 @@ module.exports = function()
 				}
 			});
 		},
-		getEstadoSalida: function(params, callback)
-		{
-			var This = this;
-			params.command = 'S'.concat(params.nro_salida);
-			params.noConnect = true;
-			socket.send(params, function( response )
-			{
-				if (This.data)
-				{
-					callback( parseInt(This.data) );
-				}
-				else
-				{
-					callback(null);
-				}
-			});
-		},
 		buscarSalida: function(params, found)
 		{
 			if (params.salidas.length > 0)
