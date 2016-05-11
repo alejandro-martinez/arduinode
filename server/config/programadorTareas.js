@@ -17,6 +17,7 @@ var Programador = function()
 			this.nuevaTarea(configTarea);
 			var tarea = this.getTarea(configTarea.id_tarea);
 			console.log("Forzando ejecucion de ",tarea.descripcion);
+			console.log()
 			this.forzarEjecucion(tarea);
 		};
 		this.getTarea = function(id)
@@ -80,6 +81,7 @@ var Programador = function()
 			delete config.enEjecucion;
 			var job = schedule.scheduleJob(rule, function()
 			{
+				console.log("Ejecutando job del schedule",config.descripcion);
 				if (This.checkValidez(config))
 				{
 					This.ejecutarTarea(config);
@@ -151,7 +153,7 @@ var Programador = function()
 					d.noError = true;
 					d.estado = accion || params.accion;
 					d.temporizada = params.temporizada;
-					console.log("Enviando comando switch a:",d.ip,d,estado);
+					console.log("Enviando comando switch a:",d.ip,d,d.estado);
 					socketArduino.switchSalida(d, function(response)
 					{
 						if (response === null)

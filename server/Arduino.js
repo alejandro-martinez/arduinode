@@ -33,8 +33,8 @@ module.exports = function()
 				{
 					//Actualizo la salida switcheada a todos los sockets
 					params.estado = parseInt(This.data);
-					This.socketClient.broadcast.emit('switchBroadcast', params);
-					
+					socket.socketClient.broadcast.emit('switchBroadcast', params);
+
 					callback( parseInt(This.data) );
 				}
 				else
