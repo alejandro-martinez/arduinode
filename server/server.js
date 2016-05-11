@@ -1,28 +1,29 @@
 'use strict';
 
-//Timeout global del servidor
 //Dependencias
-var express = require('express'),
-	app 	= express(),
-	timeout = 0,
-	DateConvert = require('./utils/DateConvert')(),
-	socketListen = null,
-	intervalo = 0,
-	middleware = require('socketio-wildcard')(),
-	serverInfo = {host: "localhost", port:8888 },
-	fs		= require('fs'),
-	compress = require('compression');
+var express 			= require('express'),
+	app 				= express(),
+	DateConvert 		= require('./utils/DateConvert')(),
+	socketListen 		= null,
+	//Lib para interceptar requests a Socket.IO y enviar hora del servidor
+	middleware 			= require('socketio-wildcard')(),
+	serverInfo 			= {host: "localhost", port:8888 },
+	fs					= require('fs'),
+	compress 			= require('compression');
 	app.use(compress());
-	var http 	= require('http').Server(app),
-	programadorTareas = require('./config/programadorTareas'),
-	serverConfig = {},
-	ArrayUtils = require('./utils/ArrayUtils')(),
-	expressConfig = require('./config/config').config(app, express),// Configuración
-	io 		= require('socket.io')(http),							// Socket IO
-	net 	= require('net'),										// Socket Arduino
-	arduino = require('./Arduino')(),								// ArduinoModule
-	DataStore	= require('./config/db')(app, expressConfig);		// Conexión
-	require('./controllers')(app);									// Controladores
+	var http 			= require('http').Server(app),
+	programadorTareas 	= require('./config/programadorTareas'),
+	serverConfig 		= {},
+	ArrayUtils 			= require('./utils/ArrayUtils')(),
+	// Configuración servidor Express
+	expressConfig 		= require('./config/config').config(app, express),
+	io 					= require('socket.io')(http),
+	//Socket para comunicacion con servidor Arduino
+	net 				= require('net'),
+	arduino 			= require('./Arduino')(),
+	DataStore			= require('./config/db')(app, expressConfig);
+	//Carga de controladores
+	require('./controllers')(app);
 
 //Crea o trae el archivo de configuracion para el servidor y Programador de tareas
 
@@ -40,12 +41,12 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 {
 	console.log("Server iniciado en: ", serverConfig.ip +":"+serverConfig.port);
 
-
 	//Captura excepciones para no detener el servidor
 	process.on('uncaughtException', function (err)
 	{
 		console.log(err)
 	});
+
 	//Abre el archivo json, y cargo campos temporales
 	DataStore.getFile('dispositivos',function()
 	{
@@ -62,10 +63,15 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 
 	io.use(middleware);
 
-	//Socket.IO CLIENTE
+	//Se dispara cuando un cliente se conecta
 	io.on('connection', function( sCliente )
 	{
-		//Crea el socket para escuchar los arduinos, solo si no fue levantado
+		//Envio hora del servidor en cada request Socket.IO
+		sCliente.on('*', function(){
+			sCliente.emit('horaServidor', new Date().getTime());
+		});
+
+		// Crea el socket para escuchar los arduinos, solo si no fue levantado
 		if (!socketListen) {
 
 			socketListen = net.createServer(function( socket ) {
@@ -80,37 +86,28 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 
 			socketListen.listen({ host:serverConfig.ip, port: serverConfig.port + 1},
 				function(){
-					console.log('Socket escuchando arduinos en:',
-								socketListen.address().address,':',socketListen.address().port);
+					console.log('Socket escuchando arduinos en:'
+								,socketListen.address().address,':'
+								,socketListen.address().port);
 			});
 		}
 
-		//Envio hora del servidor en cada pedido
-		sCliente.on('*', function(){
-			sCliente.emit('horaServidor', new Date().getTime());
-
-		});
-
-		//Paso el handler del socket del usuario
-		//para emitir errores directamente
+		// Paso instancia de Socket.IO para informar errores al usuario
 		arduino.socketClient = sCliente;
-
-		//Configuracion
 		arduino.init();
-
 		programadorTareas.socketClient = sCliente;
 
-		//Escucha evento para obtener listado de luces encendidas
+		// Escucha evento para obtener listado de luces encendidas
 		sCliente.on('getSalidasActivas', function(params)
 		{
 			sendSalidasActivas(params);
 		});
 
-		//Envia listado de salidas activas al cliente
-		//sockets conectados
+		// Envia listado de salidas activas al cliente
 		var sendSalidasActivas = function(params) {
 			var salidasAux = [],
 				sockets = [];
+
 			DataStore.currentFiles[0].forEach(function(item, key, array)
 			{
 				var salidas,
@@ -173,7 +170,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				});
 			});
 		}
-		//Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
+
+		// Devuelve el listado de salidas del dispositivo con sus estados (ON OFF)
 		sCliente.on('getSalidas', function(params)
 		{
 			sendSalidas(params);
@@ -193,7 +191,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			}
 		}
 
-		//Sube,baja o detiene las persianas
+		// Sube,baja o detiene las persianas
 		sCliente.on('movePersiana', function(params)
 		{
 			arduino.movePersiana(params, function(response)
@@ -202,22 +200,25 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			});
 		});
 
-		//Setea el estado de una salida, ON/OFF
+		// Setea el estado de una salida, ON/OFF
 		sCliente.on('switchSalida', function(params)
 		{
 			switchSalida( params );
 		});
 
 		// Se llama cuando se acciona una salida
-		// Desde la aplicacion y desde un switch real
+		// Desde la aplicacion p desde un switch real
 		var switchSalida = function( params ) {
 			params.noError = true;
 			arduino.switchSalida(params, function(response)
 			{
+				var estadoFinal = (response === null) ? params.estado_orig : response;
+				params.estado = estadoFinal;
+				
+				//Actualizo la salida switcheada a todos los sockets
 				sCliente.broadcast.emit('switchBroadcast', params);
-
-				sCliente.emit('switchResponse',
-							(response === null) ? params.estado_orig : response);
+				//Aviso el resultado del switch al socket que hizo switch
+				sCliente.emit('switchResponse', estadoFinal);
 
 			});
 		}
