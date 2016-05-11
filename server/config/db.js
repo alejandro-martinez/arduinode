@@ -49,15 +49,9 @@ module.exports = function(app, config)
 				{
 					if (tarea)
 					{
-						var date = new Date();
-						var hora_inicio = new Date(date.getFullYear(),
-												date.getMonth(),
-												date.getDate(),
-												tarea.hora_inicio.substr(0,2),
-												tarea.hora_inicio.substr(-2));
-
-						var duracion_ms = DateConvert.horario_a_ms( tarea.duracion );
-						var suma = duracion_ms + hora_inicio.getTime();
+						var hora_inicio = DateConvert.parseTimeString(tarea.hora_inicio),
+							duracion_ms = DateConvert.horario_a_ms( tarea.duracion ),
+							suma = duracion_ms + hora_inicio.getTime();
 						tarea.hora_fin = new Date(suma);
 						tareas.push(tarea);
 					}
@@ -97,10 +91,6 @@ module.exports = function(app, config)
 					});
 				}
 			});
-		},
-		getNextID: function(dispositivo, tabla)
-		{
-			var tabla = dispositivo['tareas'];
 		},
 		deleteTarea: function(params, callback)
 		{
