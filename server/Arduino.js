@@ -111,37 +111,20 @@ module.exports = function()
 			params.formatted = [];
 			_salidas.forEach(function(s)
 			{
-				var salidas = [];
-				var posGuion = s.indexOf("-"),
-					posDospuntos = s.indexOf(":"),
-					posPunto = s.indexOf(".");
-					switch (s[0])
-					{
-						case 'B':
-						case 'L':
-						case 'P':
-							var nro_salida = s[posGuion+1] + s[posGuion+2],
-								estado = s[posDospuntos+1],
-								tipo = s[0];
-								temporizada = DateConvert.min_a_horario(s.substr( posPunto + 1));
-							break;
-						default:
-							return;
-					}
-
-					var uniques = [],
-						_params =
+				var salidas = [],
+					formatted = This.parseSalida(params,s);
+					var _params =
 						{
 							salidas: _salidas,
-							nro_salida: parseInt(nro_salida),
+							nro_salida: parseInt( formatted.nro_salida ),
 							ip: params.ip,
-							tipo: tipo
+							tipo: formatted.tipo
 						};
 					if (params.salidasOrig)
 					{
 						infoSalida = params.salidasOrig.filter(function(s)
 						{
-							return s.nro_salida == nro_salida
+							return s.nro_salida == formatted.nro_salida
 								&& s.ip == params.ip;
 						});
 					}
@@ -152,18 +135,11 @@ module.exports = function()
 					});
 					if (!This.found)
 					{
-						var formatted = {
-							nro_salida: parseInt(nro_salida),
-							tipo: tipo,
-							ip: params.ip,
-							estado: parseInt(estado),
-							temporizada: temporizada
-						};
 						var note;
 						if (params.salidasOrig)
 							note = infoSalida[0].note;
 						else
-							note = params.ip.concat("-",nro_salida);
+							note = params.ip.concat("-",formatted.nro_salida);
 
 						formatted.note = note;
 						params.formatted.push(formatted);
