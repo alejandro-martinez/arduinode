@@ -20,7 +20,7 @@ var express 			= require('express'),
 	io 					= require('socket.io')(http),
 	//Socket para comunicacion con servidor Arduino
 	net 				= require('net'),
-	arduino 			= require('./Arduino')(),
+	arduino 			= require('./Arduino'),
 	DataStore			= require('./config/db')(app, expressConfig);
 	//Carga de controladores
 	require('./controllers')(app);
@@ -70,6 +70,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	{
 		// Paso instancia de Socket.IO para informar errores al usuario
 		arduino.socketClient = sCliente;
+		arduino.sockets = io.sockets;
 		arduino.init();
 		programadorTareas.socketClient = sCliente;
 
@@ -105,7 +106,6 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		{
 			var salidasAux = [],
 				sockets = [];
-
 			DataStore.currentFiles[0].forEach(function(item, key, array)
 			{
 				var salidas,

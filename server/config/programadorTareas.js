@@ -1,5 +1,5 @@
 // Tarea programadas
-var socketArduino = require('../Arduino')(),
+var socketArduino = require('../Arduino'),
 	DateConvert = require('../utils/DateConvert')(),
 	schedule = require('node-schedule');
 
@@ -16,8 +16,6 @@ var Programador = function()
 			var configTarea = this.parseConfig(_newValues);
 			this.nuevaTarea(configTarea);
 			var tarea = this.getTarea(configTarea.id_tarea);
-			console.log("Forzando ejecucion de ",tarea.descripcion);
-			console.log()
 			this.forzarEjecucion(tarea);
 		};
 		this.getTarea = function(id)
@@ -168,7 +166,7 @@ var Programador = function()
 						if (i < numDispositivos) {
 							loopDispositivos(i);
 						}
-					})
+					});
 				}
 				loopDispositivos(i);
 			}
