@@ -450,15 +450,16 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			});
 		},
 		// Guarda descripcion de una salida
-		save: function( salida, callback)
+		save: function( salidaNew, callback)
 		{
-			$http.post('/salida/save/', salida).then(function(response)
-			{
-				localStorage.removeItem('dispositivos');
-				callback(response.data || response);
-			}, function(error)
-			{
-				callback(error)
+			var This = this;
+			DispositivoFct.get(salidaNew, function(disp) {
+				disp.salidas.forEach(function(s,k, _this) {
+					if (s.nro_salida == salidaNew.nro_salida) {
+						_this[k].note = salidaNew.note;
+					}
+				});
+				callback( DispositivoFct.save(disp) );
 			});
 		},
 		//Devuelve salida a partir de ip_dispositivo y nro_salida
@@ -894,8 +895,6 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 						callback(disp[0]);
 				}
 			});
-
-
 		},
 		// Devuelve todos los Dispositivos
 		// Primero busca en caché, si está vacio, los pide al servidor

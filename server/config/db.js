@@ -146,14 +146,9 @@ module.exports = function(app, config)
 
 			if (dispositivo.length > 0 && model.hasOwnProperty('id_disp'))
 			{
-				dispositivo[0].note = model.note;
-				var salida = dispositivo[0].salidas.filter(function(s)
-				{
-					if (s.nro_salida == model.nro_salida)
-					{
-						s.note = model.note;
-					}
-				});
+				dispositivo[0].note	= model.note;
+				dispositivo[0].ip 	= model.ip;
+				dispositivo[0].salidas = model.salidas;
 			}
 			else
 			{

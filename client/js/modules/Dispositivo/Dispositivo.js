@@ -68,8 +68,6 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 						callback(disp[0]);
 				}
 			});
-
-
 		},
 		// Devuelve todos los Dispositivos
 		// Primero busca en caché, si está vacio, los pide al servidor
