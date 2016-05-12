@@ -148,23 +148,29 @@ var Programador = function()
 		{
 			if (params.hasOwnProperty('dispositivos'))
 			{
-				params.dispositivos.forEach(function(d)
-				{
+				var numDispositivos = params.dispositivos.length,
+					i = 0;
+
+				var loopDispositivos = function(i) {
+					var d = params.dispositivos[i];
+
 					d.noError = true;
 					d.estado = accion || params.accion;
 					d.temporizada = params.temporizada;
-					console.log("Enviando comando switch a:",d.ip,d,d.estado);
+
 					socketArduino.switchSalida(d, function(response)
 					{
 						if (response === null)
 						{
 							console.log("ERROR: No se puede llegar a:",d.ip);
 						}
+						i++;
+						if (i < numDispositivos) {
+							loopDispositivos(i);
+						}
 					})
-				})
-			}
-			else {
-				console.log("La tarea no tiene dispositivos asociados");
+				}
+				loopDispositivos(i);
 			}
 		};
 		this.observarCambios = function()
