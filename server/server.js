@@ -83,6 +83,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 							ip:socket.remoteAddress
 						}, data);
 					sCliente.broadcast.emit('switchBroadcast', salida);
+					socket.end();
 				});
 			});
 
