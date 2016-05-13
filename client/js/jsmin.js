@@ -586,6 +586,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 
 		//Escucha evento broadcast para actualizar estado de salidas
 		SocketIO.listen('switchBroadcast', function(data) {
+			console.log("Recibo broadcast")
 			//Trae descripcion de la salida
 			Salida.getSalida(data, function(salida) {
 				// si la salida existe, cambia el estado, sino, agrega la salida
