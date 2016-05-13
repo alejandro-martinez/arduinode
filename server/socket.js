@@ -16,75 +16,42 @@ module.exports = function()
 		//Conexion al socket arduino
 		connect: function(params, callback)
 		{
-			var timer, This = this;
-			timeout = 250;
-
-			timer = setTimeout(function()
+			var socket = new net.Socket();
+			socket.setTimeout(1000);
+			socket.connect(8000, params.ip, function(response)
 			{
-
-				if (!params.noError)
-				{
-					This.socketClient.emit('Error', This.errors['TIMEOUT']);
-				}
-				else
-				{
-					callback(0);
-				}
-			}, timeout);
-			var client = net.connect(
-			{
-				host: params.ip,
-				port: 8000
-			},function()
-			{
-				clearTimeout(timer);
-				callback(1, client)
-			});
-
-			client.on('error', function(err)
-			{
-				if (params.noError)
-				{
-					callback();
-				}
-				else
-				{
-					This.socketClient.emit('Error', This.errors[err.code]);
-				}
+				callback(1, socket)
 			})
+			socket.on('timeout',function(_err)
+			{
+			});
 		},
 		//Envia comando al socket. Viene en params.command
 		send: function(params, callback)
 		{
+			console.log("paso")
 			var This = this;
-			params.ip = params.ip || params.ip_dispositivo;
+			This.data = "";
 			if (params.ip)
 			{
-				this.connect(params, function(response, socket)
-				{
-					This.data = "";
-					if (response == 1)
-					{
-						socket.write(params.command);
-						socket.on('data', function(_data)
+				this.connect(params, function(response, socket){
+
+					if (response) {
+						socket.write(params.comando);
+						socket.on('data',function(_data)
 						{
-							if (params.decorator)
-							{
-								params.decorator(_data.toString())
-							}
-							else
-							{
-								This.data = _data.toString();
-							}
+							console.log(_data)
+							This.data+= _data.toString();
 						});
+
 						socket.on('end', function()
 						{
+							console.log("end")
 							callback(This.data);
 						});
 					}
-					else
-					{
-						callback(null);
+					else {
+						callback();
 					}
 				});
 			}

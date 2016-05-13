@@ -1,7 +1,9 @@
 var programadorTareas = require('../config/programadorTareas');
 
-module.exports = function(app)
+module.exports = function(arduinode)
 {
+	var app = arduinode.app,
+		db  = arduinode.dataStore;
 	//Devuelve todos las tareas
 	app.get('/tareas', function(req, res)
 	{

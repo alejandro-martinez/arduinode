@@ -1,9 +1,11 @@
-module.exports = function(app)
+module.exports = function(arduinode)
 {
+	var app = arduinode.app,
+		db  = arduinode.dataStore;
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		res.send( DataStore.currentFiles[0] );
+		res.send( arduinode.dataStore.dispositivosEnMemoria );
 	});
 
 	//Devuelve dispositivo por ID
