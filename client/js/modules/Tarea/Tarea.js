@@ -245,7 +245,7 @@ function($http,
 	$('#horainicio').val( $scope.tarea.hora_inicio )
 	$('#duracion').val( $scope.tarea.duracion );
 
-	// LLena el select de dispositivos
+	// Llena el select de dispositivos
 	$scope.loadSelect = function()
 	{
 		Dispositivo.getAll(function(dispositivos)

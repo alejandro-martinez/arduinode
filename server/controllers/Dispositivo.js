@@ -1,5 +1,6 @@
 module.exports = function(arduinode)
 {
+	console.log ( arduinode)
 	var app = arduinode.app,
 		db  = arduinode.dataStore;
 	//Devuelve todos los dispositivos

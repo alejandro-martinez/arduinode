@@ -568,7 +568,20 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			   Salida,
 			   Popup )
 	{
-		$('.clockpicker').clockpicker({autoclose: true});
+		$scope.getSwitchButton = SwitchButton.getTemplate;
+		SocketIO.listen('salidas', function(salidas)
+		{
+			console.log(salidas)
+			$scope.ipDispositivo = salidas[0].ip;
+			$scope.salidas 		 = salidas;
+			$scope.$digest();
+		});
+		SocketIO.send('getSalidas', {
+			ip		: "192.168.20.9",
+			id_disp	: 9
+		});
+
+		/*$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {},
 			numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
 		$scope.processed = 0;
@@ -774,7 +787,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		if (Dispositivo.hayDispositivosDisponibles() )
 		{
 			$scope.refresh();
-		}
+		}*/
 	}
 ])
 
@@ -1274,7 +1287,7 @@ function($http,
 	$('#horainicio').val( $scope.tarea.hora_inicio )
 	$('#duracion').val( $scope.tarea.duracion );
 
-	// LLena el select de dispositivos
+	// Llena el select de dispositivos
 	$scope.loadSelect = function()
 	{
 		Dispositivo.getAll(function(dispositivos)
