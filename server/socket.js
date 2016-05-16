@@ -14,16 +14,18 @@ module.exports = function()
 				"TIMEOUT": "Se alcanzó el tiempo de espera límite para la conexión!"
 		},
 		//Conexion al socket arduino
-		connect: function(params, callback)
+		connect: function(ip, callback)
 		{
 			var socket = new net.Socket();
 			socket.setTimeout(1000);
-			socket.connect(8000, params.ip, function(response)
+			console.log("IP",ip)
+			socket.connect(8000, ip, function(response)
 			{
 				callback(1, socket)
 			})
 			socket.on('timeout',function(_err)
 			{
+				console.log("Timeout",_err)
 			});
 		},
 		//Envia comando al socket. Viene en params.command
@@ -33,7 +35,7 @@ module.exports = function()
 			This.data = "";
 			if (params.ip)
 			{
-				this.connect(params, function(response, socket){
+				this.connect(params.ip, function(response, socket){
 
 					if (response) {
 						socket.write(params.comando);

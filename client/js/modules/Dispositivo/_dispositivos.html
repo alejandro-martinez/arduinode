@@ -1,7 +1,7 @@
 <table>
 	<tr ng-repeat="d in dispositivos">
 		<td><a ui-sref="updateDispositivo({params: {{d}} })">{{d.note}}</a></td>
-		<td><a class="button" ui-sref="estados({params: {{d}} })">Salidas</a></td>
+		<td><a class="button" ui-sref="estados({page: 'salidas', disp: d})">Salidas</a></td>
 	</tr>
 </table>
 <ul class="inlineButtons" id="actionsPage">

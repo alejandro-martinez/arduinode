@@ -14,7 +14,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		})
 		.state('estados',
 		{
-			params: { params: null },
+			params: { page: null, disp: null },
 			templateUrl:  SalidaConfig.rootFolder + "_estados.html",
 			controller: 'EstadosCtrl'
 		})
@@ -169,34 +169,85 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			   Salida,
 			   Popup )
 	{
+		console.log("params",params)
+		$scope.ipDispositivo = (params.disp) ? params.disp.ip : null;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
-
+				numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
+		$scope.processed = 0;
+		$scope.buffer = [];
+		$scope.salida = {};
+		console.log((params.page == 'salidasEncendidas'))
+		$scope.salidas = [];
+		$rootScope.currentMenu = (params.page == 'salidasEncendidas') ? 'Luces encendidas'
+													  : 'Salidas de: ' + params.disp.note;
 		SocketIO.listen('salidas', function(salidas)
 		{
 			$scope.ipDispositivo = salidas[0].ip;
-			$scope.salidas 		 = salidas;
+			$scope.salidas = salidas;
 			$scope.$digest();
 		});
+		SocketIO.listen('salidasEncendidas', function(salidas)
+		{
+			console.log("salidas",salidas)
+			if (params.page == 'salidasEncendidas') {
+				i = 0;
+				// Resetea el contador de dispositivos procesados
+				// y el buffer de salidas recibidas
+				if ($scope.processed == numDispositivos) {
+					$scope.processed = 0;
+					$scope.buffer = [];
+				}
+				//Flag para controlar que recibi datos de todos los dispositivos
+				$scope.processed++;
 
-		SocketIO.send('getSalidas', {
-			ip		: "192.168.20.9",
-			id_disp	: 9
+				//Guardo en buffer las salidas recibidas
+				salidas.forEach(function(s){ $scope.buffer.push(s) });
+
+				var salidasAux = salidas;
+
+				//Agrego progresivamente las salidas a la vista
+				var promise = $interval(function(){
+					if (i < salidasAux.length && salidasAux.length > 0) {
+						$scope.salidas.push( salidasAux[i] );
+						i++;
+					}
+					//Si recibi los datos de todos los dispositivos
+					//Controlo que la cantidad de salidas activas
+					//sea igual a las de la vista
+					if ($scope.processed == numDispositivos) {
+						$interval.cancel( promise );
+
+						//Si la cantidad es distinta, actualizo
+						if ( $scope.buffer.length != $scope.salidas.length ) {
+							$scope.salidas = $scope.buffer;
+						}
+					}
+				}, 100);
+			}
 		});
 
-		//Accion sobre una salida (on / off)
+		console.log(params)
+		SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
+
+		//Accion sobre una salida (Luz, Persiana, Bomba)
 		$scope.accionarSalida = function(data)
 		{
-			data.estado_orig = data.estado;
-			data.ip 		 = data.ip || $scope.ipDispositivo;
-			data.estado 	 = (data.estado == 0) ? 1 : 0;
-			var tiempo 		 = $('.clockpicker').val();
-			data.temporizada = (tiempo != '') ? tiempo : null;
+			data.ip 		 	= data.ip || $scope.ipDispositivo;
+			data.estado 	 	= (data.estado == 0) ? 1 : 0;
+			data.temporizacion	= $('.clockpicker').val();
 
 			//Envia orden al socketArduino
 			Salida.accionar( data, function(_estado)
 			{
 				data.estado = _estado;
 			});
+		}
+
+		// Se dispara al hacer click en el titulo superior
+		$scope.refresh = function()
+		{
+			$scope.salidas = [];
+			SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
 		}
 
 		/*$('.clockpicker').clockpicker({autoclose: true});
