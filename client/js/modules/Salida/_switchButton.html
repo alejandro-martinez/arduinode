@@ -4,7 +4,7 @@
 		ng-class="(s.estado == 0 ) ? 'prendida' : 'apagada'"
 		ng-checked="{{(s.estado) == 0}}"
 	/>
-	<span class="switch-label" ng-click="switch(s)"
+	<span class="switch-label" ng-click="accionarSalida(s)"
 		ng-class="(s.temporizada) ? 'temporizada' : ''"
 		data-on="{{ s.temporizada || 'Encendida'}}"	data-off="Apagada">
 	</span>

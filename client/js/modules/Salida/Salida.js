@@ -25,10 +25,10 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 	var Salida =
 	{
 		// Setea el estado de una salida
-		switchSalida: function(params, callback)
+		accionar: function(params, callback)
 		{
-			Socket.send('switchSalida',params);
-			Socket.listen('switchResponse', function(estado)
+			Socket.send('accionarSalida',params);
+			Socket.listen('accionarResponse', function(estado)
 			{
 				callback(estado);
 			});
@@ -170,17 +170,34 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			   Popup )
 	{
 		$scope.getSwitchButton = SwitchButton.getTemplate;
+
 		SocketIO.listen('salidas', function(salidas)
 		{
-			console.log(salidas)
 			$scope.ipDispositivo = salidas[0].ip;
 			$scope.salidas 		 = salidas;
 			$scope.$digest();
 		});
+
 		SocketIO.send('getSalidas', {
 			ip		: "192.168.20.9",
 			id_disp	: 9
 		});
+
+		//Accion sobre una salida (on / off)
+		$scope.accionarSalida = function(data)
+		{
+			data.estado_orig = data.estado;
+			data.ip 		 = data.ip || $scope.ipDispositivo;
+			data.estado 	 = (data.estado == 0) ? 1 : 0;
+			var tiempo 		 = $('.clockpicker').val();
+			data.temporizada = (tiempo != '') ? tiempo : null;
+
+			//Envia orden al socketArduino
+			Salida.accionar( data, function(_estado)
+			{
+				data.estado = _estado;
+			});
+		}
 
 		/*$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {},
