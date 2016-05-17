@@ -50,7 +50,11 @@ var Arduino = function() {
 		},
 		getSalidasEncendidas: function(callback) {
 
-			var salidasAux = [], sockets = [], This = this;
+			var salidasAux = [], sockets = [], processed = [],
+				This = this;
+			var emit = function(data) {
+				This.sCliente.emit('salidasEncendidas', data);
+			}
 			this.lista.forEach(function(item, key, array)
 			{
 				item.buffer = "";
@@ -73,7 +77,10 @@ var Arduino = function() {
 				})
 				sockets[key].on('timeout',function(_err)
 				{
-					This.sCliente.emit('salidasEncendidas', []);
+					if (processed.indexOf(item.ip) < 0) {
+						processed.push(item.ip);
+						emit([]);
+					}
 				});
 
 				sockets[key].on('data',function(_data)
@@ -84,19 +91,20 @@ var Arduino = function() {
 				//Si fallo la conexión, aviso al cliente con un array nulo
 				sockets[key].on('error',function(_err)
 				{
+					console.log("Enviando enc de ",item.ip)
 					connectedSuccess = false;
-					This.sCliente.emit('salidasEncendidas', []);
+					if (processed.indexOf(item.ip) < 0) {
+						processed.push(item.ip);
+						emit([]);
+					}
 				});
 				sockets[key].on('end',function()
 				{
-					console.log(item.buffer)
 					var salidas = item.parseSalida(item, item.buffer);
-					console.log("Salidas",salidas)
 					if (salidas.length > 0 && connectedSuccess)
 					{
+						emit(item.getSalidasByEstado(ON, salidas));
 						item.buffer = "";
-						var encendidas = item.getSalidasByEstado(ON, salidas);
-						This.sCliente.emit('salidasEncendidas',encendidas);
 					}
 				});
 			});

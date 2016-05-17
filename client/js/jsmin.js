@@ -616,23 +616,15 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 					//sea igual a las de la vista
 					if ($scope.processed == numDispositivos) {
 						$interval.cancel( promise );
-
 						//Si la cantidad es distinta, actualizo
 						if ( $scope.buffer.length != $scope.salidas.length ) {
 							$scope.salidas = $scope.buffer;
 						}
+						$scope.salidas = orderByFilter($scope.salidas, '+note');
 					}
 				}, 100);
 			}
 		});
-
-		// Ordena las salidas activas alfabeticamente de forma ascendente
-		// al actualizar la pagina Luces encendidas
-		$scope.onEnd = function(){
-			$timeout(function(){
-				$scope.salidas = orderByFilter($scope.salidas, '+note');
-			}, 150);
-		};
 
 		SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
 
