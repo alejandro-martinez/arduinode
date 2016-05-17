@@ -625,6 +625,14 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			}
 		});
 
+		// Ordena las salidas activas alfabeticamente de forma ascendente
+		// al actualizar la pagina Luces encendidas
+		$scope.onEnd = function(){
+			$timeout(function(){
+				$scope.salidas = orderByFilter($scope.salidas, '+note');
+			}, 50);
+		};
+
 		SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
 
 		//Accion sobre una salida (Luz, Persiana, Bomba)
@@ -842,13 +850,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			$scope.refreshSalidas[ $scope.page ]();
 		}
 
-		// Ordena las salidas activas alfabeticamente de forma ascendente
-		// al actualizar la pagina Luces encendidas
-		$scope.onEnd = function(){
-			$timeout(function(){
-				$scope.salidas = orderByFilter($scope.salidas, '+note');
-			}, 50);
-		};
+
 
 		// Solo si existen dispositivos, refresca pagina actual al inicio
 		if (Dispositivo.hayDispositivosDisponibles() )
