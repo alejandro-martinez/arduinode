@@ -1,10 +1,10 @@
-var dataStore = require('../App.js').dataStore;
+var arduino = require('../Arduino.js');
 module.exports = function(app)
 {
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		res.send( dataStore.dispositivosEnMemoria );
+		res.send( arduino.dispositivos.getAll() );
 	});
 
 	//Devuelve dispositivo por ID
