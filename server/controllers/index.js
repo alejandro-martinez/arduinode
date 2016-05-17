@@ -1,6 +1,5 @@
-module.exports = function(arduinode){
-
-	arduinode.app.get('/', function(req, res){
+module.exports = function(app){
+	app.get('/', function(req, res){
 		res.sendfile('index.html');
 	});
 };

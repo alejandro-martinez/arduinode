@@ -1,24 +1,22 @@
-module.exports = function(arduinode)
+var dataStore = require('../App.js').dataStore;
+module.exports = function(app)
 {
-	console.log ( arduinode)
-	var app = arduinode.app,
-		db  = arduinode.dataStore;
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		res.send( arduinode.dataStore.dispositivosEnMemoria );
+		res.send( dataStore.dispositivosEnMemoria );
 	});
 
 	//Devuelve dispositivo por ID
 	app.get('/dispositivo/id/:id_disp', function(req, res)
 	{
-		res.json( DataStore.findDispositivo('id_disp', req.params.id_disp) );
+		res.json( dataStore.findDispositivo('id_disp', req.params.id_disp) );
 	});
 
 	//Crea o modifica dispositivos
 	app.post('/dispositivo/save', function(req, res)
 	{
-		DataStore.saveDispositivo(req.body, function(err, file)
+		dataStore.saveDispositivo(req.body, function(err, file)
 		{
 			res.json(err)
 		});
@@ -27,7 +25,7 @@ module.exports = function(arduinode)
 		//Crea o modifica dispositivos
 	app.get('/dispositivo/delete/:id_disp', function(req, res)
 	{
-		DataStore.deleteDispositivo(req.params, function(err, file)
+		dataStore.deleteDispositivo(req.params, function(err, file)
 		{
 			res.json(err)
 		});

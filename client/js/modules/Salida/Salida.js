@@ -169,14 +169,12 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			   Salida,
 			   Popup )
 	{
-		console.log("params",params)
 		$scope.ipDispositivo = (params.disp) ? params.disp.ip : null;
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 				numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
 		$scope.processed = 0;
 		$scope.buffer = [];
 		$scope.salida = {};
-		console.log((params.page == 'salidasEncendidas'))
 		$scope.salidas = [];
 		$rootScope.currentMenu = (params.page == 'salidasEncendidas') ? 'Luces encendidas'
 													  : 'Salidas de: ' + params.disp.note;
@@ -188,7 +186,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		});
 		SocketIO.listen('salidasEncendidas', function(salidas)
 		{
-			console.log("salidas",salidas)
 			if (params.page == 'salidasEncendidas') {
 				i = 0;
 				// Resetea el contador de dispositivos procesados
@@ -226,7 +223,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			}
 		});
 
-		console.log(params)
 		SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
 
 		//Accion sobre una salida (Luz, Persiana, Bomba)

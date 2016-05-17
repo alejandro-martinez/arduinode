@@ -1,19 +1,18 @@
-var programadorTareas = require('../config/programadorTareas');
+var programadorTareas = require('../config/programadorTareas'),
+	dataStore = require('../App.js').dataStore;
 
-module.exports = function(arduinode)
+module.exports = function( app )
 {
-	var app = arduinode.app,
-		db  = arduinode.dataStore;
 	//Devuelve todos las tareas
 	app.get('/tareas', function(req, res)
 	{
-		res.json(DataStore.getTareas())
+		res.json(dataStore.getTareas())
 	});
 
 	//Crea o modifica tareas
 	app.post('/tarea/save', function(req, res)
 	{
-		DataStore.saveTarea(req.body, function(response, params)
+		dataStore.saveTarea(req.body, function(response, params)
 		{
 			programadorTareas.socketClient.emit('tareasChanged');
 			if (req.body.id_tarea === 9999)
@@ -31,7 +30,7 @@ module.exports = function(arduinode)
 	//Eliminar
 	app.post('/tarea/delete', function(req, res)
 	{
-		DataStore.deleteTarea(req.body,
+		dataStore.deleteTarea(req.body,
 		function(response)
 		{
 			programadorTareas.apagarTarea(req.body.id_tarea);
