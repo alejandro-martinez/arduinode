@@ -53,6 +53,7 @@ var Arduino = function() {
 			var salidasAux = [], sockets = [], This = this;
 			this.lista.forEach(function(item, key, array)
 			{
+				item.buffer = "";
 				var salidas,
 				connectedSuccess = false,
 				encendidas = [],
@@ -88,9 +89,9 @@ var Arduino = function() {
 				});
 				sockets[key].on('end',function()
 				{
-
+					console.log(item.buffer)
 					var salidas = item.parseSalida(item, item.buffer);
-
+					console.log("Salidas",salidas)
 					if (salidas.length > 0 && connectedSuccess)
 					{
 						item.buffer = "";

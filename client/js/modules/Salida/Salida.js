@@ -190,6 +190,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		SocketIO.listen('salidasEncendidas', function(salidas)
 		{
 			if (params.page == 'salidasEncendidas') {
+				console.log("salidas",salidas)
 				i = 0;
 				// Resetea el contador de dispositivos procesados
 				// y el buffer de salidas recibidas
@@ -231,7 +232,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		$scope.onEnd = function(){
 			$timeout(function(){
 				$scope.salidas = orderByFilter($scope.salidas, '+note');
-			}, 80);
+			}, 150);
 		};
 
 		SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
