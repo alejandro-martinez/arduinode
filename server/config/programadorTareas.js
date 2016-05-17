@@ -1,4 +1,5 @@
 // Tarea programadas
+var dataStore = require('../App.js').dataStore;
 var socketArduino = require('../Arduino'),
 	DateConvert = require('../utils/DateConvert')(),
 	schedule = require('node-schedule');
@@ -90,7 +91,7 @@ var Programador = function()
 		};
 		this.importar = function()
 		{
-			this.tareas = DataStore.getTareas();
+			this.tareas = dataStore.getFile('tareas');
 			this.cargarEnScheduler();
 		};
 		this.checkValidez = function(t)

@@ -231,7 +231,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		$scope.onEnd = function(){
 			$timeout(function(){
 				$scope.salidas = orderByFilter($scope.salidas, '+note');
-			}, 50);
+			}, 80);
 		};
 
 		SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
@@ -372,91 +372,5 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 				}, 3000);
 			});
 		}
-
-		// El servidor envia listado de luces encendidas
-		// a) cuando alguien acciona una salida
-		// b) cuando se pide listado de luces encendidas
-
-		SocketIO.listen('salidasActivas', function(salidas)
-		{
-			if ($scope.page == 'salidasActivas') {
-				i = 0;
-				// Resetea el contador de dispositivos procesados
-				// y el buffer de salidas recibidas
-				if ($scope.processed == numDispositivos) {
-					$scope.processed = 0;
-					$scope.buffer = [];
-				}
-				//Flag para controlar que recibi datos de todos los dispositivos
-				$scope.processed++;
-
-				//Guardo en buffer las salidas recibidas
-				salidas.forEach(function(s){ $scope.buffer.push(s) });
-
-				var salidasAux = salidas;
-
-				//Agrego progresivamente las salidas a la vista
-				var promise = $interval(function(){
-					if (i < salidasAux.length && salidasAux.length > 0) {
-						$scope.salidas.push( salidasAux[i] );
-						i++;
-					}
-					//Si recibi los datos de todos los dispositivos
-					//Controlo que la cantidad de salidas activas
-					//sea igual a las de la vista
-					if ($scope.processed == numDispositivos) {
-						$interval.cancel( promise );
-
-						//Si la cantidad es distinta, actualizo
-						if ( $scope.buffer.length != $scope.salidas.length ) {
-							$scope.salidas = $scope.buffer;
-						}
-					}
-				}, 100);
-			}
-		});
-
-		// Escucha evento cuando el servidor envia listado de salidas
-		// en la pagina "Salidas del dispositivo x"
-		SocketIO.listen('salidas', function(data)
-		{
-			if ($scope.page == 'salidas') {
-				$scope.ipDispositivo = data.ip;
-				$scope.salidas 		 = data.salidas;
-				$scope.$digest();
-			}
-		});
-
-		// Solicita listado de salidas en la pagina "salidas del dispositivo x"
-		$scope.refreshEstados = function()
-		{
-			SocketIO.send('getSalidas', {
-				ip		: $scope.ipDispositivo,
-				id_disp	: params.id_disp
-			});
-		}
-
-		// Determina que funcion usar para actualizar en base a la pagina actual
-		$scope.refreshSalidas = {
-			salidasActivas: function() {
-				$scope.salidas = [];
-				SocketIO.send('getSalidasActivas');
-			},
-			salidas: $scope.refreshEstados
-		}
-
-		// Se dispara al hacer click en el titulo superior
-		$scope.refresh = function()
-		{
-			$scope.refreshSalidas[ $scope.page ]();
-		}
-
-
-
-		// Solo si existen dispositivos, refresca pagina actual al inicio
-		if (Dispositivo.hayDispositivosDisponibles() )
-		{
-			$scope.refresh();
-		}*/
 	}
 ])

@@ -23,9 +23,7 @@ var Arduino = function() {
 			return disp[0] || null;
 		},
 		accionar: function(params, callback) {
-			//Obtengo el dispositivo sobre el que debo actuar
-			var dispositivo = this.getByIP( params.ip );
-			dispositivo.accionarSalida(params, function(response){
+			this.getByIP( params.ip ).accionarSalida(params, function(response) {
 				callback(response);
 			})
 		},
