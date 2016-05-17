@@ -8,6 +8,27 @@ var socket 			= require('./socket')(),
 	const ON = 0, OFF = 1;
 
 var Arduino = function() {
+	this.socketTCP = null;
+	this.listenSwitchEvents = function( conf ) {
+
+		// Crea el socket que recibe comandos de los disp. Arduino
+		if (!this.socketTCP) {
+
+			this.socketTCP = net.createServer(function( socket ) {
+				socket.on('data', function( data ) {
+					var parsed = data.toString().replace("\r","");
+
+					var salida = Dispositivo.prototype.parseSalida.call(this,
+					{ip:socket.remoteAddress}, parsed.trim());
+					This.dispositivos.sCliente.broadcast.emit('switchBroadcast', salida);
+					socket.end();
+				});
+			});
+
+			this.socketTCP.listen({ host:conf.ip, port: conf.port + 1},
+				function() {console.log('Socket escuchando arduinos en:')});
+		}
+	};
 	//Listado de dispositivos
 	this.dispositivos = {
 		sCliente: null,
@@ -84,7 +105,7 @@ var Arduino = function() {
 				lista = dataStore.getFile('dispositivos');
 			lista.forEach(function(d) {
 				var disp = new Dispositivo(d.id_disp,d.ip,d.note);
-				disp.setSalidas(d.salidas);
+				disp.setSalidas( d.salidas );
 				This.lista.push(disp);
 			});
 		}

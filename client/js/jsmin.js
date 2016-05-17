@@ -770,7 +770,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
  					boton.removeClass('active');
 				}, 3000);
 			});
-		}
+		}*/
 	}
 ])
 
