@@ -169,13 +169,16 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			   Salida,
 			   Popup )
 	{
-		$scope.ipDispositivo = (params.disp) ? params.disp.ip : null;
+		$scope.salidas = [];
+		if (params.disp) {
+			$scope.ipDispositivo = params.disp.ip;
+			$scope.salidas = params.disp.salidas;
+		}
 		$scope.getSwitchButton = SwitchButton.getTemplate;
 				numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
 		$scope.processed = 0;
 		$scope.buffer = [];
 		$scope.salida = {};
-		$scope.salidas = [];
 		$rootScope.currentMenu = (params.page == 'salidasEncendidas') ? 'Luces encendidas'
 													  : 'Salidas de: ' + params.disp.note;
 		SocketIO.listen('salidas', function(salidas)
