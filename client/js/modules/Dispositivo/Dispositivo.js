@@ -171,7 +171,9 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		var params = $params.params;
 
 		// Datos para el nuevo dispositivo
-		$scope.model = {};
+		$scope.model = {
+			salidas: []
+		};
 
 		// Edición de un dispositivo
 		if (params && params.id_disp)
@@ -185,6 +187,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		$scope.save = function(model)
 		{
 			if (!$scope.dispositivoForm.$invalid)
+				model.id_disp = $scope.model.ip.replace(".","");
 				Dispositivo.save(model, function(){
 					$state.go('dispositivos');
 				});

@@ -18,9 +18,11 @@ module.exports = function(app)
 	//Crea o modifica dispositivos
 	app.post('/dispositivo/save', function(req, res)
 	{
-		dataStore.saveDispositivo(req.body, function(err, file)
+		dataStore.saveDispositivo(req.body, function(err)
 		{
-			res.json( arduino.dispositivos.getAll() );
+			//Recargo dispositivos
+			arduino.dispositivos.load();
+			res.json(err || dataStore.dispositivos );
 		});
 	});
 
