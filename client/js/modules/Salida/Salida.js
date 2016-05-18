@@ -184,7 +184,9 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		SocketIO.listen('salidas', function(salidas)
 		{
 			$scope.ipDispositivo = salidas[0].ip;
-			$scope.salidas = salidas;
+			$scope.salidas = (salidas.length)
+						? salidas
+						: params.disp.salidas;
 			$scope.$digest();
 		});
 		SocketIO.listen('salidasEncendidas', function(salidas)

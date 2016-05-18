@@ -53,14 +53,15 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		//Parsea los items del archivo
 		DataStore.updateDispositivo();
 
-		//Carga tareas programadas
-		DataStore.getFile('tareas',function()
+		var onTareas = function()
 		{
 			programadorTareas.setConfig( serverConfig );
 			programadorTareas.importar();
 			//	Continua programacion de tareas en caso de falla
 			programadorTareas.observarCambios();
-		});
+		};
+		//Carga tareas programadas
+		DataStore.getFile('tareas', onTareas);
 	});
 
 	io.use(middleware);
@@ -78,18 +79,22 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		if (!socketListen) {
 
 			socketListen = net.createServer(function( socket ) {
-				socket.on('data', function( data ) {
+				var onData = function( data ) {
 					var data = data.toString().replace('\r\n',''),
 						salida = arduino.parseSalida({
-							ip:socket.remoteAddress
+							ip: socket.remoteAddress
 						}, data);
 					sCliente.broadcast.emit('switchBroadcast', salida);
 					socket.end();
-				});
+				};
+				socket.on('data', onData);
 			});
 
-			socketListen.listen({ host:serverConfig.ip, port: serverConfig.port + 1},
-				function() {
+			socketListen.listen({
+					host:serverConfig.ip,
+					port: serverConfig.port + 1
+					},
+					function() {
 					console.log('Socket escuchando arduinos en:'
 								,socketListen.address().address,':'
 								,socketListen.address().port);
@@ -131,7 +136,6 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				});
 
 				sockets[key].on('data',function(_data)
-
 				{
 					item.buffer+= _data;
 				});
@@ -141,6 +145,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				{
 					sCliente.emit('salidasActivas', []);
 				});
+
 				sockets[key].on('end',function()
 				{
 					//Transformo el buffer en un aray
@@ -177,22 +182,24 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 			var dispositivo = DataStore.findDispositivo('ip',params.ip);
 			if (dispositivo.length > 0)
 			{
-				arduino.getSalidas(params, function(salidas)
+				var salidasResponse = function(salidas)
 				{
 					var salidas = ArrayUtils.mixArrays(dispositivo[0].salidas, salidas);
 					dispositivo[0].salidas = salidas;
 					sCliente.emit('salidas', dispositivo[0]);
-				});
+				};
+				arduino.getSalidas(params, salidasResponse);
 			}
 		});
 
 		// Sube, baja o detiene las persianas
 		sCliente.on('movePersiana', function(params)
 		{
-			arduino.movePersiana(params, function(response)
+			arduino.movePersiana(params, moveResponse);
+			var moveResponse = function(response)
 			{
 				sCliente.emit('moveResponse', response);
-			});
+			};
 		});
 
 		// Setea el estado de una salida, ON/OFF
@@ -200,12 +207,13 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		sCliente.on('switchSalida', function(params)
 		{
 			params.noError = true;
-			arduino.switchSalida(params, function(response)
+			var switchResponse = function(response)
 			{
 				var estadoFinal = (response === null) ? params.estado_orig : response;
 				//Aviso el resultado del switch al socket que hizo switch
 				sCliente.emit('switchResponse', estadoFinal);
-			});
+			};
+			arduino.switchSalida(params, switchResponse);
 		});
 	});
 });
