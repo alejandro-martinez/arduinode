@@ -110,7 +110,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 			});
 		},
 		// Crea o actualiza dispositivos
-		save: function( dispositivo )
+		save: function( dispositivo, callback )
 		{
 			$http.post('/dispositivo/save/',dispositivo).then(function(response)
 			{
@@ -125,6 +125,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				{
 					localStorage.setItem('dispositivos', JSON.stringify(response.data));
 				}
+				if (callback) callback();
 			}, function(error)
 			{
 				Popup.open({
@@ -155,11 +156,13 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 ])
 .controller('DispositivoFormCtrl',
 			['$stateParams',
+			 '$state',
 			 '$scope',
 			 'DispositivoConfig',
 			 'DispositivoFct',
 			 'ngDialog',
 	function ($params,
+			  $state,
 			  $scope,
 			  config,
 			  Dispositivo,
@@ -182,7 +185,9 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 		$scope.save = function(model)
 		{
 			if (!$scope.dispositivoForm.$invalid)
-				Dispositivo.save(model);
+				Dispositivo.save(model, function(){
+					$state.go('dispositivos');
+				});
 		};
 
 		// Elimina un dispositivo
