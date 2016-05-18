@@ -110,9 +110,9 @@ var Arduino = function() {
 			});
 		},
 		load: function() {
-			var This = this,
-				lista = dataStore.getFile('dispositivos');
-			lista.forEach(function(d) {
+			var This = this;
+			this.lista = [];
+			dataStore.getFile('dispositivos').forEach(function(d) {
 				var disp = new Dispositivo(d.id_disp,d.ip,d.note);
 				disp.setSalidas( d.salidas );
 				This.lista.push(disp);

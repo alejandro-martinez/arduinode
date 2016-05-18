@@ -1,12 +1,13 @@
-var arduino = require('../Arduino.js'),
+var arduinode = require('../Arduino.js'),
 	dispositivo = require('../App.js').Dispositivo,
 	dataStore = require('../App.js').dataStore;
+
 module.exports = function(app)
 {
 	//Devuelve todos los dispositivos
 	app.get('/dispositivo', function(req, res)
 	{
-		res.send( arduino.dispositivos.getAll() );
+		res.send( arduinode.dispositivos.getAll() );
 	});
 
 	//Devuelve dispositivo por ID
@@ -20,18 +21,20 @@ module.exports = function(app)
 	{
 		dataStore.saveDispositivo(req.body, function(err)
 		{
-			//Recargo dispositivos
-			arduino.dispositivos.load();
+			//Recargo dispositivos en memoria
+			arduinode.dispositivos.load();
 			res.json(err || dataStore.dispositivos );
 		});
 	});
 
 		//Crea o modifica dispositivos
-	app.get('/dispositivo/delete/:id_disp', function(req, res)
+	app.get('/dispositivo/delete/:ip', function(req, res)
 	{
-		dataStore.deleteDispositivo(req.params, function(err, file)
+		dataStore.deleteDispositivo(req.params.ip, function(err, file)
 		{
-			res.json(err)
+			//Recargo dispositivos en memoria
+			arduinode.dispositivos.load();
+			res.json(err || dataStore.dispositivos );
 		});
 	});
 }
