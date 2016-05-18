@@ -123,8 +123,7 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				}
 				else
 				{
-					localStorage.removeItem('dispositivos');
-					$state.go('dispositivos');
+					localStorage.setItem('dispositivos', JSON.stringify(response.data));
 				}
 			}, function(error)
 			{

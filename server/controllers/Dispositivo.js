@@ -1,4 +1,6 @@
-var arduino = require('../Arduino.js');
+var arduino = require('../Arduino.js'),
+	dispositivo = require('../App.js').Dispositivo,
+	dataStore = require('../App.js').dataStore;
 module.exports = function(app)
 {
 	//Devuelve todos los dispositivos
@@ -18,7 +20,7 @@ module.exports = function(app)
 	{
 		dataStore.saveDispositivo(req.body, function(err, file)
 		{
-			res.json(err)
+			res.json( arduino.dispositivos.getAll() );
 		});
 	});
 

@@ -54,12 +54,15 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		save: function( salidaNew, callback)
 		{
 			var This = this;
+			console.log("get",salidaNew)
 			DispositivoFct.get(salidaNew, function(disp) {
+				console.log("iterando")
 				disp.salidas.forEach(function(s,k, _this) {
 					if (s.nro_salida == salidaNew.nro_salida) {
 						_this[k].note = salidaNew.note;
 					}
 				});
+				console.log("Guardando",disp)
 				callback( DispositivoFct.save(disp) );
 			});
 		},
@@ -181,6 +184,8 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		$scope.salida = {};
 		$rootScope.currentMenu = (params.page == 'salidasEncendidas') ? 'Luces encendidas'
 													  : 'Salidas de: ' + params.disp.note;
+		$scope.showDescripcion = $scope.editing = true;
+		$scope.showDispositivos = $scope.showSalidas = false;
 		SocketIO.listen('salidas', function(salidas)
 		{
 			$scope.ipDispositivo = salidas[0].ip;
@@ -252,6 +257,28 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
 		}
 
+		//Abre popup para editar la descripcion de una salida
+		$scope.edit = function(salida)
+		{
+			$scope.salida = salida;
+			Popup.open({
+				template: config.rootFolder+'_form.html',
+				data: salida,
+				scope: $scope
+			});
+		}
+
+		//Guarda descripcion de salida editada
+		$scope.save = function(salida)
+		{
+			console.log("save")
+			$scope.salida.ip = $scope.ipDispositivo;
+			Salida.save( $scope.salida, function(response)
+			{
+				Popup.close();
+			});
+		}
+
 		/*$('.clockpicker').clockpicker({autoclose: true});
 		var params = params.params || {},
 			numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
@@ -279,27 +306,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 				$scope.updateSalida( salida[0] );
 			});
 		})
-
-		//Abre popup para editar la descripcion de una salida
-		$scope.edit = function(salida)
-		{
-			$scope.salida = salida;
-			Popup.open({
-				template: config.rootFolder+'_form.html',
-				data: salida,
-				scope: $scope
-			});
-		}
-
-		//Guarda descripcion de salida editada
-		$scope.save = function(salida)
-		{
-			$scope.salida.id_disp = params.id_disp;
-			Salida.save( $scope.salida, function(response)
-			{
-				Popup.close();
-			});
-		}
 
 		//Accion sobre una salida (on / off)
 		$scope.switch = function(data)

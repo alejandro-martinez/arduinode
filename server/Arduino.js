@@ -35,7 +35,7 @@ var Arduino = function() {
 		lista: [],
 		//Carga listado de dispositivos desde archivo JSON, en variable lista
 		getAll: function() {
-			return this.lista;
+			return dataStore.dispositivos;
 		},
 		getByIP: function( _ip ) {
 			var disp = this.lista.filter(function(s) {
