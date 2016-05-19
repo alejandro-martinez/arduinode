@@ -27,8 +27,12 @@ var Arduino = function() {
 				});
 			});
 
-			this.socketTCP.listen({ host:conf.ip, port: conf.port + 1},
-				function() {console.log('Socket escuchando arduinos en:')});
+			this.socketTCP.listen({
+				host: conf.ip,
+				port: conf.port + 1
+			},function() {
+				console.log('Socket escuchando arduinos en:'conf.ip,conf.port+1)
+			});
 		}
 	};
 	//Listado de dispositivos
@@ -119,7 +123,7 @@ var Arduino = function() {
 			var This = this;
 			this.lista = [];
 			DataStore.getFile('dispositivos').forEach(function(d) {
-				var disp = new Dispositivo(d.id_disp,d.ip,d.note);
+				var disp = new Dispositivo(d.id_disp, d.ip, d.note);
 				disp.setSalidas( d.salidas );
 				This.lista.push(disp);
 			});
@@ -132,6 +136,7 @@ Arduino.instance = null;
 /**
  * Singleton getInstance definition
  */
+
 Arduino.getInstance = function(){
     if(this.instance === null){
         this.instance = new Arduino();
