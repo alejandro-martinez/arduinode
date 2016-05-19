@@ -2,7 +2,7 @@ var socket 		= require('./socket')(),
 	_ 			= require('underscore'),
 	DateConvert = require('./utils/DateConvert')();
 
-function dataStore() {
+function DataStore() {
 	this.reader = require('jsonfile');
 	this.dispositivos = [];
 	this.tareas = [];
@@ -143,7 +143,7 @@ Dispositivo.prototype = {
 		}
 	},
 	load: function() {
-		dataStore.getFile('dispositivos');
+		DataStore.getFile('dispositivos');
 	}
 }
 
@@ -175,9 +175,14 @@ Luz.prototype.switch = function(params, callback) {
 				+ params.estado
 				+ "."
 				+ DateConvert.horario_a_min( params.temporizada );
-	Salida.prototype.switch({comando: comando, ip: this.ip}, function(response){
+	var onSwitchResponse = function(response) {
 		callback(response);
-	});
+	}
+	Salida.prototype.switch({
+		comando: comando,
+		ip: this.ip},
+		onSwitchResponse
+	);
 };
 
 function Persiana(nro_salida, _note) {
@@ -190,9 +195,14 @@ Persiana.prototype.switch = function(params, callback) {
 	var comando = this.comando
 				+ this.nro_salida
 				+ params.accion;
-	Salida.prototype.switch({comando: comando, ip: this.ip}, function(response){
+	var onSwitchResponse = function(response) {
 		callback(response);
-	});
+	}
+	Salida.prototype.switch({
+		comando: comando,
+		ip: this.ip},
+		onSwitchResponse
+	);
 };
 
 function SalidaFactory() {
@@ -208,15 +218,15 @@ function SalidaFactory() {
 
 exports.Dispositivo = Dispositivo;
 
-dataStore.instance = null;
+DataStore.instance = null;
 
 /**
  * Singleton getInstance definition
  */
-dataStore.getInstance = function(){
+DataStore.getInstance = function(){
     if(this.instance === null){
-        this.instance = new dataStore();
+        this.instance = new DataStore();
     }
     return this.instance;
 }
-exports.dataStore = dataStore.getInstance();
+exports.DataStore = DataStore.getInstance();

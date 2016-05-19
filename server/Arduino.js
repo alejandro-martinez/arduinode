@@ -5,7 +5,7 @@ var socket 			= require('./socket')(),
 	Dispositivo 	= clases.Dispositivo,
 	//Socket para comunicacion con servidor Arduino
 	net 			= require('net'),
-	dataStore 		= clases.dataStore;
+	DataStore 		= clases.DataStore;
 	const ON = 0, OFF = 1;
 
 var Arduino = function() {
@@ -118,7 +118,7 @@ var Arduino = function() {
 		load: function() {
 			var This = this;
 			this.lista = [];
-			dataStore.getFile('dispositivos').forEach(function(d) {
+			DataStore.getFile('dispositivos').forEach(function(d) {
 				var disp = new Dispositivo(d.id_disp,d.ip,d.note);
 				disp.setSalidas( d.salidas );
 				This.lista.push(disp);
