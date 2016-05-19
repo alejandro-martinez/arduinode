@@ -18,7 +18,6 @@ module.exports = function()
 		{
 			var socket = new net.Socket();
 			socket.setTimeout(1000);
-			console.log("IP",ip)
 			socket.connect(8000, ip, function(response)
 			{
 				callback(1, socket)
@@ -39,6 +38,7 @@ module.exports = function()
 
 					if (response) {
 						socket.write(params.comando);
+						console.log("Comando",params)
 						socket.on('data',function(_data)
 						{
 							This.data+= _data.toString();

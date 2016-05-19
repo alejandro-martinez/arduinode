@@ -1,5 +1,5 @@
 var socket 		= require('./socket')(),
-	_ = require('underscore'),
+	_ 			= require('underscore'),
 	DateConvert = require('./utils/DateConvert')();
 
 function dataStore() {
@@ -11,6 +11,7 @@ function dataStore() {
 		return this[file];
 	};
 	this.saveDispositivo = function(dispositivo, callback) {
+
 		//Busco el dispositivo, y lo reemplazo por el recibido
 		_.extend(_.findWhere(this.dispositivos, { ip: dispositivo.ip }), dispositivo);
 
@@ -31,17 +32,12 @@ function dataStore() {
 		//Escribo el archivo json
 		this.writeJSON(this.dispositivos,'dispositivos',onWrite);
 	};
-	this.findDispositivo = function(ip) {
-		this.dispositivos.filter( function(disp, k, _this) {
-			if (disp.ip == ip) {
-				return _this[k];
-			}
-		});
-	};
 	this.deleteDispositivo = function(ip, callback) {
+
 		//Actualiza el array, removiendo el dispositivo cuya IP es ip
 		this.dispositivos = _.without(this.dispositivos,
 								_.findWhere(this.dispositivos, {ip: ip}));
+
 		//Escribo el array this.dispositivos en el archivo JSON
 		this.updateFile( function(response) {
 			callback(response)
@@ -57,9 +53,6 @@ function dataStore() {
 			callback(err);
 		});
 	};
-	this.saveTarea = function() {
-
-	};
 };
 
 
@@ -73,18 +66,14 @@ function Dispositivo(_id, _ip, _note) {
 
 Dispositivo.prototype = {
 	getSalidaByNro: function(nro_salida) {
-		var This = this;
-		return this.salidas.filter(function(s,i,_array) {
-			if (s.nro_salida == parseInt(nro_salida)) {
-				s.ip = This.ip;
-				return s;
-			}
-		});
+		var salida = _.findWhere(this.salidas, { nro_salida: parseInt(nro_salida) })
+		salida.ip = this.ip;
+		return salida;
 	},
 	accionarSalida: function(params, callback) {
 		var salida = this.getSalidaByNro( params.nro_salida );
-		if (salida.length) {
-			salida[0].switch( params ,function(response){
+		if (salida) {
+			salida.switch( params ,function(response){
 				callback(response);
 			});
 		}
@@ -124,7 +113,7 @@ Dispositivo.prototype = {
 						nro_salida: parseInt(nro_salida),
 						tipo: tipo,
 						ip: params.ip,
-						note: This.getSalidaByNro(nro_salida)[0].note || params.ip,
+						note: This.getSalidaByNro(nro_salida).note || params.ip,
 						estado: parseInt(estado),
 						temporizada: temporizada
 					});
