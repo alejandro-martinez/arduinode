@@ -1,4 +1,5 @@
 var socket 		= require('./socket')(),
+	_ = require('underscore'),
 	DateConvert = require('./utils/DateConvert')();
 
 function dataStore() {
@@ -10,25 +11,18 @@ function dataStore() {
 		return this[file];
 	};
 	this.saveDispositivo = function(dispositivo, callback) {
-		var This = this;
-		//Modificacion dispositivo existente
-		this.dispositivos.filter( function(disp, k, _this) {
-			if (disp.ip == dispositivo.ip) {
-				//Agrego las modificaciones
-				_this[k] = dispositivo;
-				This.updateFile( function(response){
-					callback(response)
-				});
-			}
-		});
+		//Busco el dispositivo, y lo reemplazo por el recibido
+		_.extend(_.findWhere(this.dispositivos, { ip: dispositivo.ip }), dispositivo);
+
 		//Nuevo dispositivo
 		if (dispositivo.isNew) {
 			delete dispositivo.isNew;
 			this.dispositivos.push( dispositivo );
-			this.updateFile(function(response) {
-				callback(response)
-			});
 		}
+		//Escribo el array this.dispositivos en el archivo JSON
+		this.updateFile(function(response) {
+			callback(response)
+		});
 	};
 	this.updateFile = function(callback) {
 		var onWrite = function(response) {
@@ -37,18 +31,20 @@ function dataStore() {
 		//Escribo el archivo json
 		this.writeJSON(this.dispositivos,'dispositivos',onWrite);
 	};
-	this.deleteDispositivo = function(ip, callback) {
-		var This = this;
-		console.log("ip",ip)
+	this.findDispositivo = function(ip) {
 		this.dispositivos.filter( function(disp, k, _this) {
 			if (disp.ip == ip) {
-				//Elimino el dispositivo
-				_this.splice(k, 1);
-				This.updateFile( function(response){
-					console.log("Write")
-					callback(response)
-				});
+				return _this[k];
 			}
+		});
+	};
+	this.deleteDispositivo = function(ip, callback) {
+		//Actualiza el array, removiendo el dispositivo cuya IP es ip
+		this.dispositivos = _.without(this.dispositivos,
+								_.findWhere(this.dispositivos, {ip: ip}));
+		//Escribo el array this.dispositivos en el archivo JSON
+		this.updateFile( function(response) {
+			callback(response)
 		});
 	};
 	this.writeJSON = function(content, file, callback) {
