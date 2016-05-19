@@ -38,7 +38,6 @@ module.exports = function()
 
 					if (response) {
 						socket.write(params.comando);
-						console.log("Comando",params)
 						socket.on('data',function(_data)
 						{
 							This.data+= _data.toString();
@@ -47,6 +46,7 @@ module.exports = function()
 						socket.on('end', function()
 						{
 							callback(This.data);
+							socket.destroy();
 						});
 					}
 					else {

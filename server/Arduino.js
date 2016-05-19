@@ -1,6 +1,7 @@
 var clases 			= require('./App.js');
 var socket 			= require('./socket')(),
 	DateConvert 		= require('./utils/DateConvert')(),
+	_ 			= require('underscore'),
 	Dispositivo 	= clases.Dispositivo,
 	//Socket para comunicacion con servidor Arduino
 	net 			= require('net'),
@@ -19,7 +20,8 @@ var Arduino = function() {
 					var parsed = data.toString().replace("\r","");
 
 					var salida = Dispositivo.prototype.parseSalida.call(this,
-					{ip:socket.remoteAddress}, parsed.trim());
+								{ip:socket.remoteAddress},
+								parsed.trim());
 					This.dispositivos.sCliente.broadcast.emit('switchBroadcast', salida);
 					socket.end();
 				});
@@ -37,11 +39,8 @@ var Arduino = function() {
 		getAll: function() {
 			return this.lista;
 		},
-		getByIP: function( _ip ) {
-			var disp = this.lista.filter(function(s) {
-				return s.ip == _ip;
-			});
-			return disp[0] || null;
+		getByIP: function(ip) {
+			return _.findWhere(this.lista,{ip: ip});
 		},
 		accionar: function(params, callback) {
 			this.getByIP( params.ip ).accionarSalida(params, function(response) {
@@ -91,7 +90,6 @@ var Arduino = function() {
 				//Si fallo la conexión, aviso al cliente con un array nulo
 				sockets[key].on('error',function(_err)
 				{
-					console.log("Enviando enc de ",item.ip)
 					connectedSuccess = false;
 					if (processed.indexOf(item.ip) < 0) {
 						processed.push(item.ip);

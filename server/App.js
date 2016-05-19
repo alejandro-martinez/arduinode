@@ -122,10 +122,7 @@ Dispositivo.prototype = {
 		}
 	},
 	getSalidasByEstado: function(_estado, _array) {
-		var salidas = _array.filter(function(s) {
-			return s.estado === _estado;
-		})
-		return salidas;
+		return _.where(_array, {estado: _estado});
 	},
 	getSalidas: function(params, callback) {
 		params.comando = 'G';
