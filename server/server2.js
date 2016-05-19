@@ -39,6 +39,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		console.log("Ocurrió un error:", err);
 	});
 
+	//Cargo lista de dispositivos en memoria
 	arduinode.dispositivos.load();
 	programadorTareas.setConfig( serverConfig );
 	programadorTareas.importar();
@@ -52,11 +53,12 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 
 		arduinode.dispositivos.sCliente = sCliente;
 
-		// Crea el socket que recibe comandos de los disp. Arduino
+		// Crea el socket que recibe eventos de los disp. Arduino
 		arduinode.listenSwitchEvents( serverConfig );
 
 		//Accion sobre una salida (Persiana, Luz, Bomba)
-		sCliente.on('accionarSalida', function(params){
+		sCliente.on('accionarSalida', function( params ){
+			console.log("params",params);
 			arduinode.dispositivos.accionar(params, function(response) {
 				sCliente.emit('accionarResponse', response);
 			});
@@ -64,17 +66,11 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 
 		//Devuelve lista de salidas de un dispositivo (con sus estados)
 		sCliente.on('getSalidas', function(params,p) {
-			if (params.page == 'salidasEncendidas') {
-				arduinode.dispositivos.getSalidasEncendidas(function(salidas){
+			var action = "get" + params.page,
+				onData = function(salidas) {
 					sCliente.emit('salidas',salidas);
-				});
-			}
-			else {
-				var disp = arduinode.dispositivos.getByIP(params.ip);
-				disp.getSalidas(params, function(salidas) {
-					sCliente.emit('salidas',salidas);
-				});
-			}
+				};
+			arduinode.dispositivos[action](onData, params);
 		});
 	});
 });

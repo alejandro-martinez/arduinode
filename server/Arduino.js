@@ -47,7 +47,15 @@ var Arduino = function() {
 				callback(response);
 			})
 		},
-		getSalidasEncendidas: function(callback) {
+		getSalidas: function( callback, params ) {
+			var disp = this.getByIP( params.ip ),
+				onData = function(salidas) {
+					callback(salidas);
+				};
+
+			disp.getSalidas(params, onData);
+		},
+		getSalidasEncendidas: function( callback ) {
 
 			var salidasAux = [], sockets = [], processed = [],
 				This = this;

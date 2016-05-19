@@ -170,8 +170,11 @@ function Luz(nro_salida, _note) {
 };
 
 Luz.prototype.switch = function(params, callback) {
-	//params.estado .. Accion sobre la salida (encender o apagar)
-	var comando = this.comando + this.nro_salida + params.estado;
+	var comando = this.comando
+				+ this.nro_salida
+				+ params.estado
+				+ "."
+				+ DateConvert.horario_a_min( params.temporizada );
 	Salida.prototype.switch({comando: comando, ip: this.ip}, function(response){
 		callback(response);
 	});
@@ -183,8 +186,10 @@ function Persiana(nro_salida, _note) {
 	this.comando = 'P';
 };
 
-Persiana.prototype.switch = function(params, callback){
-	var comando = this.comando + this.nro_salida + params.accion;
+Persiana.prototype.switch = function(params, callback) {
+	var comando = this.comando
+				+ this.nro_salida
+				+ params.accion;
 	Salida.prototype.switch({comando: comando, ip: this.ip}, function(response){
 		callback(response);
 	});
