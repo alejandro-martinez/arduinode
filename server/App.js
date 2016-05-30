@@ -6,6 +6,7 @@ function DataStore() {
 	this.reader = require('jsonfile');
 	this.dispositivos = [];
 	this.tareas = [];
+	this.tareasActivas = [];
 	this.getFile = function(file) {
 		this[file] = this.reader.readFileSync('./models/'+file+'.json');
 		return this[file];
@@ -20,17 +21,43 @@ function DataStore() {
 			delete dispositivo.isNew;
 			this.dispositivos.push( dispositivo );
 		}
-		//Escribo el array this.dispositivos en el archivo JSON
-		this.updateFile(function(response) {
+		//Escribo en el archivo JSON
+		this.updateFile('dispositivos',function(response) {
 			callback(response)
 		});
 	};
-	this.updateFile = function(callback) {
+	this.saveTarea = function(tarea, callback) {
+
+		//Obtengo el nuevo id, a partir de la ultima tarea guardada
+		if (tarea.isNew) {
+			if (this.tareas.length) {
+				var last = _.last(this.tareas);
+				tarea.id_tarea = last.id_tarea + 1;
+			}
+			else {
+				tarea.id_tarea = 1;
+			}
+		}
+
+		//Busco la tarea y la reemplazo por la recibida
+		_.extend(_.findWhere(this.tareas, { id_tarea: tarea.id_tarea }), tarea);
+		
+		//Nueva tarea
+		if (tarea.isNew) {
+			this.tareas.push( tarea );
+			delete tarea.isNew;
+		}
+		//Escribo en el archivo JSON
+		this.updateFile('tareas',function(response) {
+			callback(response, tarea)
+		});
+	};
+	this.updateFile = function(file, callback) {
 		var onWrite = function(response) {
 			callback(response);
 		}
 		//Escribo el archivo json
-		this.writeJSON(this.dispositivos,'dispositivos',onWrite);
+		this.writeJSON(this[file], file, onWrite);
 	};
 	this.deleteDispositivo = function(ip, callback) {
 
@@ -39,7 +66,7 @@ function DataStore() {
 								_.findWhere(this.dispositivos, {ip: ip}));
 
 		//Escribo el array this.dispositivos en el archivo JSON
-		this.updateFile( function(response) {
+		this.updateFile('dispositivos',function(response) {
 			callback(response)
 		});
 	};
@@ -72,6 +99,7 @@ Dispositivo.prototype = {
 	},
 	accionarSalida: function(params, callback) {
 		var salida = this.getSalidaByNro( params.nro_salida );
+
 		if (salida) {
 			salida.switch( params ,function(response){
 				callback(response);
@@ -149,18 +177,20 @@ Dispositivo.prototype = {
 
 function Salida(nro_salida, _note, _tipo) {
 	this.nro_salida = nro_salida || null;
-	this.note = _note || null;
-	this.tipo = _tipo || null;
-	this.estado = null;
-	this.accion = null;
-	this.comando = null,
-	this.temporizada = null;
+	this.note 		= _note || null;
+	this.tipo 		= _tipo || null;
+	this.estado 	= null;
+	this.accion 	= null;
+	this.comando 	= null,
+	this.temporizada= null;
 }
 
 Salida.prototype.switch = function(params, callback) {
-	socket.send(params, function(response) {
-		callback(response)
-	});
+	if (params.hasOwnProperty('comando')) {
+		socket.send(params, function(response) {
+			callback(response)
+		});
+	}
 };
 
 function Luz(nro_salida, _note) {
@@ -174,21 +204,20 @@ Luz.prototype.switch = function(params, callback) {
 				+ this.nro_salida
 				+ params.estado
 				+ "."
-				+ DateConvert.horario_a_min( params.temporizada );
+				+ params.temporizada;
 	var onSwitchResponse = function(response) {
 		callback(response);
 	}
 	Salida.prototype.switch({
 		comando: comando,
-		ip: this.ip},
-		onSwitchResponse
+		ip: this.ip
+	}, onSwitchResponse
 	);
 };
 
 function Persiana(nro_salida, _note) {
 	Salida.apply(this,[nro_salida, _note]);
-	this.tipo = 'P';
-	this.comando = 'P';
+	this.tipo = this.comando = 'P';
 };
 
 Persiana.prototype.switch = function(params, callback) {
@@ -200,7 +229,8 @@ Persiana.prototype.switch = function(params, callback) {
 	}
 	Salida.prototype.switch({
 		comando: comando,
-		ip: this.ip},
+		ip: this.ip
+	},
 		onSwitchResponse
 	);
 };

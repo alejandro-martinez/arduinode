@@ -1237,7 +1237,8 @@ function($http,
 		dia_inicio: 1,
 		dia_fin: 1,
 		accion: 0,
-		activa: 1
+		activa: 1,
+		isNew: true
 	}
 
 	var params 				   = $params.params || def_model;

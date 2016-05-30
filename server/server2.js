@@ -36,21 +36,25 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	//Captura excepciones para no detener el servidor
 	process.on('uncaughtException', function (err)
 	{
-		console.log("Ocurrió un error:", err);
+	//	console.log("Ocurrió un error:", err);
 	});
 
 	//Cargo lista de dispositivos en memoria
 	arduinode.dispositivos.load();
-	programadorTareas.setConfig( serverConfig );
-	programadorTareas.importar();
 
-	//	Continua programacion de tareas en caso de falla
+	//Carga listado de tareas en memoria
+	programadorTareas.setConfig( serverConfig );
+	programadorTareas.loadTareas();
 	programadorTareas.observarCambios();
+
+	// Servicio que continua la programación de tareas en caso de falla
+	//programadorTareas.observarCambios();
 
 	//Se dispara cuando un cliente se conecta
 	io.on('connection', function( sCliente )
 	{
 
+		programadorTareas.sCliente = sCliente;
 		arduinode.dispositivos.sCliente = sCliente;
 
 		// Crea el socket que recibe eventos de los disp. Arduino
@@ -58,7 +62,6 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 
 		//Accion sobre una salida (Persiana, Luz, Bomba)
 		sCliente.on('accionarSalida', function( params ){
-			console.log("params",params);
 			arduinode.dispositivos.accionar(params, function(response) {
 				sCliente.emit('accionarResponse', response);
 			});

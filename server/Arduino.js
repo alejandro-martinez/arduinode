@@ -31,7 +31,7 @@ var Arduino = function() {
 				host: conf.ip,
 				port: conf.port + 1
 			},function() {
-				console.log('Socket escuchando arduinos en:'conf.ip,conf.port+1)
+				console.log('Socket escuchando arduinos en:'+conf.ip,conf.port+1)
 			});
 		}
 	};

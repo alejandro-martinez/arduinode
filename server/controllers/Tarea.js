@@ -6,27 +6,27 @@ module.exports = function( app )
 	//Devuelve todos las tareas
 	app.get('/tareas', function(req, res)
 	{
-		res.json(DataStore.getTareas())
+		res.json(DataStore.tareas)
 	});
 
 	//Crea o modifica tareas
 	app.post('/tarea/save', function(req, res)
 	{
-		DataStore.saveTarea(req.body, function(response, params)
+		DataStore.saveTarea(req.body, function(response, tarea)
 		{
-			programadorTareas.socketClient.emit('tareasChanged');
-			if (req.body.id_tarea === 9999)
-			{
-				programadorTareas.importar();
+		//	programadorTareas.sCliente.emit('tareasChanged');
+			// Nueva tarea, agregar al scheduler
+			if (req.body.isNew) {
+				// Creo objeto tarea, parseando la configuracion
+				programadorTareas.loadTareas();
 			}
-			else
-			{
-				programadorTareas.reprogramarTarea(params.tarea);
+			// Tarea existente, se reprograma
+			else {
+				programadorTareas.reprogramarTarea(tarea);
 			}
 			res.json(response);
 		});
 	});
-
 	//Eliminar
 	app.post('/tarea/delete', function(req, res)
 	{

@@ -153,7 +153,6 @@ module.exports = function()
 				horaFinal.setDate( horaFinal.getDate() -1 )
 
 			}
-
 			return ( horaActual >= horaInicial && horaActual <= horaFinal );
 		},
 		minutosRestantes: function(horaIni, duracion)
