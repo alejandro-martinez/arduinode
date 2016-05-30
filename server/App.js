@@ -41,7 +41,7 @@ function DataStore() {
 
 		//Busco la tarea y la reemplazo por la recibida
 		_.extend(_.findWhere(this.tareas, { id_tarea: tarea.id_tarea }), tarea);
-		
+
 		//Nueva tarea
 		if (tarea.isNew) {
 			this.tareas.push( tarea );
@@ -200,6 +200,7 @@ function Luz(nro_salida, _note) {
 };
 
 Luz.prototype.switch = function(params, callback) {
+	console.log("params",params)
 	var comando = this.comando
 				+ this.nro_salida
 				+ params.estado
