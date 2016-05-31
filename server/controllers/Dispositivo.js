@@ -28,13 +28,16 @@ module.exports = function(app)
 	});
 
 		//Crea o modifica dispositivos
-	app.get('/dispositivo/delete/:ip', function(req, res)
+	app.get('/dispositivo/delete/:id_disp', function(req, res)
 	{
-		DataStore.deleteDispositivo(req.params.ip, function(err, file)
+		var onDelete = function(err)
 		{
 			//Recargo dispositivos en memoria
 			arduinode.dispositivos.load();
 			res.json(err || DataStore.dispositivos );
-		});
+		};
+		DataStore.deleteModel('dispositivos',{
+			id_disp: parseInt( req.params.id_disp )
+		}, onDelete);
 	});
 }

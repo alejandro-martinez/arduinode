@@ -34,30 +34,26 @@ function DataStore() {
 		else {
 			//Busco el modelo, y lo reemplazo por el recibido
 			var filter = {};
-			filter[key] = model[key];
+				filter[key] = model[key];
 			_.extend(_.findWhere(this[fileName], filter ), model);
 		}
 		this.updateFile(fileName,function(response) {
 			callback(response, model)
 		});
 	};
-
 	this.updateFile = function(file, callback) {
-		console.log("guardando")
 		var onWrite = function(err) {
 			callback(err);
 		}
 		//Escribo el archivo json
 		this.reader.writeFile('./models/'+file+'.json', this[file], onWrite);
 	};
-	this.deleteDispositivo = function(ip, callback) {
+	this.deleteModel = function(fileName, filter, callback) {
 
-		//Actualiza el array, removiendo el dispositivo cuya IP es ip
-		this.dispositivos = _.without(this.dispositivos,
-								_.findWhere(this.dispositivos, {ip: ip}));
+		//Actualiza el array, removiendo el modelo que coincide con filter
+		this[fileName] = _.without(this[fileName],_.findWhere(this[fileName], filter));
 
-		//Escribo el array this.dispositivos en el archivo JSON
-		this.updateFile('dispositivos',function(response) {
+		this.updateFile(fileName,function(response) {
 			callback(response)
 		});
 	};
@@ -181,7 +177,6 @@ function Luz(nro_salida, _note) {
 };
 
 Luz.prototype.switch = function(params, callback) {
-	console.log("params",params)
 	var comando = this.comando
 				+ this.nro_salida
 				+ params.estado
@@ -190,11 +185,7 @@ Luz.prototype.switch = function(params, callback) {
 	var onSwitchResponse = function(response) {
 		callback(response);
 	}
-	Salida.prototype.switch({
-		comando: comando,
-		ip: this.ip
-	}, onSwitchResponse
-	);
+	Salida.prototype.switch({ comando: comando, ip: this.ip}, onSwitchResponse);
 };
 
 function Persiana(nro_salida, _note) {
@@ -209,12 +200,7 @@ Persiana.prototype.switch = function(params, callback) {
 	var onSwitchResponse = function(response) {
 		callback(response);
 	}
-	Salida.prototype.switch({
-		comando: comando,
-		ip: this.ip
-	},
-		onSwitchResponse
-	);
+	Salida.prototype.switch({ comando: comando, ip: this.ip},onSwitchResponse);
 };
 
 function SalidaFactory() {
@@ -231,10 +217,6 @@ function SalidaFactory() {
 exports.Dispositivo = Dispositivo;
 
 DataStore.instance = null;
-
-/**
- * Singleton getInstance definition
- */
 DataStore.getInstance = function(){
     if(this.instance === null){
         this.instance = new DataStore();

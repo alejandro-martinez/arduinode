@@ -12,7 +12,6 @@ module.exports = function( app )
 	//Crea o modifica tareas
 	app.post('/tarea/save', function(req, res)
 	{
-		console.log("guardando")
 		DataStore.saveModel('tareas',req.body,'id_tarea', function(response, tarea)
 		{
 		//	programadorTareas.sCliente.emit('tareasChanged');
