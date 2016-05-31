@@ -372,7 +372,6 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 		});
 
 		$rootScope.socket.on('horaServidor', function(hora) {
-			console.log("Hora")
 			$rootScope.horaServidor = hora;
 		})
 	}
@@ -1125,9 +1124,9 @@ function($http,
 			}
 		},
 		// Elimina una tarea
-		remove: function(tarea)
+		remove: function( id )
 		{
-			$http.post('/tarea/delete/',tarea).then(function(response)
+			$http.post('/tarea/delete',{id: id}).then(function(response)
 			{
 				if (response.data == null)
 				{
@@ -1438,7 +1437,7 @@ function($http,
 	// Elimina una tarea
 	$scope.deleteTarea = function()
 	{
-		Tarea.remove( $scope.tarea );
+		Tarea.remove( $scope.tarea.id_tarea );
 	}
 
 	// Control de checkbox de selección de dias de ejecución

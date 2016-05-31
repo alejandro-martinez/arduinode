@@ -30,10 +30,11 @@ module.exports = function( app )
 	//Eliminar
 	app.post('/tarea/delete', function(req, res)
 	{
-		DataStore.deleteTarea(req.body,
-		function(response)
+		console.log(req.body)
+		DataStore.deleteModel('tareas',{id_tarea: req.body.id}, function(response)
 		{
-			programadorTareas.apagarTarea(req.body.id_tarea);
+			//Detiene la tarea, (si estaba ejecutandose), y la quita del scheduler
+			programadorTareas.quitarTarea(req.body);
 			res.json(response);
 		});
 	});

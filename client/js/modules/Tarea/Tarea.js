@@ -56,9 +56,9 @@ function($http,
 			}
 		},
 		// Elimina una tarea
-		remove: function(tarea)
+		remove: function( tarea )
 		{
-			$http.post('/tarea/delete/',tarea).then(function(response)
+			$http.post('/tarea/delete',{tarea: tarea}).then(function(response)
 			{
 				if (response.data == null)
 				{
