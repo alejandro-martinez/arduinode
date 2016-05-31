@@ -309,7 +309,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 				$scope.salidas.push(params);
 				$scope.$digest();
 			}
-
 		}
 
 		/*$('.clockpicker').clockpicker({autoclose: true});
