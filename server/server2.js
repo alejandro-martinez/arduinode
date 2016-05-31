@@ -64,6 +64,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		sCliente.on('accionarSalida', function( params ){
 			arduinode.dispositivos.accionar(params, function(response) {
 				sCliente.emit('accionarResponse', response);
+				sCliente.broadcast.emit('switchBroadcast', params);
 			});
 		});
 
