@@ -1124,9 +1124,9 @@ function($http,
 			}
 		},
 		// Elimina una tarea
-		remove: function( id )
+		remove: function( tarea )
 		{
-			$http.post('/tarea/delete',{id: id}).then(function(response)
+			$http.post('/tarea/delete',{tarea: tarea}).then(function(response)
 			{
 				if (response.data == null)
 				{
@@ -1437,7 +1437,7 @@ function($http,
 	// Elimina una tarea
 	$scope.deleteTarea = function()
 	{
-		Tarea.remove( $scope.tarea.id_tarea );
+		Tarea.remove( $scope.tarea );
 	}
 
 	// Control de checkbox de selección de dias de ejecución

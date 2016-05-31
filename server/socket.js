@@ -24,7 +24,7 @@ module.exports = function()
 			})
 			socket.on('timeout',function(_err)
 			{
-				console.log("Timeout",_err)
+				callback();
 			});
 		},
 		//Envia comando al socket. Viene en params.command
@@ -37,7 +37,6 @@ module.exports = function()
 				this.connect(params.ip, function(response, socket){
 
 					if (response) {
-						console.log("PArams",params)
 						socket.write(params.comando);
 						socket.on('data',function(_data)
 						{

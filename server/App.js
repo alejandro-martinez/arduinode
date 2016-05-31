@@ -59,9 +59,7 @@ function DataStore() {
 	};
 };
 
-
 function Dispositivo(_id, _ip, _note) {
-
 	this.id_disp = _id || null;
 	this.ip = _ip || null;
 	this.note = _note || null;
@@ -79,6 +77,7 @@ Dispositivo.prototype = {
 
 		if (salida) {
 			salida.switch( params ,function(response){
+				console.log("response",response)
 				callback(response);
 			});
 		}
@@ -142,7 +141,7 @@ Dispositivo.prototype = {
 		if (_salidas.length) {
 			_salidas.forEach(function(s) {
 				var factory = new SalidaFactory();
-				var salida = factory.create(s.nro_salida,s.tipo, s.note);
+				var salida = factory.create( s.nro_salida,s.tipo, s.note );
 				This.salidas.push( salida);
 			});
 		}
@@ -164,7 +163,7 @@ function Salida(nro_salida, _note, _tipo) {
 
 Salida.prototype.switch = function(params, callback) {
 	if (params.hasOwnProperty('comando')) {
-		socket.send(params, function(response) {
+		socket.send(params, function(response, timeout) {
 			callback(response)
 		});
 	}
@@ -194,13 +193,11 @@ function Persiana(nro_salida, _note) {
 };
 
 Persiana.prototype.switch = function(params, callback) {
-	var comando = this.comando
-				+ this.nro_salida
-				+ params.accion;
+	var comando = this.comando + this.nro_salida + params.accion;
 	var onSwitchResponse = function(response) {
 		callback(response);
 	}
-	Salida.prototype.switch({ comando: comando, ip: this.ip},onSwitchResponse);
+	Salida.prototype.switch({ comando: comando, ip: this.ip}, onSwitchResponse);
 };
 
 function SalidaFactory() {

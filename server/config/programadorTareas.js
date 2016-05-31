@@ -9,9 +9,7 @@ function Tarea(config) {
 	this.config = config;
 }
 Tarea.prototype = {
-	remove	 	: function() {},
 	parseConfig	: function() {
-
 		var t = this.config;
 		this.config = {
 			id_tarea: 		t.id_tarea,
@@ -33,7 +31,7 @@ Tarea.prototype = {
 		//Setea reglas de ejecucion para el Scheduler
 		this.setExecutionRules();
 	},
-	ejecutar: function(tarea) {
+	ejecutar: function(callback) {
 		var This = this,
 			i = 0,
 		loop = function(i) {
@@ -48,14 +46,20 @@ Tarea.prototype = {
 				loop(i);
 			});
 		}
-		loop(i);
+		if (This.config.dispositivos.length > i) {
+			loop(i);
+		}
+		//Termino de iterar los dispositivos de la tarea
+		else {
+			if (callback) callback();
+		}
 	},
 	setExecutionRules: function() {
-		var rule = new schedule.RecurrenceRule();
-		rule.dayOfWeek 	= this.config.dias_ejecucion;
-		rule.second 	= 0;
-		rule.hour 		= parseInt(this.config.hora_ini);
-		rule.minute 	= parseInt(this.config.min_ini);
+		var rule 			= new schedule.RecurrenceRule();
+		rule.dayOfWeek 		= this.config.dias_ejecucion;
+		rule.second 		= 0;
+		rule.hour 			= parseInt( this.config.hora_ini );
+		rule.minute 		= parseInt( this.config.min_ini );
 		this.executionRules = rule;
 		return rule;
 	},
@@ -99,19 +103,28 @@ var Programador = function()
 		this.reprogramarTarea = function(_tarea)
 		{
 			//Elimino la tarea de tareas en ejecucion
-			DataStore.tareasActivas.forEach(function(s,k,_this) {
-
-				if (s.id == _tarea.id_tarea) {
-					delete _this[k];
-				}
-			});
+			this.quitarTareaEnEjecucion( _tarea);
 			//Añado la tarea actualizada, al scheduler
 			var tarea = new Tarea(_tarea);
 			tarea.parseConfig();
 			this.loadInScheduler(tarea);
 		};
-		this.quitarTarea = function(tarea) {
-			console.log("Removiendo tarea de scheduler",tarea)
+		this.quitarTareaEnEjecucion = function( tarea ) {
+			DataStore.tareasActivas.forEach(function(s,k,_this) {
+				if (s.id == tarea.id_tarea) {
+					delete _this[k];
+				}
+			});
+		};
+		this.quitarTarea = function(_tarea) {
+			//Ejecuta comandos de apagado en los dispositivos de la tarea
+			_tarea.accion = 1;
+			var tarea = new Tarea(_tarea);
+			tarea.parseConfig();
+
+			tarea.ejecutar(function() {
+				this.quitarTareaEnEjecucion( _tarea);
+			});
 		};
 		this.loadInScheduler = function( tarea )
 		{
@@ -119,7 +132,6 @@ var Programador = function()
 
 			//Chequeo si la tarea es valida para ejecutarse en este momento
 			// y si la accion de la misma es Encendido (las de Apagado no se forzan)
-
 			if (tarea.isValid()) {
 				this.forzarEjecucion(tarea);
 			}
@@ -153,36 +165,6 @@ var Programador = function()
 				console.log("La tarea '" + t.config.descripcion + "' es de apagado, no se obliga la ejecucion");
 			}
 		};
-
-		/*this.ejecutarTarea = function(params, accion)
-		{
-			if (params.hasOwnProperty('dispositivos'))
-			{
-				var numDispositivos = params.dispositivos.length,
-					i = 0;
-
-				var loopDispositivos = function(i) {
-					var d = params.dispositivos[i];
-
-					d.noError = true;
-					d.estado = accion || params.accion;
-					d.temporizada = params.temporizada;
-
-					socketArduino.switchSalida(d, function(response)
-					{
-						if (response === null)
-						{
-							console.log("ERROR: No se puede llegar a:",d.ip);
-						}
-						i++;
-						if (i < numDispositivos) {
-							loopDispositivos(i);
-						}
-					});
-				}
-				loopDispositivos(i);
-			}
-		};*/
 		this.observarCambios = function()
 		{
 			var This = this;
@@ -222,10 +204,6 @@ var Programador = function()
 }
 
 Programador.instance = null;
-
-/**
- * Singleton getInstance definition
- */
 Programador.getInstance = function(){
     if(this.instance === null){
         this.instance = new Programador();
