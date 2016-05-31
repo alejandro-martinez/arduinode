@@ -372,6 +372,7 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 		});
 
 		$rootScope.socket.on('horaServidor', function(hora) {
+			console.log("Hora")
 			$rootScope.horaServidor = hora;
 		})
 	}

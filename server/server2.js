@@ -1,32 +1,30 @@
 //Dependencias
-var arduinode = arduinode || {},
+var arduinode 			= arduinode || {},
 	express 			= require('express'),
 	app 				= express(),
-	//Lib para interceptar requests a Socket.IO y enviar hora del servidor
-	socketListen 		= null,
-	middleware 			= require('socketio-wildcard')(),
-	serverInfo 			= {host: "localhost", port:8888 },
 	fs					= require('fs'),
-	compress 			= require('compression');
-	app.use(compress());
-	var http 			= require('http').Server(app),
+	compress 			= require('compression'),
+	http 				= require('http').Server(app),
 	programadorTareas 	= require('./config/programadorTareas'),
-	serverConfig 		= {},
-	// Configuración servidor Express
 	expressConfig 		= require('./config/config').config(app, express),
-	io 					= require('socket.io')(http),
 	arduinode			= require('./Arduino');
-	//Carga de controladores
+	middleware 			= require('socketio-wildcard')(),
+	io 					= require('socket.io')(http),
 	require('./controllers')(app);
 
-//Crea o trae el archivo de configuracion para el servidor y Programador de tareas
-var path = './config/config.json';
-if (!fs.existsSync(path))
-{
-	fs.writeFileSync(path, '{"ip":"localhost","port":8888, "tiempoEscaneoTareas":300000}');
-}
+	app.use(compress());
 
-var serverConfig = require(path);
+var serverConfig = {},
+	serverInfo	 = { host: "localhost", port:8888 },
+	configPath 	 = './config/config.json'
+
+
+//Crea o trae el archivo de configuracion para el servidor y Programador de tareas
+if (!fs.existsSync(configPath))
+{
+	fs.writeFileSync(configPath, '{"ip":"localhost","port":8888, "tiempoEscaneoTareas":300000}');
+}
+var serverConfig = require(configPath);
 
 //Server HTTP
 http.listen(serverConfig.port, serverConfig.ip, function()
@@ -42,22 +40,23 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	//Cargo lista de dispositivos en memoria
 	arduinode.dispositivos.load();
 
-	//Carga listado de tareas en memoria
+	//Carga lista de tareas en memoria
 	programadorTareas.setConfig( serverConfig );
 	programadorTareas.loadTareas();
+
+	//Servicio que continua la ejecución de tareas en caso de falla
 	programadorTareas.observarCambios();
 
-	// Servicio que continua la programación de tareas en caso de falla
-	//programadorTareas.observarCambios();
+	//Registra middleware para capturar requests y enviar la hora del server
+	io.use(middleware);
 
-	//Se dispara cuando un cliente se conecta
+	//Conexión de un cliente
 	io.on('connection', function( sCliente )
 	{
-
-		programadorTareas.sCliente = sCliente;
+		programadorTareas.sCliente 		= sCliente;
 		arduinode.dispositivos.sCliente = sCliente;
 
-		// Crea el socket que recibe eventos de los disp. Arduino
+		//Crea socket que recibe eventos de los disp. Arduino
 		arduinode.listenSwitchEvents( serverConfig );
 
 		//Accion sobre una salida (Persiana, Luz, Bomba)
@@ -75,6 +74,11 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 					sCliente.emit('salidas',salidas);
 				};
 			arduinode.dispositivos[action](onData, params);
+		});
+
+		//Envia la hora del servidor en cada request Socket.IO
+		sCliente.on('*', function() {
+			sCliente.emit('horaServidor', new Date().getTime());
 		});
 	});
 });

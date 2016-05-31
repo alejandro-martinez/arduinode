@@ -1,41 +1,37 @@
-var clases 			= require('./App.js');
-var socket 			= require('./socket')(),
-	DateConvert 		= require('./utils/DateConvert')(),
+var clases 		= require('./App.js'),
+	socket 		= require('./socket')(),
+	DateConvert = require('./utils/DateConvert')(),
 	_ 			= require('underscore'),
-	Dispositivo 	= clases.Dispositivo,
-	//Socket para comunicacion con servidor Arduino
-	net 			= require('net'),
-	DataStore 		= clases.DataStore;
+	Dispositivo = clases.Dispositivo,
+	DataStore 	= clases.DataStore,
+	net 		= require('net');
 	const ON = 0, OFF = 1;
 
 var Arduino = function() {
 	this.socketTCP = null;
 	this.listenSwitchEvents = function( conf ) {
-
+		var This = this;
 		// Crea el socket que recibe comandos de los disp. Arduino
 		if (!this.socketTCP) {
 
 			this.socketTCP = net.createServer(function( socket ) {
 				socket.on('data', function( data ) {
 					var parsed = data.toString().replace("\r","");
-
-					var salida = Dispositivo.prototype.parseSalida.call(this,
-								{ip:socket.remoteAddress},
-								parsed.trim());
+						salida = Dispositivo.prototype.parseSalida.call(
+										this,
+										{ ip: socket.remoteAddress },
+										parsed.trim()
+								 );
 					This.dispositivos.sCliente.broadcast.emit('switchBroadcast', salida);
 					socket.end();
 				});
 			});
 
-			this.socketTCP.listen({
-				host: conf.ip,
-				port: conf.port + 1
-			},function() {
+			this.socketTCP.listen({ host: conf.ip, port: conf.port + 1 }, function() {
 				console.log('Socket escuchando arduinos en:'+conf.ip,conf.port+1)
 			});
 		}
 	};
-	//Listado de dispositivos
 	this.dispositivos = {
 		sCliente: null,
 		lista: [],
@@ -46,39 +42,36 @@ var Arduino = function() {
 		getByIP: function(ip) {
 			return _.findWhere(this.lista,{ip: ip});
 		},
-		accionar: function(params, callback) {
-			var This = this;
-			this.getByIP( params.ip ).accionarSalida(params, function(response) {
+		accionar: function( params, callback ) {
+			this.getByIP( params.ip ).accionarSalida( params, function(response) {
 				callback(response);
-			})
+			});
 		},
 		getSalidas: function( callback, params ) {
 			var disp = this.getByIP( params.ip ),
 				onData = function(salidas) {
 					callback(salidas);
 				};
-
 			disp.getSalidas(params, onData);
 		},
 		getSalidasEncendidas: function( callback ) {
 
-			var salidasAux = [], sockets = [], processed = [],
-				This = this;
-			var emit = function(data) {
-				This.sCliente.emit('salidasEncendidas', data);
-			}
+			var salidasAux = [], sockets = [], processed = [], This = this,
+				emit = function(data) {
+					This.sCliente.emit('salidasEncendidas', data);
+				};
 			this.lista.forEach(function(item, key, array)
 			{
 				item.buffer = "";
 				var salidas,
-				connectedSuccess = false,
-				encendidas = [],
-				params = {
-					noError: true,
-					ip: item.ip,
-					id_disp: item.id_disp,
-					filterByEstado: '0'
-				}
+					connectedSuccess = false,
+					encendidas = [],
+					params = {
+						noError: true,
+						ip: item.ip,
+						id_disp: item.id_disp,
+						filterByEstado: '0'
+					};
 
 				sockets[key] = new net.Socket();
 				sockets[key].setTimeout(1000);
@@ -124,7 +117,7 @@ var Arduino = function() {
 			var This = this;
 			this.lista = [];
 			DataStore.getFile('dispositivos').forEach(function(d) {
-				var disp = new Dispositivo(d.id_disp, d.ip, d.note);
+				var disp = new Dispositivo( d.id_disp, d.ip, d.note );
 				disp.setSalidas( d.salidas );
 				This.lista.push(disp);
 			});
@@ -133,11 +126,6 @@ var Arduino = function() {
 }
 
 Arduino.instance = null;
-
-/**
- * Singleton getInstance definition
- */
-
 Arduino.getInstance = function(){
     if(this.instance === null){
         this.instance = new Arduino();
