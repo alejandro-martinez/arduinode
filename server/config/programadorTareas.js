@@ -99,13 +99,16 @@ var Programador = function()
 		this.reprogramarTarea = function(_tarea)
 		{
 			console.log("Reprogramando tarea");
-
+			console.log("tarea",_tarea);
 			//Elimino la tarea de tareas en ejecucion
+			console.log("Activas",DataStore.tareasActivas)
 			DataStore.tareasActivas.forEach(function(s,k,_this) {
+
 				if (s.id == _tarea.id_tarea) {
 					delete _this[k];
 				}
 			});
+			console.log("deleted")
 			//Añado la tarea actualizada, al scheduler
 			// Creo objeto tarea, parseando la configuracion
 			var tarea = new Tarea(_tarea);

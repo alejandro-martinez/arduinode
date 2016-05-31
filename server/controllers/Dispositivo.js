@@ -19,7 +19,7 @@ module.exports = function(app)
 	//Crea o modifica dispositivos
 	app.post('/dispositivo/save', function(req, res)
 	{
-		DataStore.saveDispositivo(req.body, function(err)
+		DataStore.saveModel('dispositivos',req.body,'ip', function(err)
 		{
 			//Recargo dispositivos en memoria
 			arduinode.dispositivos.load();

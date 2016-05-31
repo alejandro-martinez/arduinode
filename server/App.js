@@ -1,63 +1,54 @@
 var socket 		= require('./socket')(),
-	_ 			= require('underscore'),
-	DateConvert = require('./utils/DateConvert')();
+	DateConvert = require('./utils/DateConvert')(),
+	_ 			= require('underscore');
 
 function DataStore() {
-	this.reader = require('jsonfile');
+	this.reader 	  = require('jsonfile');
 	this.dispositivos = [];
-	this.tareas = [];
-	this.tareasActivas = [];
+	this.tareas 	  = [];
+	this.tareasActivas= [];
 	this.getFile = function(file) {
 		this[file] = this.reader.readFileSync('./models/'+file+'.json');
 		return this[file];
 	};
-	this.saveDispositivo = function(dispositivo, callback) {
-
-		//Busco el dispositivo, y lo reemplazo por el recibido
-		_.extend(_.findWhere(this.dispositivos, { ip: dispositivo.ip }), dispositivo);
-
-		//Nuevo dispositivo
-		if (dispositivo.isNew) {
-			delete dispositivo.isNew;
-			this.dispositivos.push( dispositivo );
+	this.lastID = function( tarea ) {
+		var id_tarea;
+		if (this.tareas.length) {
+			var last = _.last(this.tareas);
+			id_tarea= last.id_tarea + 1;
 		}
-		//Escribo en el archivo JSON
-		this.updateFile('dispositivos',function(response) {
-			callback(response)
+		else {
+			id_tarea = 1;
+		}
+		return id_tarea;
+	};
+	this.saveModel = function(fileName, model, key, callback) {
+		//Nuevo
+		if (model.isNew) {
+			delete model.isNew;
+			if (fileName == 'tareas') {
+				model[key] = this.lastID();
+			}
+			this[fileName].push( model );
+		}
+		else {
+			//Busco el modelo, y lo reemplazo por el recibido
+			var filter = {};
+			filter[key] = model[key];
+			_.extend(_.findWhere(this[fileName], filter ), model);
+		}
+		this.updateFile(fileName,function(response) {
+			callback(response, model)
 		});
 	};
-	this.saveTarea = function(tarea, callback) {
 
-		//Obtengo el nuevo id, a partir de la ultima tarea guardada
-		if (tarea.isNew) {
-			if (this.tareas.length) {
-				var last = _.last(this.tareas);
-				tarea.id_tarea = last.id_tarea + 1;
-			}
-			else {
-				tarea.id_tarea = 1;
-			}
-		}
-
-		//Busco la tarea y la reemplazo por la recibida
-		_.extend(_.findWhere(this.tareas, { id_tarea: tarea.id_tarea }), tarea);
-
-		//Nueva tarea
-		if (tarea.isNew) {
-			this.tareas.push( tarea );
-			delete tarea.isNew;
-		}
-		//Escribo en el archivo JSON
-		this.updateFile('tareas',function(response) {
-			callback(response, tarea)
-		});
-	};
 	this.updateFile = function(file, callback) {
-		var onWrite = function(response) {
-			callback(response);
+		console.log("guardando")
+		var onWrite = function(err) {
+			callback(err);
 		}
 		//Escribo el archivo json
-		this.writeJSON(this[file], file, onWrite);
+		this.reader.writeFile('./models/'+file+'.json', this[file], onWrite);
 	};
 	this.deleteDispositivo = function(ip, callback) {
 
@@ -68,16 +59,6 @@ function DataStore() {
 		//Escribo el array this.dispositivos en el archivo JSON
 		this.updateFile('dispositivos',function(response) {
 			callback(response)
-		});
-	};
-	this.writeJSON = function(content, file, callback) {
-		var This = this;
-		this.reader.writeFile('./models/'+file+'.json', content, function(err) {
-			//Actualizo el archivo en memoria
-			if (!err) {
-				This[file] = content;
-			}
-			callback(err);
 		});
 	};
 };
