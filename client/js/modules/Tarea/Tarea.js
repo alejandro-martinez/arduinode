@@ -139,7 +139,7 @@ function($http,
 		$scope.duplicateTarea = function(tarea)
 		{
 			// Setea la fecha de la tarea duplicada
-			tarea.id_tarea = -1;
+			tarea.isNew = true;
 			tarea.dia_inicio = tarea.dia_fin;
 			tarea.mes_inicio = tarea.mes_fin;
 

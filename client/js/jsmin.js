@@ -453,15 +453,12 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		save: function( salidaNew, callback)
 		{
 			var This = this;
-			console.log("get",salidaNew)
 			DispositivoFct.get(salidaNew, function(disp) {
-				console.log("iterando")
 				disp.salidas.forEach(function(s,k, _this) {
 					if (s.nro_salida == salidaNew.nro_salida) {
 						_this[k].note = salidaNew.note;
 					}
 				});
-				console.log("Guardando",disp)
 				callback( DispositivoFct.save(disp) );
 			});
 		},
@@ -588,7 +585,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		$scope.showDispositivos = $scope.showSalidas = false;
 		SocketIO.listen('salidas', function(salidas)
 		{
-			console.log(salidas)
 			$scope.ipDispositivo = salidas[0].ip;
 			$scope.salidas = (salidas.length)
 						? salidas
@@ -598,7 +594,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		SocketIO.listen('salidasEncendidas', function(salidas)
 		{
 			if (params.page == 'SalidasEncendidas') {
-				console.log("salidas",salidas)
 				i = 0;
 				// Resetea el contador de dispositivos procesados
 				// y el buffer de salidas recibidas
@@ -670,7 +665,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		//Guarda descripcion de salida editada
 		$scope.save = function(salida)
 		{
-			console.log("save")
 			$scope.salida.ip = $scope.ipDispositivo;
 			Salida.save( $scope.salida, function(response)
 			{
@@ -1174,7 +1168,7 @@ function($http,
 		$scope.duplicateTarea = function(tarea)
 		{
 			// Setea la fecha de la tarea duplicada
-			tarea.id_tarea = -1;
+			tarea.isNew = true;
 			tarea.dia_inicio = tarea.dia_fin;
 			tarea.mes_inicio = tarea.mes_fin;
 
