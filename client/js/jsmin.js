@@ -588,6 +588,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		$scope.showDispositivos = $scope.showSalidas = false;
 		SocketIO.listen('salidas', function(salidas)
 		{
+			console.log(salidas)
 			$scope.ipDispositivo = salidas[0].ip;
 			$scope.salidas = (salidas.length)
 						? salidas
@@ -652,7 +653,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		// Se dispara al hacer click en el titulo superior
 		$scope.refresh = function()
 		{
-			$scope.salidas = [];
 			SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
 		}
 
