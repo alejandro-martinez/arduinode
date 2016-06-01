@@ -77,7 +77,6 @@ Dispositivo.prototype = {
 
 		if (salida) {
 			salida.switch( params ,function(response){
-				console.log("response",response)
 				callback(response);
 			});
 		}
@@ -85,6 +84,7 @@ Dispositivo.prototype = {
 	parseSalida: function(params, _data ) {
 		This = this;
 		if (_data.length > 0) {
+		
 			var parsed = [],
 				salidasParsed = [];
 
@@ -94,33 +94,26 @@ Dispositivo.prototype = {
 			else {
 				salidasParsed = _data.split("\n");
 			}
+
 			salidasParsed.forEach(function(str) {
-				var posGuion = str.indexOf("-"),
-					posDospuntos = str.indexOf(":"),
-					posPunto = str.indexOf(".");
-					switch (str[0])
-					{
-						case 'B':
-						case 'L':
-						case 'P':
-							var nro_salida = str[posGuion+1] + str[posGuion+2],
-								estado = str[posDospuntos+1],
-								tipo = str[0];
-								if (posPunto > -1) {
-									var temporizada = DateConvert.min_a_horario(str.substr( posPunto + 1));
-								}
-							break;
-						default:
-							return;
+				if (str.length) {
+					var posGuion 	= str.indexOf("-"),
+						posDospuntos= str.indexOf(":"),
+						posPunto 	= str.indexOf("."),
+						nro_salida 	= str[posGuion+1] + str[posGuion+2];
+
+					if (posPunto > -1) {
+						var temporizada = DateConvert.min_a_horario(str.substr( posPunto + 1));
 					}
 					parsed.push({
 						nro_salida: parseInt(nro_salida),
-						tipo: tipo,
+						tipo: str[0],
 						ip: params.ip,
 						note: This.getSalidaByNro(nro_salida).note || params.ip,
-						estado: parseInt(estado),
+						estado: parseInt( str[posDospuntos+1] ),
 						temporizada: temporizada
 					});
+				}
 			});
 			return parsed;
 		}
