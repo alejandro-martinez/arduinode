@@ -22,7 +22,7 @@ function DataStore() {
 		}
 		return id_tarea;
 	};
-	this.saveModel = function(fileName, model, key, callback) {
+	this.saveModel = function( fileName, model, key, callback ) {
 		//Nuevo
 		if (model.isNew) {
 			delete model.isNew;
@@ -106,35 +106,35 @@ Dispositivo.prototype = {
 						var temporizada = DateConvert.min_a_horario(str.substr( posPunto + 1));
 					}
 					parsed.push({
-						nro_salida: parseInt(nro_salida),
-						tipo: str[0],
-						ip: params.ip,
-						note: This.getSalidaByNro(nro_salida).note || params.ip,
-						estado: parseInt( str[posDospuntos+1] ),
-						temporizada: temporizada
+						nro_salida	: parseInt(nro_salida),
+						tipo		: str[0],
+						ip			: params.ip,
+						note		: This.getSalidaByNro(nro_salida).note || params.ip,
+						estado		: parseInt( str[posDospuntos+1] ),
+						temporizada	: temporizada
 					});
 				}
 			});
 			return parsed;
 		}
 	},
-	getSalidasByEstado: function(_estado, _array) {
+	getSalidasByEstado: function( _estado, _array ) {
 		return _.where(_array, {estado: _estado});
 	},
-	getSalidas: function(params, callback) {
+	getSalidas: function( params, callback ) {
 		params.comando = 'G';
 		var This = this;
-		socket.send(params, function(response) {
-			callback(This.parseSalida(params, response));
+		socket.send( params, function( response ) {
+			callback( This.parseSalida( params, response ) );
 		});
 	},
 	//Devuelve listado de salidas (y sus estados) de un dispositivo
-	setSalidas: function(_salidas) {
+	setSalidas: function( _salidas ) {
 		var This = this;
 		if (_salidas.length) {
 			_salidas.forEach(function(s) {
 				var factory = new SalidaFactory();
-				var salida = factory.create( s.nro_salida,s.tipo, s.note );
+				var salida 	= factory.create( s.nro_salida,s.tipo, s.note );
 				This.salidas.push( salida);
 			});
 		}
@@ -144,7 +144,7 @@ Dispositivo.prototype = {
 	}
 }
 
-function Salida(nro_salida, _note, _tipo) {
+function Salida( nro_salida, _note, _tipo ) {
 	this.nro_salida = nro_salida || null;
 	this.note 		= _note || null;
 	this.tipo 		= _tipo || null;
@@ -154,21 +154,21 @@ function Salida(nro_salida, _note, _tipo) {
 	this.temporizada= null;
 }
 
-Salida.prototype.switch = function(params, callback) {
+Salida.prototype.switch = function( params, callback ) {
 	if (params.hasOwnProperty('comando')) {
-		socket.send(params, function(response, timeout) {
+		socket.send( params, function( response, timeout ) {
 			callback(response)
 		});
 	}
 };
 
-function Luz(nro_salida, _note) {
+function Luz( nro_salida, _note ) {
 	Salida.apply(this, [nro_salida, _note]);
 	this.tipo 	 = 'L';
 	this.comando = 'T';
 };
 
-Luz.prototype.switch = function(params, callback) {
+Luz.prototype.switch = function( params, callback ) {
 	var comando = this.comando
 				+ this.nro_salida
 				+ params.estado
@@ -185,16 +185,16 @@ function Persiana(nro_salida, _note) {
 	this.tipo = this.comando = 'P';
 };
 
-Persiana.prototype.switch = function(params, callback) {
+Persiana.prototype.switch = function( params, callback ) {
 	var comando = this.comando + this.nro_salida + params.estado;
-	var onSwitchResponse = function(response) {
+	var onSwitchResponse = function( response ) {
 		callback(response);
 	}
 	Salida.prototype.switch({ comando: comando, ip: this.ip}, onSwitchResponse);
 };
 
 function SalidaFactory() {
-	this.create = function(nro_salida,_tipo, _note) {
+	this.create = function( nro_salida,_tipo, _note ) {
 		if (_tipo === "L") {
 			return new Luz(nro_salida, _note);
 		}
