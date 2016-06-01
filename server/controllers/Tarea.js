@@ -1,5 +1,5 @@
-var programadorTareas = require('../config/programadorTareas'),
-	DataStore = require('../App.js').DataStore;
+var programadorTareas = require('../programadorTareas'),
+	DataStore = require('../Clases.js').DataStore;
 
 module.exports = function( app )
 {

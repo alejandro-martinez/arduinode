@@ -1,13 +1,12 @@
 //Dependencias
-var arduinode 			= arduinode || {},
-	express 			= require('express'),
-	app 				= express();
-var fs					= require('fs'),
+var	express 			= require('express'),
+	app 				= express(),
+	fs					= require('fs'),
 	compress 			= require('compression'),
 	http 				= require('http').Server(app),
-	programadorTareas 	= require('./config/programadorTareas'),
+	programadorTareas 	= require('./programadorTareas'),
 	expressConfig 		= require('./config/config').config(app, express),
-	arduinode			= require('./Arduino');
+	Arduinode			= require('./Arduinode');
 	middleware 			= require('socketio-wildcard')(),
 	io 					= require('socket.io')(http),
 	require('./controllers')(app);
@@ -36,7 +35,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	});
 
 	//Cargo lista de dispositivos en memoria
-	arduinode.dispositivos.load();
+	Arduinode.dispositivos.load();
 
 	//Carga lista de tareas en memoria
 	programadorTareas.setConfig( serverConfig );
@@ -52,14 +51,14 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	io.on('connection', function( sCliente )
 	{
 		//Seteo referencia al socket conectado
-		app.sCliente = arduinode.dispositivos.sCliente = sCliente;
+		app.sCliente = Arduinode.dispositivos.sCliente = sCliente;
 
 		//Crea socket que recibe eventos de los disp. Arduino
-		arduinode.listenSwitchEvents( serverConfig );
+		Arduinode.listenSwitchEvents( serverConfig );
 
 		//Accion sobre una salida (Persiana, Luz, Bomba)
 		sCliente.on('accionarSalida', function( params ) {
-			arduinode.dispositivos.accionar(params, function(response) {
+			Arduinode.dispositivos.accionar(params, function(response) {
 				sCliente.emit('accionarResponse', response);
 				sCliente.broadcast.emit('switchBroadcast', params);
 			});
@@ -71,7 +70,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 				onData = function(salidas) {
 					sCliente.emit('salidas',salidas);
 				};
-			arduinode.dispositivos[action](onData, params);
+			Arduinode.dispositivos[action](onData, params);
 		});
 
 		//Envia la hora del servidor en cada request Socket.IO

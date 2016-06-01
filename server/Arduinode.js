@@ -1,4 +1,4 @@
-var clases 		= require('./App.js'),
+var clases 		= require('./Clases.js'),
 	socket 		= require('./socket')(),
 	DateConvert = require('./utils/DateConvert')(),
 	_ 			= require('underscore'),
@@ -7,7 +7,22 @@ var clases 		= require('./App.js'),
 	net 		= require('net');
 	const ON = 0, OFF = 1;
 
-var Arduino = function() {
+/**************** Clase Arduinode *******************
+
+Clase (Singleton) principal de la aplicación
+
+	- Interactua con Dispositivo y Socket;
+	- Mantiene un listado de dispositivos activos
+
+Permite:
+	1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,
+	   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast
+	   a todos los sockets conectados.
+	2) Consultar listado de Salidas activas (Luces encendidas)
+
+//*************** Clase Arduinode *****************/
+
+var Arduinode = function() {
 	this.socketTCP = null;
 	this.listenSwitchEvents = function( conf ) {
 		var This = this;
@@ -126,11 +141,11 @@ var Arduino = function() {
 	}
 }
 
-Arduino.instance = null;
-Arduino.getInstance = function(){
+Arduinode.instance = null;
+Arduinode.getInstance = function(){
     if(this.instance === null){
-        this.instance = new Arduino();
+        this.instance = new Arduinode();
     }
     return this.instance;
 }
-module.exports = Arduino.getInstance();
+module.exports = Arduinode.getInstance();

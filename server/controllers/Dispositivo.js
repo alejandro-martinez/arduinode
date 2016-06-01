@@ -1,6 +1,5 @@
-var arduinode = require('../Arduino.js'),
-	dispositivo = require('../App.js').Dispositivo,
-	DataStore = require('../App.js').DataStore;
+var arduinode = require('../Arduinode.js'),
+	DataStore = require('../Clases.js').DataStore;
 
 module.exports = function(app)
 {

@@ -1,10 +1,17 @@
 // Tarea programadas
-var DataStore = require('../App.js').DataStore;
-var Arduino = require('../Arduino'),
-	DateConvert = require('../utils/DateConvert')(),
+var DataStore = require('./Clases.js').DataStore;
+var Arduinode = require('./Arduinode'),
+	DateConvert = require('./utils/DateConvert')(),
 	_ 			= require('underscore'),
 	schedule = require('node-schedule');
 
+/**************** Clase Tarea *******************
+
+Representa una Tarea (comando programado);
+Las tareas son comandos programados para enviar a los dispositivos Arduino.
+Ej; Encender una Luz en un día y horario determinados, con recurrencia opcional;
+
+//*************** Clase Arduinode *****************/
 function Tarea(config) {
 	this.config = config;
 }
@@ -40,8 +47,8 @@ Tarea.prototype = {
 				//Seteo la misma temporizacion para todos los dispositivos
 				dispositivoTarea.temporizada = This.config.temporizada;
 				dispositivoTarea.estado 	   = This.config.accion;
-				
-				Arduino.dispositivos.accionar(dispositivoTarea, function(response) {
+
+				Arduinode.dispositivos.accionar(dispositivoTarea, function(response) {
 					i++;
 					loop(i);
 				});
@@ -95,6 +102,22 @@ Tarea.prototype = {
 		return false;
 	}
 }
+
+/**************** Clase Programador de tareas *******************
+
+Clase (Singleton) para ABM de tareas.
+
+Las tareas activas, se almacenan en DataStore.tareas
+
+Permite:
+		1) Crear, eliminar, modificar y reprogramar tareas;
+		2) Observar ejecucion de tareas:
+			Se relanzan cada x tiempo, (definido en tiempoEscaneoTareas)
+			si se corta el servicio;
+
+El modulo schedule permite programar las tareas;
+
+//*************** Clase Arduinode *****************/
 var Programador = function()
 {
 		this.setConfig = function(config)
