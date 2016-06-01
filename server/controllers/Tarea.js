@@ -14,10 +14,9 @@ module.exports = function( app )
 	{
 		DataStore.saveModel('tareas',req.body,'id_tarea', function(response, tarea)
 		{
-		//	programadorTareas.sCliente.emit('tareasChanged');
+			programadorTareas.sCliente.emit('tareasChanged');
 			// Nueva tarea, agregar al scheduler
 			if (req.body.isNew) {
-				// Creo objeto tarea, parseando la configuracion
 				programadorTareas.loadTareas();
 			}
 			// Tarea existente, se reprograma

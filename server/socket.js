@@ -34,8 +34,7 @@ module.exports = function()
 			This.data = "";
 			if (params.ip)
 			{
-				this.connect(params.ip, function(response, socket){
-
+				this.connect(params.ip, function(response, socket) {
 					if (response) {
 						socket.write(params.comando);
 						socket.on('data',function(_data)

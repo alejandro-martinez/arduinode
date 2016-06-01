@@ -158,20 +158,27 @@ function($http,
 			 'SalidaFct',
 			 'TareaFct',
 			 'ngDialog',
+			 'SalidaConfig',
 		function ( $scope,
 				   $rootScope,
 				   $params,
 				   Dispositivo,
 				   Salida,
 				   Tarea,
-				   Popup )
+				   Popup,
+				   Estados)
 	{
-	$scope.diasSemana = ['Domingo','Lunes', 'Martes', 'Miercoles',
-							'Jueves','Viernes','Sabado'];
 
-	$scope.mesesTxt = ["Enero", "Febrero", "Marzo", "Abril",
+	angular.extend($scope, {
+		dispositivoSelected: {},
+		dias: [],
+		meses: [],
+		diasSemana: ['Domingo','Lunes', 'Martes', 'Miercoles',
+							'Jueves','Viernes','Sabado'],
+		mesesTxt: ["Enero", "Febrero", "Marzo", "Abril",
 						"Mayo", "Junio", "Julio","Agosto", "Septiembre",
-						"Octubre", "Noviembre", "Diciembre"];
+						"Octubre", "Noviembre", "Diciembre"]
+	});
 
 	// Devuelve true si el par (dia/mes) es valido
 	var dia_valido = function(dia, mes) {
@@ -201,26 +208,28 @@ function($http,
 		duracion: "",
 		dia_inicio: 1,
 		dia_fin: 1,
-		accion: 0,
+		accion: Estados.ON,
 		activa: 1,
 		isNew: true
 	}
 
 	var params 				   = $params.params || def_model;
 	$rootScope.currentMenu 	   = 'Edición de tareas';
-	$scope.dispositivoSelected = {};
-	$scope.tarea 			   = params;
-	$scope.tarea.dispositivosEliminados = [];
-	$scope.tarea.mes_inicio    = params.mes_inicio - 1;
-	$scope.tarea.mes_fin 	   = params.mes_fin - 1;
-	$scope.dias 			   = [];
-	$scope.meses 			   = [];
+	$scope.tarea = params;
+
+	angular.extend($scope.tarea, {
+		mes_inicio			  : params.mes_inicio - 1,
+		mes_fin	  			  : params.mes_fin - 1,
+		dispositivosEliminados: []
+	});
 
 	// Setea la acción que debe realizar la tarea sobre las salidas
 	// Encender o apagar
 	$scope.switch = function(data)
 	{
-		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
+		$scope.tarea.accion = ($scope.tarea.accion == Estados.ON)
+							? Estados.OFF
+							: Estados.ON;
 	}
 
 	// Cambia a "Activa" o "Inactiva" la tarea
@@ -238,8 +247,6 @@ function($http,
 			$scope.meses.push(i - 1);
 		}
 	}
-
-	$scope.tarea = params;
 
 	// Configura el componente para seleccionar horario y duracion
 	$('.clockpicker').clockpicker({ autoclose: true });
@@ -324,12 +331,14 @@ function($http,
 	$scope.save = function()
 	{
 		// Parseo de fechas
-		$scope.tarea.hora_inicio = $('#horainicio').val();
-		$scope.tarea.duracion 	 = $('#duracion').val();
-		$scope.tarea.dia_inicio  = $('#dia_inicio').val();
-		$scope.tarea.mes_inicio  = parseInt( $('#mes_inicio').val() ) + 1;
-		$scope.tarea.dia_fin  	 = $('#dia_fin').val();
-		$scope.tarea.mes_fin  	 = parseInt( $('#mes_fin').val() ) + 1;
+		angular.extend($scope.tarea, {
+			hora_inicio	: $('#horainicio').val(),
+			duracion	: $('#duracion').val(),
+			dia_inicio	: $('#dia_inicio').val(),
+			mes_inicio	: parseInt( $('#mes_inicio').val() ) + 1,
+			dia_fin		: $('#dia_fin').val(),
+			mes_fin		: parseInt( $('#mes_fin').val() ) + 1
+		});
 
 		// Si los datos son validos
 		if ($scope.isModelValid())

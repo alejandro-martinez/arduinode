@@ -84,7 +84,7 @@ Dispositivo.prototype = {
 	parseSalida: function(params, _data ) {
 		This = this;
 		if (_data.length > 0) {
-		
+
 			var parsed = [],
 				salidasParsed = [];
 
@@ -186,7 +186,7 @@ function Persiana(nro_salida, _note) {
 };
 
 Persiana.prototype.switch = function(params, callback) {
-	var comando = this.comando + this.nro_salida + params.accion;
+	var comando = this.comando + this.nro_salida + params.estado;
 	var onSwitchResponse = function(response) {
 		callback(response);
 	}

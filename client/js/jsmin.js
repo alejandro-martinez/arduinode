@@ -398,7 +398,11 @@ socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScop
 }]);
 
 angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
-.constant('SalidaConfig',{ rootFolder: 'js/modules/Salida/' })
+.constant('SalidaConfig',{
+	rootFolder: 'js/modules/Salida/',
+	ON: 0,
+	OFF: 1
+})
 .config(function( $stateProvider, $urlRouterProvider, SalidaConfig )
 {
 	// Definicion de rutas y paths
@@ -429,7 +433,10 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			Socket.send('accionarSalida',params);
 			Socket.listen('accionarResponse', function(estado)
 			{
-				callback(estado);
+				if (callback)
+				{
+					callback(estado);
+				}
 			});
 		},
 		// Busca una salida en un array
@@ -440,14 +447,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 				return s.nro_salida == nro_salida;
 			})
 			return salida;
-		},
-		movePersiana: function(params, callback)
-		{
-			Socket.send('movePersiana',params);
-			Socket.listen('moveResponse', function(response)
-			{
-				callback(response);
-			});
 		},
 		// Guarda descripcion de una salida
 		save: function( salidaNew, callback)
@@ -555,6 +554,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			 'SwitchButton',	//Control del boton de switch de la salida
 			 'SalidaFct',		//Funciones de Salida
 			 'ngDialog',		//Para mostrar mensajes en Popup
+			 'SalidaConfig',	//Constantes
 	function ( $rootScope,
 			   $scope,
 			   $timeout,
@@ -566,51 +566,66 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			   Dispositivo,
 			   SwitchButton,
 			   Salida,
-			   Popup )
+			   Popup,
+			   Estados
+			   )
 	{
-		$scope.salidas = [];
-		$('.clockpicker').clockpicker({autoclose: true});
-		if (params.disp) {
-			$scope.ipDispositivo = params.disp.ip;
-			$scope.salidas = params.disp.salidas;
+		$('.clockpicker').clockpicker({ autoclose: true });
+		var dispositivo 	= params.disp,
+			numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length,
+			processed 		= 0,
+			buffer 			= [];
+
+		angular.extend($scope, {
+			salidas: dispositivo.salidas || [],
+			getSwitchButton: SwitchButton.getTemplate,
+			salida: {},
+			editing: true,
+			showDescripcion: true,
+			showSalidas: false,
+			showDispositivos: false
+		});
+
+		//Setea titulo de pagina
+		if (params.page == 'SalidasEncendidas') {
+			$rootScope.currentMenu = 'Luces encendidas';
 		}
-		$scope.getSwitchButton = SwitchButton.getTemplate;
-				numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
-		$scope.processed = 0;
-		$scope.buffer = [];
-		$scope.salida = {};
-		$rootScope.currentMenu = (params.page == 'SalidasEncendidas') ? 'Luces encendidas'
-													  : 'Salidas de: ' + params.disp.note;
-		$scope.showDescripcion = $scope.editing = true;
-		$scope.showDispositivos = $scope.showSalidas = false;
+		else {
+			$rootScope.currentMenu = 'Salidas de: ' + dispositivo.note;
+		}
+
+		//Pide salidas segun pagina seleccionada (encendidas o todas)
+		SocketIO.send('getSalidas', {ip: dispositivo.ip, page: params.page});
 		SocketIO.listen('salidas', function(salidas)
 		{
-			$scope.ipDispositivo = salidas[0].ip;
+			dispositivo.ip = salidas[0].ip;
 			$scope.salidas = (salidas.length)
-						? salidas
-						: params.disp.salidas;
+						   ? salidas
+						   : dispositivo.salidas;
 			$scope.$digest();
 		});
+
+		//Recibe listado de salidas encendidas
 		SocketIO.listen('salidasEncendidas', function(salidas)
 		{
 			if (params.page == 'SalidasEncendidas') {
 				i = 0;
 				// Resetea el contador de dispositivos procesados
 				// y el buffer de salidas recibidas
-				if ($scope.processed == numDispositivos) {
-					$scope.processed = 0;
-					$scope.buffer = [];
+				if (processed == numDispositivos) {
+					processed = 0;
+					buffer = [];
 				}
 				//Flag para controlar que recibi datos de todos los dispositivos
-				$scope.processed++;
+				processed++;
 
 				//Guardo en buffer las salidas recibidas
-				salidas.forEach(function(s){ $scope.buffer.push(s) });
+				salidas.forEach(function(s){ buffer.push(s) });
 
 				var salidasAux = salidas;
 
 				//Agrego progresivamente las salidas a la vista
-				var promise = $interval(function(){
+				var promise = $interval(function() {
 					if (i < salidasAux.length && salidasAux.length > 0) {
 						$scope.salidas.push( salidasAux[i] );
 						i++;
@@ -618,11 +633,11 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 					//Si recibi los datos de todos los dispositivos
 					//Controlo que la cantidad de salidas activas
 					//sea igual a las de la vista
-					if ($scope.processed == numDispositivos) {
+					if (processed == numDispositivos) {
 						$interval.cancel( promise );
 						//Si la cantidad es distinta, actualizo
-						if ( $scope.buffer.length != $scope.salidas.length ) {
-							$scope.salidas = $scope.buffer;
+						if (buffer.length != $scope.salidas.length ) {
+							$scope.salidas = buffer;
 						}
 						$scope.salidas = orderByFilter($scope.salidas, '+note');
 					}
@@ -630,13 +645,16 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			}
 		});
 
-		SocketIO.send('getSalidas', {ip: $scope.ipDispositivo, page: params.page});
-
-		//Accion sobre una salida (Luz, Persiana, Bomba)
+		//Accion sobre una salida (Luz, Bomba)
 		$scope.accionarSalida = function(data)
 		{
-			data.estado 	 = (data.estado == 0) ? 1 : 0;
+			//Setea temporizacion
 			data.temporizada = $('.clockpicker').val();
+
+			//Setea el inversa del estado actual de la salida
+			data.estado = (data.estado == Estados.ON)
+						? Estados.OFF
+						: Estados.ON;
 
 			//Envia orden al socketArduino
 			Salida.accionar( data, function(_estado)
@@ -645,10 +663,30 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 			});
 		}
 
+		//Accion sobre persiana
+		$scope.move = function(s, estado)
+		{
+			s.estado = estado;
+			//Muestra estado de boton indicando la accion
+			//de subir o bajar la persiana
+			var boton = $('#'.concat(s.nro_salida,estado));
+			$('.active').removeClass('active');
+			boton.addClass('active');
+
+			//Espera 3 segundos y resetea el estado del boton
+			setTimeout(function()
+			{
+				boton.removeClass('active');
+			}, 3000);
+
+			//Envia orden al socketArduino
+			Salida.accionar(s);
+		}
+
 		// Se dispara al hacer click en el titulo superior
 		$scope.refresh = function()
 		{
-			SocketIO.send('getSalidas', {ip: $scope.ipDispositivo,page:  params.page});
+			SocketIO.send('getSalidas', {ip: dispositivo.ip, page: params.page});
 		}
 
 		//Abre popup para editar la descripcion de una salida
@@ -665,7 +703,6 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		//Guarda descripcion de salida editada
 		$scope.save = function(salida)
 		{
-			$scope.salida.ip = $scope.ipDispositivo;
 			Salida.save( $scope.salida, function(response)
 			{
 				Popup.close();
@@ -673,137 +710,27 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 		}
 
 		//Escucha evento broadcast para actualizar estado de salidas
-		SocketIO.listen('switchBroadcast', function(data) {
-			console.log("Recibo broadcast",data)
-
-			//Trae descripcion de la salida
-			Salida.getSalida(data, function(salida) {
-				// si la salida existe, cambia el estado, sino, agrega la salida
-				salida[0].estado 	  = data.estado;
-				salida[0].temporizada = data.temporizada;
-				$scope.updateSalida( salida[0] );
-			});
-		})
-
-		//Actualiza el estado de una salida específica
-		$scope.updateSalida = function(params)
-		{
-			//Si la salida existe se actualiza el estado
-			//remover para produccion
-			//params.ip = '192.168.20.11';
-			if ( Salida.findSalida($scope.salidas,params.nro_salida).length > 0 ) {
-				$scope.salidas.forEach(function(s)
+		SocketIO.listen('switchBroadcast', function( params ) {
+		
+			//Si la salida existe, cambia el estado
+			if ( Salida.findSalida( $scope.salidas, params.nro_salida).length > 0 ) {
+				$scope.salidas.forEach(function(s, k, _this)
 				{
 					if (s.nro_salida == params.nro_salida
-					 && s.ip == params.ip)
+					&&  s.ip 		 == params.ip)
 					{
-						s.estado 		= params.estado;
-						s.temporizada 	= params.temporizada;
+						_this[k].estado 	 = params.estado;
+						_this[k].temporizada = params.temporizada;
+						$scope.$digest();
 					}
 				});
-				$scope.$digest();
 			}
-			//Agrego la salida
+			//sino, se agrega
 			else {
 				$scope.salidas.push(params);
 				$scope.$digest();
 			}
-		}
-
-		/*$('.clockpicker').clockpicker({autoclose: true});
-		var params = params.params || {},
-			numDispositivos = JSON.parse(localStorage.getItem("dispositivos")).length;
-		$scope.processed = 0;
-		$scope.buffer = [];
-		$scope.salida = {};
-		$scope.page = (params.estado == 0) ? 'salidasActivas' : 'salidas';
-		$scope.salidas = [];
-		$rootScope.currentMenu = (params.estado == 0) ? 'Luces encendidas'
-													  : 'Salidas de: ' + params.note;
-
-		$scope.ipDispositivo = params.ip;
-		$scope.getSwitchButton = SwitchButton.getTemplate;
-		$scope.showDescripcion = $scope.editing = true;
-		$scope.showDispositivos = $scope.showSalidas = false;
-
-		//Escucha evento broadcast para actualizar estado de salidas
-		SocketIO.listen('switchBroadcast', function(data) {
-			console.log("Recibo broadcast")
-			//Trae descripcion de la salida
-			Salida.getSalida(data, function(salida) {
-				// si la salida existe, cambia el estado, sino, agrega la salida
-				salida[0].estado 	  = data.estado;
-				salida[0].temporizada = data.temporizada;
-				$scope.updateSalida( salida[0] );
-			});
-		})
-
-		//Accion sobre una salida (on / off)
-		$scope.switch = function(data)
-		{
-			data.estado_orig = data.estado;
-			data.ip 		 = data.ip || $scope.ipDispositivo;
-			data.estado 	 = (data.estado == 0) ? 1 : 0;
-			var tiempo 		 = $('.clockpicker').val();
-			data.temporizada = (tiempo != '') ? tiempo : null;
-
-			//Envia orden al socketArduino
-			Salida.switchSalida( data, function(_estado)
-			{
-				data.estado = _estado;
-				$scope.updateSalida(data);
-			});
-		}
-
-		//Actualiza el estado de una salida específica
-		$scope.updateSalida = function(params)
-		{
-			//Si la salida existe se actualiza el estado
-			//remover para produccion
-			//params.ip = '192.168.20.11';
-			if ( Salida.findSalida($scope.salidas,params.nro_salida).length > 0 ) {
-				$scope.salidas.forEach(function(s)
-				{
-					if (s.nro_salida == params.nro_salida
-					 && s.ip == params.ip)
-					{
-						s.estado 		= params.estado;
-						s.temporizada 	= params.temporizada;
-					}
-				});
-				$scope.$digest();
-			}
-			//Agrego la salida
-			else {
-				$scope.salidas.push(params);
-				$scope.$digest();
-			}
-
-		}
-
-		//Funcionamiento Persianas
-		$scope.move = function(ip, nro_salida, action)
-		{
-			var params = {
-				ip: $scope.ipDispositivo || ip,
-				action: action,
-				nro_salida: nro_salida
-			}
-			Salida.movePersiana(params, function(_response)
-			{
-				//Muestra estado de boton indicando la accion
-				//de subir o bajar la persiana
-				var boton = $('#'.concat(nro_salida,action));
-				$('.active').removeClass('active');
-				boton.addClass('active');
-
-				//Espera 3 segundos y resetea el estado del boton
-				setTimeout(function()
-				{
- 					boton.removeClass('active');
-				}, 3000);
-			});
-		}*/
+		});
 	}
 ])
 
@@ -1226,20 +1153,27 @@ function($http,
 			 'SalidaFct',
 			 'TareaFct',
 			 'ngDialog',
+			 'SalidaConfig',
 		function ( $scope,
 				   $rootScope,
 				   $params,
 				   Dispositivo,
 				   Salida,
 				   Tarea,
-				   Popup )
+				   Popup,
+				   Estados)
 	{
-	$scope.diasSemana = ['Domingo','Lunes', 'Martes', 'Miercoles',
-							'Jueves','Viernes','Sabado'];
 
-	$scope.mesesTxt = ["Enero", "Febrero", "Marzo", "Abril",
+	angular.extend($scope, {
+		dispositivoSelected: {},
+		dias: [],
+		meses: [],
+		diasSemana: ['Domingo','Lunes', 'Martes', 'Miercoles',
+							'Jueves','Viernes','Sabado'],
+		mesesTxt: ["Enero", "Febrero", "Marzo", "Abril",
 						"Mayo", "Junio", "Julio","Agosto", "Septiembre",
-						"Octubre", "Noviembre", "Diciembre"];
+						"Octubre", "Noviembre", "Diciembre"]
+	});
 
 	// Devuelve true si el par (dia/mes) es valido
 	var dia_valido = function(dia, mes) {
@@ -1269,26 +1203,28 @@ function($http,
 		duracion: "",
 		dia_inicio: 1,
 		dia_fin: 1,
-		accion: 0,
+		accion: Estados.ON,
 		activa: 1,
 		isNew: true
 	}
 
 	var params 				   = $params.params || def_model;
 	$rootScope.currentMenu 	   = 'Edición de tareas';
-	$scope.dispositivoSelected = {};
-	$scope.tarea 			   = params;
-	$scope.tarea.dispositivosEliminados = [];
-	$scope.tarea.mes_inicio    = params.mes_inicio - 1;
-	$scope.tarea.mes_fin 	   = params.mes_fin - 1;
-	$scope.dias 			   = [];
-	$scope.meses 			   = [];
+	$scope.tarea = params;
+
+	angular.extend($scope.tarea, {
+		mes_inicio			  : params.mes_inicio - 1,
+		mes_fin	  			  : params.mes_fin - 1,
+		dispositivosEliminados: []
+	});
 
 	// Setea la acción que debe realizar la tarea sobre las salidas
 	// Encender o apagar
 	$scope.switch = function(data)
 	{
-		$scope.tarea.accion = ($scope.tarea.accion == 0) ? 1 : 0;
+		$scope.tarea.accion = ($scope.tarea.accion == Estados.ON)
+							? Estados.OFF
+							: Estados.ON;
 	}
 
 	// Cambia a "Activa" o "Inactiva" la tarea
@@ -1306,8 +1242,6 @@ function($http,
 			$scope.meses.push(i - 1);
 		}
 	}
-
-	$scope.tarea = params;
 
 	// Configura el componente para seleccionar horario y duracion
 	$('.clockpicker').clockpicker({ autoclose: true });
@@ -1392,12 +1326,14 @@ function($http,
 	$scope.save = function()
 	{
 		// Parseo de fechas
-		$scope.tarea.hora_inicio = $('#horainicio').val();
-		$scope.tarea.duracion 	 = $('#duracion').val();
-		$scope.tarea.dia_inicio  = $('#dia_inicio').val();
-		$scope.tarea.mes_inicio  = parseInt( $('#mes_inicio').val() ) + 1;
-		$scope.tarea.dia_fin  	 = $('#dia_fin').val();
-		$scope.tarea.mes_fin  	 = parseInt( $('#mes_fin').val() ) + 1;
+		angular.extend($scope.tarea, {
+			hora_inicio	: $('#horainicio').val(),
+			duracion	: $('#duracion').val(),
+			dia_inicio	: $('#dia_inicio').val(),
+			mes_inicio	: parseInt( $('#mes_inicio').val() ) + 1,
+			dia_fin		: $('#dia_fin').val(),
+			mes_fin		: parseInt( $('#mes_fin').val() ) + 1
+		});
 
 		// Si los datos son validos
 		if ($scope.isModelValid())

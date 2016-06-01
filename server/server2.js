@@ -11,13 +11,11 @@ var arduinode 			= arduinode || {},
 	middleware 			= require('socketio-wildcard')(),
 	io 					= require('socket.io')(http),
 	require('./controllers')(app);
-
 	app.use(compress());
 
 var serverConfig = {},
 	serverInfo	 = { host: "localhost", port:8888 },
 	configPath 	 = './config/config.json'
-
 
 //Crea o trae el archivo de configuracion para el servidor y Programador de tareas
 if (!fs.existsSync(configPath))
@@ -34,7 +32,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	//Captura excepciones para no detener el servidor
 	process.on('uncaughtException', function (err)
 	{
-	//	console.log("Ocurrió un error:", err);
+		console.log("Ocurrió un error:", err);
 	});
 
 	//Cargo lista de dispositivos en memoria
@@ -60,7 +58,7 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 		arduinode.listenSwitchEvents( serverConfig );
 
 		//Accion sobre una salida (Persiana, Luz, Bomba)
-		sCliente.on('accionarSalida', function( params ){
+		sCliente.on('accionarSalida', function( params ) {
 			arduinode.dispositivos.accionar(params, function(response) {
 				sCliente.emit('accionarResponse', response);
 				sCliente.broadcast.emit('switchBroadcast', params);

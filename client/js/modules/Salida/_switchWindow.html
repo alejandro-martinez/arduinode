@@ -1,7 +1,7 @@
 <div class="containerSwitchWindow">
 	<ul id="{{s.id}}">
-		<li id="{{s.nro_salida + '0'}}"	class="moveUp" ng-click="move(s.ip,s.nro_salida,0)"></li>
-		<li id="{{s.nro_salida + '2'}}" class="stopIcon" ng-click="move(s.ip,s.nro_salida,2)"></li>
-		<li id="{{(s.nro_salida) + '1'}}" class="moveDown" ng-click="move(s.ip,s.nro_salida,1)"></li>
+		<li id="{{s.nro_salida + '0'}}"	class="moveUp" ng-click="move(s,0)"></li>
+		<li id="{{s.nro_salida + '2'}}" class="stopIcon" ng-click="move(s,2)"></li>
+		<li id="{{(s.nro_salida) + '1'}}" class="moveDown" ng-click="move(s,1)"></li>
 	</ul>
 </div>
