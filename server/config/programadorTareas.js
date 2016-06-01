@@ -35,16 +35,17 @@ Tarea.prototype = {
 		var This = this,
 			i = 0,
 		loop = function(i) {
-			var params = This.config.dispositivos[i];
+			var dispositivoTarea = This.config.dispositivos[i];
+			if (dispositivoTarea) {
+				//Seteo la misma temporizacion para todos los dispositivos
+				dispositivoTarea.temporizada = This.config.temporizada;
+				dispositivoTarea.estado 	   = This.config.accion;
 
-			//Seteo la misma temporizacion para todos los dispositivos
-			params.temporizada = This.config.temporizada;
-			params.estado 	   = This.config.accion;
-
-			Arduino.dispositivos.accionar(params, function(response) {
-				i++;
-				loop(i);
-			});
+				Arduino.dispositivos.accionar(dispositivoTarea, function(response) {
+					i++;
+					loop(i);
+				});
+			}
 		}
 		if (This.config.dispositivos.length > i) {
 			loop(i);
