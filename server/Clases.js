@@ -2,6 +2,7 @@
 //Dependencias
 var socket 		= require('./socket')(),
 	DateConvert = require('./utils/DateConvert')(),
+	fs			= require('fs'),
 	_ 			= require('underscore');
 
 /**************** Clase DataStore *******************
@@ -17,6 +18,12 @@ function DataStore() {
 	this.tareas 	  = [];
 	this.tareasActivas= [];
 	this.getFile = function(file) {
+
+		//Si el archivo solicitado no existe, se crea
+		var filePath = './models/'+file+'.json';
+		if (!fs.existsSync(filePath)) {
+			fs.writeFileSync(filePath, '[]');
+		}
 		this[file] = this.reader.readFileSync('./models/'+file+'.json');
 		return this[file];
 	};
