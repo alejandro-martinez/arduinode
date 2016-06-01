@@ -23,7 +23,7 @@ var Arduino = function() {
 										{ ip: socket.remoteAddress },
 										parsed.trim()
 								 );
-					This.dispositivos.sCliente.broadcast.emit('switchBroadcast', salida);
+					This.dispositivos.broadcast.emit('switchBroadcast', salida);
 					socket.end();
 				});
 			});
@@ -34,8 +34,8 @@ var Arduino = function() {
 		}
 	};
 	this.dispositivos = {
-		sCliente: null,
 		lista: [],
+		sCliente: null,
 		//Carga listado de dispositivos desde archivo JSON, en variable lista
 		getAll: function() {
 			return this.lista;
@@ -56,7 +56,7 @@ var Arduino = function() {
 			disp.getSalidas(params, onData);
 		},
 		getSalidasEncendidas: function( callback ) {
-
+			var This = this;
 			var salidasAux = [], sockets = [], processed = [], This = this,
 				emit = function(data) {
 					This.sCliente.emit('salidasEncendidas', data);

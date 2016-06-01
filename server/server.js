@@ -1,8 +1,8 @@
 //Dependencias
 var arduinode 			= arduinode || {},
 	express 			= require('express'),
-	app 				= express(),
-	fs					= require('fs'),
+	app 				= express();
+var fs					= require('fs'),
 	compress 			= require('compression'),
 	http 				= require('http').Server(app),
 	programadorTareas 	= require('./config/programadorTareas'),
@@ -51,8 +51,8 @@ http.listen(serverConfig.port, serverConfig.ip, function()
 	//Conexión de un cliente
 	io.on('connection', function( sCliente )
 	{
-		programadorTareas.sCliente 		= sCliente;
-		arduinode.dispositivos.sCliente = sCliente;
+		//Seteo referencia al socket conectado
+		app.sCliente = arduinode.dispositivos.sCliente = sCliente;
 
 		//Crea socket que recibe eventos de los disp. Arduino
 		arduinode.listenSwitchEvents( serverConfig );

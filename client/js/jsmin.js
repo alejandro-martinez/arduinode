@@ -1028,6 +1028,7 @@ function($http,
 			// si esto sucede borra el cache para reflejar los cambios
 			SocketIO.listen('tareasChanged', function()
 			{
+				console.log("TareasBroadcast")
 				localStorage.setItem('tareas', undefined);
 			});
 

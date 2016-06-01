@@ -40,7 +40,7 @@ Tarea.prototype = {
 				//Seteo la misma temporizacion para todos los dispositivos
 				dispositivoTarea.temporizada = This.config.temporizada;
 				dispositivoTarea.estado 	   = This.config.accion;
-
+				
 				Arduino.dispositivos.accionar(dispositivoTarea, function(response) {
 					i++;
 					loop(i);
