@@ -60,8 +60,6 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 				var dispositivos = models;
 				if ( dispositivos.length > 0 ) {
 					var disp = dispositivos.filter( function( disp) {
-						//remover para produccion
-						//return (disp.ip == '192.168.20.11');
 						return (disp.ip == params.ip);
 					});
 					if (disp.length)
