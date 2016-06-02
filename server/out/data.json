@@ -1,0 +1,669 @@
+{
+    "project": {},
+    "files": {
+        "Arduinode.js": {
+            "name": "Arduinode.js",
+            "modules": {
+                "Arduinode": 1
+            },
+            "classes": {
+                "Arduinode": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Clases.js": {
+            "name": "Clases.js",
+            "modules": {},
+            "classes": {
+                "Dispositivo": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "DataStore.js": {
+            "name": "DataStore.js",
+            "modules": {
+                "DataStore": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "programadorTareas.js": {
+            "name": "programadorTareas.js",
+            "modules": {
+                "Programador de Tareas": 1
+            },
+            "classes": {
+                "Tarea": 1,
+                "Programador": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "server.js": {
+            "name": "server.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "Arduinode": {
+            "name": "Arduinode",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "Arduinode": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "Arduinode.js",
+            "line": 30,
+            "description": "Modulo Principal de la aplicación\nInteractua con Dispositivo y Socket, a través de una clase Facade (Arduinode)"
+        },
+        "DataStore": {
+            "name": "DataStore",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "Dispositivo": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "Clases.js",
+            "line": 16,
+            "description": "Almacena en memoria, y archivos JSON, los modelos de la aplicación.\nLista de dispositivos y salidas asociadas.\nLista de tareas programadas."
+        },
+        "Programador de Tareas": {
+            "name": "Programador de Tareas",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "Tarea": 1,
+                "Programador": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "programadorTareas.js",
+            "line": 149,
+            "description": "Relacionado a la programacion y ejecucion de tareas sobre los dispositivos"
+        }
+    },
+    "classes": {
+        "Arduinode": {
+            "name": "Arduinode",
+            "shortname": "Arduinode",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Arduinode",
+            "namespace": "",
+            "file": "Arduinode.js",
+            "line": 30,
+            "description": "Clase (Singleton, Facade) principal de la aplicación\n- Interactua con Dispositivo y Socket;\n- Mantiene un listado de dispositivos activos",
+            "is_constructor": 1
+        },
+        "Dispositivo": {
+            "name": "Dispositivo",
+            "shortname": "Dispositivo",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "DataStore",
+            "namespace": "",
+            "file": "Clases.js",
+            "line": 16,
+            "description": "Representa un Dispositivo Arduino",
+            "is_constructor": 1
+        },
+        "Tarea": {
+            "name": "Tarea",
+            "shortname": "Tarea",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Programador de Tareas",
+            "namespace": "",
+            "file": "programadorTareas.js",
+            "line": 11,
+            "description": "Representa una Tarea (comando programado)\nLas tareas son comandos programados para enviar a los dispositivos Arduino.\nEj; Encender una Luz en un día y horario determinados, con recurrencia opcional;",
+            "is_constructor": 1
+        },
+        "Programador": {
+            "name": "Programador",
+            "shortname": "Programador",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Programador de Tareas",
+            "namespace": "",
+            "file": "programadorTareas.js",
+            "line": 149,
+            "description": "Clase (Singleton) para ABM de tareas.\nEl modulo schedule permite programar las tareas;\nPermite:\n\t\t1) Crear, eliminar, modificar y reprogramar tareas;\n\t\t2) Observar ejecucion de tareas:\n\t\t\tSe relanzan cada x tiempo, (definido en tiempoEscaneoTareas)\n\t\t\tsi se corta el servicio;",
+            "is_constructor": 1
+        }
+    },
+    "elements": {},
+    "classitems": [
+        {
+            "file": "Arduinode.js",
+            "line": 16,
+            "description": "Clase (Singleton) principal de la aplicación\n\t- Interactua con Dispositivo y Socket;\n\t- Mantiene un listado de dispositivos activos\nPermite:\n\t1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,\n\t   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast\n\t   a todos los sockets conectados.\n\t2) Consultar listado de Salidas activas (Luces encendidas)",
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 39,
+            "description": "Instancia de modulo net, para recibir datos de Dispositivos Arduino reales",
+            "itemtype": "property",
+            "name": "socketTCP",
+            "type": "net Object (socket)",
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 44,
+            "description": "Lista de dispositivos Arduino registrados",
+            "itemtype": "property",
+            "name": "dispositivos",
+            "type": "JSON Object",
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 51,
+            "description": "Registra un socket para escuchar eventos de los dispositivos Arduino reales.\nEmite un broadcast a todos los dispositivos conectados a la aplicacion,\ncuando se produce un evento,",
+            "itemtype": "method",
+            "name": "listenSwitchEvents",
+            "params": [
+                {
+                    "name": "conf",
+                    "description": "Configuracion para el socket (IP, puerto)"
+                }
+            ],
+            "return": {
+                "description": "null"
+            },
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 84,
+            "description": "Devuelve lista de dispositivos Arduino registrados",
+            "itemtype": "method",
+            "name": "getAll",
+            "params": [
+                {
+                    "name": "conf",
+                    "description": "Configuracion para el socket (IP, puerto)"
+                }
+            ],
+            "return": {
+                "description": "Array"
+            },
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 93,
+            "description": "Devuelve dispositivo filtrado por IP",
+            "itemtype": "method",
+            "name": "getByIP",
+            "params": [
+                {
+                    "name": "ip",
+                    "description": "IP del dispositivo a buscar"
+                }
+            ],
+            "return": {
+                "description": "Dispositivo"
+            },
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 102,
+            "description": "Ejecuta un comando sobre una salida de un Dispositivo",
+            "itemtype": "method",
+            "name": "accionar",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "Objeto JSON con las claves: IP del dispositivo, numero de salida, accion y temporización"
+                }
+            ],
+            "return": {
+                "description": "Boolean"
+            },
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 115,
+            "description": "Devuelve las salidas de un Dispositivo Arduino",
+            "itemtype": "method",
+            "name": "getSalidas",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn"
+                },
+                {
+                    "name": "params",
+                    "description": "Objeto JSON con la clave IP del dispositivo"
+                }
+            ],
+            "return": {
+                "description": "Array"
+            },
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 129,
+            "description": "Devuelve listado de salidas de un Dispositivo, filtradas por estado = 0 (Encendidas)",
+            "itemtype": "method",
+            "name": "getSalidasEncendidas",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn"
+                },
+                {
+                    "name": "params",
+                    "description": "Objeto JSON con la clave IP del dispositivo"
+                }
+            ],
+            "return": {
+                "description": "Array"
+            },
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Arduinode.js",
+            "line": 195,
+            "description": "Registra dispositivos cargados en el modelo (dispositivos.json), en DataStore.dispositivos\ny en atributo lista de esta clase",
+            "itemtype": "method",
+            "name": "load",
+            "class": "Arduinode",
+            "module": "Arduinode"
+        },
+        {
+            "file": "Clases.js",
+            "line": 1,
+            "description": "Representa un Dispositivo Arduino, y sus Salidas\nPermite:\n1) accionar las salidas que posee, (Luces, Bombas, Persianas);\n2) Consultar lista de salidas y sus estados",
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "Clases.js",
+            "line": 23,
+            "description": "Dirección IP del dispositivo Arduino",
+            "itemtype": "property",
+            "name": "ip",
+            "type": "String",
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "Clases.js",
+            "line": 28,
+            "description": "Descripción del dispositivo",
+            "itemtype": "property",
+            "name": "note",
+            "type": "String",
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "Clases.js",
+            "line": 33,
+            "description": "Lista de salidas (instancias de Salida) del dispositivo",
+            "itemtype": "property",
+            "name": "salidas",
+            "type": "Array",
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "Clases.js",
+            "line": 46,
+            "description": "Devuelve una salida por Numero.",
+            "itemtype": "method",
+            "name": "getSalidaByNro",
+            "return": {
+                "description": "Salida"
+            },
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "Clases.js",
+            "line": 56,
+            "description": "Ejecuta un comando sobre una salida de un dispositivo.",
+            "itemtype": "method",
+            "name": "accionarSalida",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "Objeto JSON con la clave IP del dispositivo, numero de salida, y comando"
+                },
+                {
+                    "name": "callback",
+                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn"
+                }
+            ],
+            "return": {
+                "description": "Boolean Resultado del comando"
+            },
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "Clases.js",
+            "line": 72,
+            "description": "Parsea los datos recibidos desde los dispositivos Arduino",
+            "itemtype": "method",
+            "name": "parseSalida",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "Objeto JSON con la clave IP del dispositivo, numero de salida, y comando"
+                },
+                {
+                    "name": "callback",
+                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn"
+                }
+            ],
+            "return": {
+                "description": "Boolean Resultado del comando"
+            },
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "Clases.js",
+            "line": 142,
+            "description": "Representa un objeto Salida de la clase Dispositivo;\nLas instancias se crean a través de SalidaFactory,\ndependiento del atributo tipo;\nEl protocolo establece la siguiente sintaxis para enviar comandos\nal dispositivo Arduino:\n[Comando] [Nro de salida] [:] [Accion] [.] [Temporización]\ndonde:\n\t- Temporizacion [en minutos] es opcional\n\t- Accion [ 1,0 ] y  Temporizacion solo se usan cuando Comando = T\n\t- Comando: puede valer S, T, o P\n\t\tS sirve para consultar el estado de una salida\n\t\t\tUso: S + Nro de Salida\n\t\tT sirve para setear el estado de la Salida\n\t\t\tUso: T + Nro de Salida + Accion (1 o 0)\n\t\t\tEjemplo:\n\t\t\t\t\tT231 --> Apaga (OFF), a la salida numero 23\n\t\t\tEjemplo Temporizacion:\n\t\t\t\t\tT230.60 --> Activa la salida 23 por 60 (minutos)\n\t\tP sirve para accionar sobre Salidas tipo Persiana\n\t\t\tUso: P + Nro de Salida + Accion (0,1,2)\n\t\t\t\t0 --> Sube la Persiana\n\t\t\t\t1 --> Baja\n\t\t\t\t2 --> Detiene\n\t\t\tEjemplo:\n\t\t\t\t\tP251 --> Baja la persiana cuya salida es 25",
+            "class": "Dispositivo",
+            "module": ""
+        },
+        {
+            "file": "DataStore.js",
+            "line": 18,
+            "description": "Listado de dispositivos Arduino registrados",
+            "itemtype": "property",
+            "name": "dispositivos",
+            "type": "Array",
+            "class": "Tarea",
+            "module": "DataStore"
+        },
+        {
+            "file": "DataStore.js",
+            "line": 23,
+            "description": "Listado de tareas programadas registradas",
+            "itemtype": "property",
+            "name": "tareas",
+            "type": "Array",
+            "class": "Tarea",
+            "module": "DataStore"
+        },
+        {
+            "file": "DataStore.js",
+            "line": 28,
+            "description": "Listado de tareas cargadas en scheduler (listas para ejecución)",
+            "itemtype": "property",
+            "name": "tareasActivas",
+            "type": "Array",
+            "class": "Tarea",
+            "module": "DataStore"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 29,
+            "description": "Tiempo en minutos, durante el cual se ejecuta la tarea",
+            "itemtype": "property",
+            "name": "temporizada",
+            "type": "String",
+            "class": "Tarea",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 34,
+            "description": "Lista de dispositivos Arduino sobre la cual se ejecutan los comandos",
+            "itemtype": "property",
+            "name": "dispositivos",
+            "type": "Array",
+            "class": "Tarea",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 52,
+            "description": "Ejecuta una tarea.\nItera el array de dispositivos de la tarea,\nextrayendo IP del dispositivo y numero de salida a Accionar",
+            "itemtype": "method",
+            "name": "ejecutar",
+            "return": {
+                "description": "callback (Opcional)"
+            },
+            "class": "Tarea",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 81,
+            "description": "Setea reglas de ejecucion para la tarea que se envia al scheduler.\nLos parametros provienen del objeto config de la Clase Tarea\nParametros: Dia de ejecucion, hora, minuto, segundo",
+            "itemtype": "method",
+            "name": "setExecutionRules",
+            "return": {
+                "description": "rule"
+            },
+            "class": "Tarea",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 100,
+            "description": "Retorna el tiempo restante (en minutos) de una tarea, (si existe)\nSe calcula a partir de la hora inicio y la duracion de la tarea",
+            "itemtype": "method",
+            "name": "getTiempoRestante",
+            "return": {
+                "description": "Integer"
+            },
+            "class": "Tarea",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 122,
+            "description": "Determina si una tarea es valida para su ejecucion\nSe comprueba el atributo activa, fecha, hora y dias de ejecucion",
+            "itemtype": "method",
+            "name": "isValid",
+            "return": {
+                "description": "Boolean"
+            },
+            "class": "Tarea",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 161,
+            "description": "Parametros de configuración (Tiempo de escaneo de tareas)",
+            "itemtype": "property",
+            "name": "config",
+            "type": "JSON",
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 173,
+            "description": "Se lanza al modificar una tarea existente. Quita la tarea del scheduler,\ny la agrega nuevamente con los cambios hechos.",
+            "itemtype": "method",
+            "name": "reprogramarTarea",
+            "params": [
+                {
+                    "name": "_tarea",
+                    "description": "la configuración de la tarea, (se parsea y se crea instancia Tarea)"
+                }
+            ],
+            "return": {
+                "description": "null"
+            },
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 186,
+            "description": "Quita una tarea del array de tareasActivas de DataStore",
+            "itemtype": "method",
+            "name": "quitarTareaEnEjecucion",
+            "params": [
+                {
+                    "name": "tarea",
+                    "description": "la tarea a quitar"
+                }
+            ],
+            "return": {
+                "description": "null"
+            },
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 200,
+            "description": "Al quitar una tarea, se ejecuta la accion de apagado sobre los\ndispositivos asociados a la misma.",
+            "itemtype": "method",
+            "name": "quitarTarea",
+            "params": [
+                {
+                    "name": "_tarea",
+                    "description": "la configuracion de tarea a quitar. (Se parsea y se crea instancia Tarea)"
+                }
+            ],
+            "return": {
+                "description": "null"
+            },
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 215,
+            "description": "Agrega un objeto Tarea al scheduler (modulo schedule).\ndispositivos asociados a la misma.\nRequiere el objeto rule devuelto por tarea.getExecutionRules()\nRegistra la tarea como activa, en DataStore.tareasActivas",
+            "itemtype": "method",
+            "name": "loadInScheduler",
+            "params": [
+                {
+                    "name": "tarea",
+                    "description": "objeto tarea (instancia de Tarea)"
+                }
+            ],
+            "return": {
+                "description": "null"
+            },
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 239,
+            "description": "Intenta ejecutar una tarea forzosamente. Comprobando si es valida,\ny el tiempo restante.",
+            "itemtype": "method",
+            "name": "forzarEjecucion",
+            "params": [
+                {
+                    "name": "tarea",
+                    "description": "objeto tarea (instancia de Tarea)"
+                }
+            ],
+            "return": {
+                "description": "null"
+            },
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 261,
+            "description": "Recorre el listado de tareas e intenta forzar la ejecucion de cada una.\nRegistra la tarea como activa, en DataStore.tareasActivas",
+            "itemtype": "method",
+            "name": "loadInScheduler",
+            "params": [
+                {
+                    "name": "tiempoEscaneoTareas",
+                    "description": "en milisegundos"
+                }
+            ],
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "programadorTareas.js",
+            "line": 283,
+            "description": "Importa listado de tareas desde archivo JSON, a DataStore.tareas\ny las carga en scheduler.",
+            "itemtype": "method",
+            "name": "loadTareas",
+            "class": "Programador",
+            "module": "Programador de Tareas"
+        },
+        {
+            "file": "server.js",
+            "line": 26,
+            "description": "Intenta ejecutar una tarea forzosamente. Comprobando si es valida,\ny el tiempo restante.",
+            "itemtype": "method",
+            "name": "forzarEjecucion",
+            "params": [
+                {
+                    "name": "tarea",
+                    "description": "objeto tarea (instancia de Tarea)"
+                }
+            ],
+            "return": {
+                "description": "null"
+            },
+            "class": "",
+            "module": "Programador de Tareas"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nClase (Singleton) principal de la aplicación\n\t- Interactua con Dispositivo y Socket;\n\t- Mantiene un listado de dispositivos activos\nPermite:\n\t1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,\n\t   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast\n\t   a todos los sockets conectados.\n\t2) Consultar listado de Salidas activas (Luces encendidas)",
+            "line": " Arduinode.js:16"
+        },
+        {
+            "message": "Missing item type\nRepresenta un Dispositivo Arduino, y sus Salidas\nPermite:\n1) accionar las salidas que posee, (Luces, Bombas, Persianas);\n2) Consultar lista de salidas y sus estados",
+            "line": " Clases.js:1"
+        },
+        {
+            "message": "Missing item type\nRepresenta un objeto Salida de la clase Dispositivo;\nLas instancias se crean a través de SalidaFactory,\ndependiento del atributo tipo;\nEl protocolo establece la siguiente sintaxis para enviar comandos\nal dispositivo Arduino:\n[Comando] [Nro de salida] [:] [Accion] [.] [Temporización]\ndonde:\n\t- Temporizacion [en minutos] es opcional\n\t- Accion [ 1,0 ] y  Temporizacion solo se usan cuando Comando = T\n\t- Comando: puede valer S, T, o P\n\t\tS sirve para consultar el estado de una salida\n\t\t\tUso: S + Nro de Salida\n\t\tT sirve para setear el estado de la Salida\n\t\t\tUso: T + Nro de Salida + Accion (1 o 0)\n\t\t\tEjemplo:\n\t\t\t\t\tT231 --> Apaga (OFF), a la salida numero 23\n\t\t\tEjemplo Temporizacion:\n\t\t\t\t\tT230.60 --> Activa la salida 23 por 60 (minutos)\n\t\tP sirve para accionar sobre Salidas tipo Persiana\n\t\t\tUso: P + Nro de Salida + Accion (0,1,2)\n\t\t\t\t0 --> Sube la Persiana\n\t\t\t\t1 --> Baja\n\t\t\t\t2 --> Detiene\n\t\t\tEjemplo:\n\t\t\t\t\tP251 --> Baja la persiana cuya salida es 25",
+            "line": " Clases.js:142"
+        }
+    ]
+}

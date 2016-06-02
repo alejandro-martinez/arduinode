@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Arduinode.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Arduinode.html">Arduinode</a></li>
+                                <li><a href="../classes/Dispositivo.html">Dispositivo</a></li>
+                                <li><a href="../classes/Programador.html">Programador</a></li>
+                                <li><a href="../classes/Tarea.html">Tarea</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Arduinode.html">Arduinode</a></li>
+                                <li><a href="../modules/DataStore.html">DataStore</a></li>
+                                <li><a href="../modules/Programador de Tareas.html">Programador de Tareas</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: Arduinode.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Modulo Principal de la aplicación
+ * Interactua con Dispositivo y Socket, a través de una clase Facade (Arduinode)
+ * @module Arduinode
+ */
+
+var clases 		= require(&#x27;./Clases.js&#x27;),
+	socket 		= require(&#x27;./socket&#x27;)(),
+	DateConvert = require(&#x27;./utils/DateConvert&#x27;)(),
+	_ 			= require(&#x27;underscore&#x27;),
+	Dispositivo = clases.Dispositivo,
+	DataStore 	= require(&#x27;./DataStore&#x27;).DataStore,
+	net 		= require(&#x27;net&#x27;);
+	const ON = 0, OFF = 1;
+
+/**************** Clase Arduinode *******************
+
+Clase (Singleton) principal de la aplicación
+
+	- Interactua con Dispositivo y Socket;
+	- Mantiene un listado de dispositivos activos
+
+Permite:
+	1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,
+	   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast
+	   a todos los sockets conectados.
+	2) Consultar listado de Salidas activas (Luces encendidas)
+
+//*************** Clase Arduinode *****************/
+/**
+* Clase (Singleton, Facade) principal de la aplicación
+* - Interactua con Dispositivo y Socket;
+* - Mantiene un listado de dispositivos activos
+*
+* @class Arduinode
+* @constructor
+*/
+
+/**
+* Instancia de modulo net, para recibir datos de Dispositivos Arduino reales
+* @property socketTCP
+* @type net Object (socket)
+*/
+/**
+* Lista de dispositivos Arduino registrados
+* @property dispositivos
+* @type JSON Object
+*/
+var Arduinode = function() {
+	this.socketTCP = null;
+/**
+* Registra un socket para escuchar eventos de los dispositivos Arduino reales.
+* Emite un broadcast a todos los dispositivos conectados a la aplicacion,
+* cuando se produce un evento,
+* @method listenSwitchEvents
+* @param conf Configuracion para el socket (IP, puerto)
+* @return null
+*/
+	this.listenSwitchEvents = function( conf ) {
+		var This = this;
+		if (!this.socketTCP) {
+
+			this.socketTCP = net.createServer(function( socket ) {
+				socket.on(&#x27;data&#x27;, function( data ) {
+					var parsed = data.toString().replace(&quot;\r&quot;,&quot;&quot;);
+						salida = Dispositivo.prototype.parseSalida.call(
+										this,
+										{ ip: socket.remoteAddress },
+										parsed.trim()
+								 );
+					This.dispositivos.broadcast.emit(&#x27;switchBroadcast&#x27;, salida);
+					socket.end();
+				});
+			});
+
+			this.socketTCP.listen({ host: conf.ip, port: conf.port + 1 }, function() {
+				console.log(&#x27;Socket escuchando arduinos en:&#x27;+conf.ip,conf.port+1)
+			});
+		}
+	};
+	this.dispositivos = {
+		lista: [],
+		sCliente: null,
+/**
+* Devuelve lista de dispositivos Arduino registrados
+* @method getAll
+* @param conf Configuracion para el socket (IP, puerto)
+* @return Array
+*/
+		getAll: function() {
+			return this.lista;
+		},
+/**
+* Devuelve dispositivo filtrado por IP
+* @method getByIP
+* @param ip IP del dispositivo a buscar
+* @return Dispositivo
+*/
+		getByIP: function(ip) {
+			return _.findWhere(this.lista,{ip: ip});
+		},
+/**
+* Ejecuta un comando sobre una salida de un Dispositivo
+* @method accionar
+* @param params Objeto JSON con las claves: IP del dispositivo, numero de salida, accion y temporización
+* @return Boolean
+*/
+		accionar: function( params, callback ) {
+			var This = this;
+			this.getByIP( params.ip ).accionarSalida( params, function(response) {
+				callback(response);
+			});
+		},
+
+/**
+* Devuelve las salidas de un Dispositivo Arduino
+* @method getSalidas
+* @param callback Funcion callback que se ejecuta cuando se completa la operaciòn
+* @param params Objeto JSON con la clave IP del dispositivo
+* @return Array
+*/
+		getSalidas: function( callback, params ) {
+			var disp = this.getByIP( params.ip ),
+				onData = function(salidas) {
+					callback(salidas);
+				};
+			disp.getSalidas(params, onData);
+		},
+/**
+* Devuelve listado de salidas de un Dispositivo, filtradas por estado = 0 (Encendidas)
+* @method getSalidasEncendidas
+* @param callback Funcion callback que se ejecuta cuando se completa la operaciòn
+* @param params Objeto JSON con la clave IP del dispositivo
+* @return Array
+*/
+		getSalidasEncendidas: function( callback ) {
+			var This = this;
+			var salidasAux = [], sockets = [], processed = [], This = this,
+				emit = function(data) {
+					This.sCliente.emit(&#x27;salidasEncendidas&#x27;, data);
+				};
+			this.lista.forEach(function(item, key, array)
+			{
+				item.buffer = &quot;&quot;;
+				var salidas,
+					connectedSuccess = false,
+					encendidas = [],
+					params = {
+						noError: true,
+						ip: item.ip,
+						id_disp: item.id_disp,
+						filterByEstado: &#x27;0&#x27;
+					};
+
+				sockets[key] = new net.Socket();
+				sockets[key].setTimeout(1000);
+				sockets[key].connect(8000, item.ip, function(response)
+				{
+					connectedSuccess = true;
+					sockets[key].write(&#x27;G&#x27;)
+				})
+				sockets[key].on(&#x27;timeout&#x27;,function(_err)
+				{
+					if (processed.indexOf(item.ip) &lt; 0) {
+						processed.push(item.ip);
+						emit([]);
+					}
+				});
+
+				sockets[key].on(&#x27;data&#x27;,function(_data)
+				{
+					item.buffer+= _data;
+				});
+
+				//Si fallo la conexión, aviso al cliente con un array nulo
+				sockets[key].on(&#x27;error&#x27;,function(_err)
+				{
+					connectedSuccess = false;
+					if (processed.indexOf(item.ip) &lt; 0) {
+						processed.push(item.ip);
+						emit([]);
+					}
+				});
+				sockets[key].on(&#x27;end&#x27;,function()
+				{
+					var salidas = item.parseSalida(item, item.buffer);
+					if (salidas.length &gt; 0 &amp;&amp; connectedSuccess)
+					{
+						emit(item.getSalidasByEstado(ON, salidas));
+						item.buffer = &quot;&quot;;
+					}
+				});
+			});
+		},
+/**
+* Registra dispositivos cargados en el modelo (dispositivos.json), en DataStore.dispositivos
+* y en atributo lista de esta clase
+* @method load
+*/
+		load: function() {
+			var This = this;
+			this.lista = [];
+			DataStore.getFile(&#x27;dispositivos&#x27;).forEach(function(d) {
+				var disp = new Dispositivo( d.id_disp, d.ip, d.note );
+				disp.setSalidas( d.salidas );
+				This.lista.push(disp);
+			});
+		}
+	}
+}
+
+Arduinode.instance = null;
+Arduinode.getInstance = function(){
+    if(this.instance === null){
+        this.instance = new Arduinode();
+    }
+    return this.instance;
+}
+module.exports = Arduinode.getInstance();
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
