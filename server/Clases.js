@@ -89,8 +89,8 @@ El metodo parseSalida, formatea los datos recibidos de los dispositivos Arduino;
 
 function Dispositivo(_id, _ip, _note) {
 	this.id_disp = _id || null;
-	this.ip = _ip || null;
-	this.note = _note || null;
+	this.ip 	 = _ip || null;
+	this.note 	 = _note || null;
 	this.salidas = [];
 }
 
@@ -161,8 +161,8 @@ Dispositivo.prototype = {
 		var This = this;
 		if (_salidas.length) {
 			_salidas.forEach(function(s) {
-				var factory = new SalidaFactory();
-				var salida 	= factory.create( s.nro_salida,s.tipo, s.note );
+				var factory = new SalidaFactory(),
+					salida 	= factory.create( s.nro_salida,s.tipo, s.note );
 				This.salidas.push( salida);
 			});
 		}
@@ -213,8 +213,8 @@ donde:
 
 //*************** Clase Dispositivo *****************/
 
-function Salida( nro_salida, _note, _tipo ) {
-	this.nro_salida = nro_salida || null;
+function Salida( _nro_salida, _note, _tipo ) {
+	this.nro_salida = _nro_salida || null;
 	this.note 		= _note || null;
 	this.tipo 		= _tipo || null;
 	this.estado 	= null;
@@ -222,6 +222,8 @@ function Salida( nro_salida, _note, _tipo ) {
 	this.comando 	= null,
 	this.temporizada= null;
 }
+
+/* Metodo switch general, interactua con el socket enviandole un comando */
 
 Salida.prototype.switch = function( params, callback ) {
 	if (params.hasOwnProperty('comando')) {
@@ -236,6 +238,8 @@ function Luz( nro_salida, _note ) {
 	this.tipo 	 = 'L';
 	this.comando = 'T';
 };
+
+/* Cada Tipo de Salida, reescribe su modo de hacer switch */
 
 Luz.prototype.switch = function( params, callback ) {
 	var comando = this.comando
@@ -255,13 +259,14 @@ function Persiana(nro_salida, _note) {
 };
 
 Persiana.prototype.switch = function( params, callback ) {
-	var comando = this.comando + this.nro_salida + params.estado;
-	var onSwitchResponse = function( response ) {
+	var comando = this.comando + this.nro_salida + params.estado,
+		onSwitchResponse = function( response ) {
 		callback(response);
 	}
 	Salida.prototype.switch({ comando: comando, ip: this.ip}, onSwitchResponse);
 };
 
+/* Factory para crear los distintos tipos de Salida */
 function SalidaFactory() {
 	this.create = function( nro_salida,_tipo, _note ) {
 		if (_tipo === "L") {

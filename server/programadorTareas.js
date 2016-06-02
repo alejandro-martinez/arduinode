@@ -1,6 +1,6 @@
-// Tarea programadas
-var DataStore = require('./Clases.js').DataStore;
-var Arduinode = require('./Arduinode'),
+// Dependencias
+var DataStore 	= require('./Clases.js').DataStore;
+var Arduinode 	= require('./Arduinode'),
 	DateConvert = require('./utils/DateConvert')(),
 	_ 			= require('underscore'),
 	schedule = require('node-schedule');
@@ -18,23 +18,15 @@ function Tarea(config) {
 Tarea.prototype = {
 	parseConfig	: function() {
 		var t = this.config;
-		this.config = {
-			id_tarea: 		t.id_tarea,
-			activa: 		t.activa,
-			accion: 		t.accion,
-			dispositivos: 	t.dispositivos,
-			dia_inicio	: 	t.dia_inicio,
-			mes_inicio	: 	t.mes_inicio,
+		var parseData = {
 			hora_ini: 		t.hora_inicio.substr(0,2),
 			min_ini: 		t.hora_inicio.substr(-2),
 			raw_hora_inicio:t.hora_inicio,
-			dias_ejecucion: DateConvert.strToArray(t.dias_ejecucion),
-			dia_fin	: 		t.dia_fin,
-			mes_fin	: 		t.mes_fin,
+			dias_ejecucion: DateConvert.strToArray( t.dias_ejecucion ),
 			temporizada: 	DateConvert.horario_a_min( t.duracion ),
-			raw_duracion: 	t.duracion,
-			descripcion: 	t.descripcion
+			raw_duracion: 	t.duracion
 		};
+		this.config = _.extend(this.config, parseData);
 		//Setea reglas de ejecucion para el Scheduler
 		this.setExecutionRules();
 	},
@@ -46,7 +38,7 @@ Tarea.prototype = {
 			if (dispositivoTarea) {
 				//Seteo la misma temporizacion para todos los dispositivos
 				dispositivoTarea.temporizada = This.config.temporizada;
-				dispositivoTarea.estado 	   = This.config.accion;
+				dispositivoTarea.estado 	 = This.config.accion;
 
 				Arduinode.dispositivos.accionar(dispositivoTarea, function(response) {
 					i++;
@@ -221,7 +213,6 @@ var Programador = function()
 				// Creo objeto tarea, parseando la configuracion
 				var tarea = new Tarea(tarea);
 				tarea.parseConfig();
-
 				This.loadInScheduler(tarea);
 			});
 		};

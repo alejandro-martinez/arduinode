@@ -9,7 +9,7 @@ gulp.task('default', function() {
 		var bower = main + "bower_components/";
 			js	  = main + "js/modules/";
 
-		//Concat scripts JS
+		//Concat archivos JS
 		gulp.src([
 			bower + 'jquery/dist/jquery.min.js',
 			bower + 'angular/angular.min.js',
@@ -29,7 +29,7 @@ gulp.task('default', function() {
 			bower + 'ng-dialog/css/ngDialog-theme-default.min.css',
 			bower + 'ng-dialog/css/ngDialog-theme-plain.min.css',
 			bower + 'clockpicker/dist/bootstrap-clockpicker.min.css',
-			main + 'css/main.css'
+			main  + 'css/main.css'
 		])
 		.pipe(concat('../cssmin.css'))
 		.pipe(gulp.dest(main + 'css/cssmin.css'));

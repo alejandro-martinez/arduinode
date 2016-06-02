@@ -52,7 +52,12 @@ module.exports = function()
 		//Convierte "1,2,3,4,5" en [1,2,3,4,5]
 		strToArray: function(str)
 		{
-			return str.replace(/, +/g, ",").split(",").map(Number)
+			if (typeof str === 'string') {
+				return str.replace(/, +/g, ",").split(",").map(Number);
+			}
+			else {
+				return str;
+			}
 		},
 		//Devuelve diferencia en minutos
 		diffHoras: function(hora1,hora2)

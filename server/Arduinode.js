@@ -51,7 +51,6 @@ var Arduinode = function() {
 	this.dispositivos = {
 		lista: [],
 		sCliente: null,
-		//Carga listado de dispositivos desde archivo JSON, en variable lista
 		getAll: function() {
 			return this.lista;
 		},
