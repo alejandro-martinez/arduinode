@@ -66,28 +66,37 @@ Tarea.prototype = {
 	getExecutionRules: function() {
 		return this.executionRules;
 	},
+	getTiempoRestante: function() {
+		var t = this.config;
+		return DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion );
+	},
+	isFechaValida: function() {
+		if ( DateConvert.fechaBetween( this.config ) ) {
+			if ( DateConvert.diaActualValido( this.config.dias_ejecucion )) {
+				return true;
+			}
+		}
+		return false;
+	},
+	isHorarioValido: function() {
+		var t = this.config;
+		return ( DateConvert.horaActualValida( t.raw_hora_inicio, t.raw_duracion) );
+	},
 	isValid: function() {
 
 		var t = this.config;
 
-		if (t.activa) {
-			//Verifico el rango de fechas
-			if (DateConvert.fechaBetween(t)) {
-				//Verifico que el dia sea valido
-				if (DateConvert.diaActualValido(t.dias_ejecucion)) {
-					//Verifico que se a un horario valido
-					if (t.accion == 1) {
-						if( DateConvert.horaActualValida( t.raw_hora_inicio, '00:00' ) ) {
-							return true;
-						};
-					}
-					if( DateConvert.horaActualValida( t.raw_hora_inicio, t.raw_duracion ) ){
-						var min_rest = DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion )
-						if ( min_rest > 0 )
-						{
-							return min_rest;
-						}
-					}
+		//Verifica que la tarea esté activa el rango de fechas y que la tarea este activa
+		if ( this.config.activa ) {
+
+			//Verifica Fecha y Horario
+			if ( this.isFechaValida() && this.isHorarioValido() ) {
+
+				//Si la tarea deberia estar ejecutandose, calcula el tiempo restante
+				var min_rest = this.getTiempoRestante( t.raw_hora_inicio,t.raw_duracion );
+				if ( min_rest > 0 )
+				{
+					return min_rest;
 				}
 			}
 		}
@@ -112,18 +121,18 @@ El modulo schedule permite programar las tareas;
 //*************** Clase Arduinode *****************/
 var Programador = function()
 {
-		this.setConfig = function(config)
+		this.setConfig = function( config )
 		{
 			this.config = config;
 		};
-		this.reprogramarTarea = function(_tarea)
+		this.reprogramarTarea = function( _tarea )
 		{
 			//Elimino la tarea de tareas en ejecucion
-			this.quitarTareaEnEjecucion( _tarea);
+			this.quitarTareaEnEjecucion( _tarea );
 			//Añado la tarea actualizada, al scheduler
-			var tarea = new Tarea(_tarea);
+			var tarea = new Tarea( _tarea );
 			tarea.parseConfig();
-			this.loadInScheduler(tarea);
+			this.loadInScheduler( tarea );
 		};
 		this.quitarTareaEnEjecucion = function( tarea ) {
 			DataStore.tareasActivas.forEach(function(s,k,_this) {
@@ -132,10 +141,10 @@ var Programador = function()
 				}
 			});
 		};
-		this.quitarTarea = function(_tarea) {
+		this.quitarTarea = function( _tarea ) {
 			//Ejecuta comandos de apagado en los dispositivos de la tarea
 			_tarea.accion = 1;
-			var tarea = new Tarea(_tarea);
+			var tarea = new Tarea( _tarea );
 			tarea.parseConfig();
 
 			tarea.ejecutar(function() {
@@ -149,7 +158,7 @@ var Programador = function()
 			//Chequeo si la tarea es valida para ejecutarse en este momento
 			// y si la accion de la misma es Encendido (las de Apagado no se forzan)
 			if (tarea.isValid()) {
-				this.forzarEjecucion(tarea);
+				this.forzarEjecucion( tarea );
 			}
 			else {
 				console.log("La tarea a forzar no es valida",tarea.config.descripcion);
@@ -163,10 +172,10 @@ var Programador = function()
 			job.id = tarea.config.id_tarea;
 			DataStore.tareasActivas.push(job);
 		};
-		this.forzarEjecucion = function(t) {
+		this.forzarEjecucion = function( t ) {
 
 			if (t.config.accion == 0) {
-				var tiempo_restante = t.isValid(t);
+				var tiempo_restante = t.isValid( t );
 				if (tiempo_restante) {
 					console.log("Tiempo restante de ",
 						t.config.descripcion,
