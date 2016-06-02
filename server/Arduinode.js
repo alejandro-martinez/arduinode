@@ -58,6 +58,7 @@ var Arduinode = function() {
 			return _.findWhere(this.lista,{ip: ip});
 		},
 		accionar: function( params, callback ) {
+			var This = this;
 			this.getByIP( params.ip ).accionarSalida( params, function(response) {
 				callback(response);
 			});

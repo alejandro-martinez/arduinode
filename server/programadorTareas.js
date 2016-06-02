@@ -138,14 +138,16 @@ var Programador = function()
 			var tarea = new Tarea( _tarea );
 			this.loadInScheduler( tarea );
 		};
-		this.quitarTareaEnEjecucion = function( tarea ) {
+		this.quitarTareaEnEjecucion = function( tarea )
+		{
 			DataStore.tareasActivas.forEach(function(s,k,_this) {
 				if (s.id == tarea.id_tarea) {
 					delete _this[k];
 				}
 			});
 		};
-		this.quitarTarea = function( _tarea ) {
+		this.quitarTarea = function( _tarea )
+		{
 			//Ejecuta comandos de apagado en los dispositivos de la tarea
 			_tarea.accion = 1;
 			var tarea = new Tarea( _tarea );
@@ -172,8 +174,8 @@ var Programador = function()
 			job.id = tarea.config.id_tarea;
 			DataStore.tareasActivas.push(job);
 		};
-		this.forzarEjecucion = function( t ) {
-
+		this.forzarEjecucion = function( t )
+		{
 			if ( t.config.accion == 0 && t.isValid() ) {
 				var tiempo_restante = t.getTiempoRestante();
 

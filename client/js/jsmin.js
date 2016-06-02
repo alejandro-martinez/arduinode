@@ -556,54 +556,56 @@ angular.module('Arduinode.Dispositivo',['Socket'])
 	}
 ])
 
-angular.module('Arduinode.Home',[])
-.config(function( $stateProvider, $urlRouterProvider )
+var socketIOModule = angular.module('Socket',[]);
+
+socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScope, Popup )
 {
-	$urlRouterProvider.otherwise("/");
-	$stateProvider
-		.state('home',
+	if (!$rootScope.socket)
+	{
+		// Lanza el socket en la ip origen actual
+		$rootScope.socket = io(window.location.origin);
+
+		// Escucha errores del servidor
+		$rootScope.socket.on('Error', function(error)
 		{
-			url: "/",
-			templateUrl: "js/modules/Home/home.html",
-			controller: 'MainCtrl'
+			if ( Object.getOwnPropertyNames(error).length == 0 )
+			{
+				var error = 'Error Desconocido';
+			}
+			else
+			{
+				$rootScope.error = error;
+			}
+			$rootScope.loading = false;
+			Popup.open({ template: '<h1>' + error + '</h1>', plain: true });
+		});
+
+		$rootScope.socket.on('horaServidor', function(hora) {
+			$rootScope.horaServidor = hora;
 		})
-})
-.controller('MainCtrl', [ '$state', '$rootScope',
-	function ( $state, $rootScope ) {
-
-	$rootScope.currentMenu = 'Home';
-	$rootScope.previousState;
-	$rootScope.currentState;
-
-	//Setea las rutas anterior y actual, al navegar
-	$rootScope.$on('$stateChangeSuccess',function(ev, to, toParams, from, fromParams)
-	{
-		$rootScope.previousState = from.name;
-		$rootScope.currentState = to.name;
-	});
-
-	//Control de navegación hacia atrás
-	$rootScope.goBack = function()
-	{
-		if ($rootScope.previousState == 'estados'
-		 || $rootScope.currentState == 'tareas'
-		)
-		{
-			$state.go('home');
-		}
-		else
-		{
-			$state.go($rootScope.previousState);
-		}
 	}
 
-	//Componente Fastclick para eliminar delay de botones en smarphones
-	$(function()
-	{
-		FastClick.attach(document.body);
-	});
+	// Métodos disponibles del Socket
+	return {
 
-}])
+		// Envia un parametro
+		send: function(param, _data)
+		{
+			$rootScope.socket.emit(param, _data || {});
+		},
+
+		// Escucha un evento
+		listen: function(param, callback)
+		{
+			$rootScope.socket.removeListener(param);
+			$rootScope.socket.on(param, function(data)
+			{
+				callback(data);
+			});
+		}
+	}
+}]);
+
 angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 .constant('SalidaConfig',{
 	rootFolder: 'js/modules/Salida/',
@@ -919,7 +921,7 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 
 		//Escucha evento broadcast para actualizar estado de salidas
 		SocketIO.listen('switchBroadcast', function( params ) {
-
+			
 			//Si la salida existe, cambia el estado
 			if ( Salida.findSalida( $scope.salidas, params.nro_salida).length > 0 ) {
 				$scope.salidas.forEach(function(s, k, _this)
@@ -942,56 +944,54 @@ angular.module('Arduinode.Salida',['Socket','Arduinode.Dispositivo'])
 	}
 ])
 
-var socketIOModule = angular.module('Socket',[]);
-
-socketIOModule.factory('SocketIO', ['$rootScope','ngDialog', function ($rootScope, Popup )
+angular.module('Arduinode.Home',[])
+.config(function( $stateProvider, $urlRouterProvider )
 {
-	if (!$rootScope.socket)
-	{
-		// Lanza el socket en la ip origen actual
-		$rootScope.socket = io(window.location.origin);
-
-		// Escucha errores del servidor
-		$rootScope.socket.on('Error', function(error)
+	$urlRouterProvider.otherwise("/");
+	$stateProvider
+		.state('home',
 		{
-			if ( Object.getOwnPropertyNames(error).length == 0 )
-			{
-				var error = 'Error Desconocido';
-			}
-			else
-			{
-				$rootScope.error = error;
-			}
-			$rootScope.loading = false;
-			Popup.open({ template: '<h1>' + error + '</h1>', plain: true });
-		});
-
-		$rootScope.socket.on('horaServidor', function(hora) {
-			$rootScope.horaServidor = hora;
+			url: "/",
+			templateUrl: "js/modules/Home/home.html",
+			controller: 'MainCtrl'
 		})
-	}
+})
+.controller('MainCtrl', [ '$state', '$rootScope',
+	function ( $state, $rootScope ) {
 
-	// Métodos disponibles del Socket
-	return {
+	$rootScope.currentMenu = 'Home';
+	$rootScope.previousState;
+	$rootScope.currentState;
 
-		// Envia un parametro
-		send: function(param, _data)
+	//Setea las rutas anterior y actual, al navegar
+	$rootScope.$on('$stateChangeSuccess',function(ev, to, toParams, from, fromParams)
+	{
+		$rootScope.previousState = from.name;
+		$rootScope.currentState = to.name;
+	});
+
+	//Control de navegación hacia atrás
+	$rootScope.goBack = function()
+	{
+		if ($rootScope.previousState == 'estados'
+		 || $rootScope.currentState == 'tareas'
+		)
 		{
-			$rootScope.socket.emit(param, _data || {});
-		},
-
-		// Escucha un evento
-		listen: function(param, callback)
+			$state.go('home');
+		}
+		else
 		{
-			$rootScope.socket.removeListener(param);
-			$rootScope.socket.on(param, function(data)
-			{
-				callback(data);
-			});
+			$state.go($rootScope.previousState);
 		}
 	}
-}]);
 
+	//Componente Fastclick para eliminar delay de botones en smarphones
+	$(function()
+	{
+		FastClick.attach(document.body);
+	});
+
+}])
 angular.module('Arduinode.Tarea',['Arduinode.Dispositivo','Arduinode.Salida'])
 .config(function( $stateProvider, $urlRouterProvider )
 {
@@ -1027,7 +1027,6 @@ function($http,
 			// si esto sucede borra el cache para reflejar los cambios
 			SocketIO.listen('tareasChanged', function()
 			{
-				console.log("TareasBroadcast")
 				localStorage.setItem('tareas', undefined);
 			});
 
