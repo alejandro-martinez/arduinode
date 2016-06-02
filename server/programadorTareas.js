@@ -14,6 +14,7 @@ Ej; Encender una Luz en un día y horario determinados, con recurrencia opcional
 //*************** Clase Arduinode *****************/
 function Tarea(config) {
 	this.config = config;
+	this.parseConfig();
 }
 Tarea.prototype = {
 	parseConfig	: function() {
@@ -131,7 +132,6 @@ var Programador = function()
 			this.quitarTareaEnEjecucion( _tarea );
 			//Añado la tarea actualizada, al scheduler
 			var tarea = new Tarea( _tarea );
-			tarea.parseConfig();
 			this.loadInScheduler( tarea );
 		};
 		this.quitarTareaEnEjecucion = function( tarea ) {
@@ -145,8 +145,6 @@ var Programador = function()
 			//Ejecuta comandos de apagado en los dispositivos de la tarea
 			_tarea.accion = 1;
 			var tarea = new Tarea( _tarea );
-			tarea.parseConfig();
-
 			tarea.ejecutar(function() {
 				this.quitarTareaEnEjecucion( _tarea);
 			});
@@ -203,7 +201,6 @@ var Programador = function()
 				{
 					// Creo objeto tarea, parseando la configuracion
 					var tarea = new Tarea(tarea);
-					tarea.parseConfig();
 					This.forzarEjecucion(tarea);
 				});
 			},this.config.tiempoEscaneoTareas)
@@ -221,7 +218,6 @@ var Programador = function()
 			{
 				// Creo objeto tarea, parseando la configuracion
 				var tarea = new Tarea(tarea);
-				tarea.parseConfig();
 				This.loadInScheduler(tarea);
 			});
 		};
