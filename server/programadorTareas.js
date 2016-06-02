@@ -14,7 +14,12 @@ Ej; Encender una Luz en un día y horario determinados, con recurrencia opcional
 //*************** Clase Arduinode *****************/
 function Tarea(config) {
 	this.config = config;
+
+	//Parse de parametros de la tarea
 	this.parseConfig();
+
+	//Setea reglas de ejecucion para el Scheduler
+	this.setExecutionRules();
 }
 Tarea.prototype = {
 	parseConfig	: function() {
@@ -28,8 +33,6 @@ Tarea.prototype = {
 			raw_duracion: 	t.duracion
 		};
 		this.config = _.extend(this.config, parseData);
-		//Setea reglas de ejecucion para el Scheduler
-		this.setExecutionRules();
 	},
 	ejecutar: function(callback) {
 		var This = this,
