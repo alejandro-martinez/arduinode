@@ -23,6 +23,14 @@ if (!fs.existsSync(configPath))
 }
 var serverConfig = require(configPath);
 
+/**
+* Intenta ejecutar una tarea forzosamente. Comprobando si es valida,
+* y el tiempo restante.
+* @method forzarEjecucion
+* @param tarea objeto tarea (instancia de Tarea)
+* @return null
+*/
+
 //Server HTTP
 http.listen(serverConfig.port, serverConfig.ip, function()
 {

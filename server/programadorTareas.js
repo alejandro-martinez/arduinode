@@ -1,17 +1,22 @@
-// Dependencias
-var DataStore 	= require('./Clases.js').DataStore;
+/**
+ * Relacionado a la programacion y ejecucion de tareas sobre los dispositivos
+ *
+ * @module Programador de Tareas
+ */
+var DataStore 	= require('./DataStore').DataStore;
 var Arduinode 	= require('./Arduinode'),
 	DateConvert = require('./utils/DateConvert')(),
 	_ 			= require('underscore'),
 	schedule = require('node-schedule');
+/**
+* Representa una Tarea (comando programado)
+* Las tareas son comandos programados para enviar a los dispositivos Arduino.
+* Ej; Encender una Luz en un día y horario determinados, con recurrencia opcional;
+*
+* @class Tarea
+* @constructor
+*/
 
-/**************** Clase Tarea *******************
-
-Representa una Tarea (comando programado);
-Las tareas son comandos programados para enviar a los dispositivos Arduino.
-Ej; Encender una Luz en un día y horario determinados, con recurrencia opcional;
-
-//*************** Clase Arduinode *****************/
 function Tarea(config) {
 	this.config = config;
 
@@ -21,6 +26,16 @@ function Tarea(config) {
 	//Setea reglas de ejecucion para el Scheduler
 	this.setExecutionRules();
 }
+/**
+* Tiempo en minutos, durante el cual se ejecuta la tarea
+* @property temporizada
+* @type String
+*/
+/**
+* Lista de dispositivos Arduino sobre la cual se ejecutan los comandos
+* @property dispositivos
+* @type Array
+*/
 Tarea.prototype = {
 	parseConfig	: function() {
 		var t = this.config;
@@ -34,13 +49,19 @@ Tarea.prototype = {
 		};
 		this.config = _.extend(this.config, parseData);
 	},
-	ejecutar: function(callback) {
+/**
+* Ejecuta una tarea.
+* Itera el array de dispositivos de la tarea,
+* extrayendo IP del dispositivo y numero de salida a Accionar
+* @method ejecutar
+* @return callback (Opcional)
+*/
+	ejecutar: function( callback ) {
 		var This = this,
 			i = 0,
 		loop = function(i) {
 			var dispositivoTarea = This.config.dispositivos[i];
 			if (dispositivoTarea) {
-				//Seteo la misma temporizacion para todos los dispositivos
 				dispositivoTarea.temporizada = This.config.temporizada;
 				dispositivoTarea.estado 	 = This.config.accion;
 
@@ -53,11 +74,17 @@ Tarea.prototype = {
 		if (This.config.dispositivos.length > i) {
 			loop(i);
 		}
-		//Termino de iterar los dispositivos de la tarea
 		else {
 			if (callback) callback();
 		}
 	},
+/**
+* Setea reglas de ejecucion para la tarea que se envia al scheduler.
+* Los parametros provienen del objeto config de la Clase Tarea
+* Parametros: Dia de ejecucion, hora, minuto, segundo
+* @method setExecutionRules
+* @return rule
+*/
 	setExecutionRules: function() {
 		var rule 			= new schedule.RecurrenceRule();
 		rule.dayOfWeek 		= this.config.dias_ejecucion;
@@ -70,6 +97,12 @@ Tarea.prototype = {
 	getExecutionRules: function() {
 		return this.executionRules;
 	},
+/**
+* Retorna el tiempo restante (en minutos) de una tarea, (si existe)
+* Se calcula a partir de la hora inicio y la duracion de la tarea
+* @method getTiempoRestante
+* @return Integer
+*/
 	getTiempoRestante: function() {
 		var t = this.config;
 		return DateConvert.minutosRestantes( t.raw_hora_inicio, t.raw_duracion );
@@ -86,6 +119,12 @@ Tarea.prototype = {
 		var t = this.config;
 		return ( DateConvert.horaActualValida( t.raw_hora_inicio, t.raw_duracion) );
 	},
+/**
+* Determina si una tarea es valida para su ejecucion
+* Se comprueba el atributo activa, fecha, hora y dias de ejecucion
+* @method isValid
+* @return Boolean
+*/
 	isValid: function() {
 
 		var t = this.config;
@@ -107,21 +146,23 @@ Tarea.prototype = {
 		return false;
 	}
 }
-
-/**************** Clase Programador de tareas *******************
-
-Clase (Singleton) para ABM de tareas.
-
-Las tareas activas, se almacenan en DataStore.tareas
-
-Permite:
-		1) Crear, eliminar, modificar y reprogramar tareas;
-		2) Observar ejecucion de tareas:
-			Se relanzan cada x tiempo, (definido en tiempoEscaneoTareas)
-			si se corta el servicio;
-
-El modulo schedule permite programar las tareas;
-
+/**
+* Clase (Singleton) para ABM de tareas.
+* El modulo schedule permite programar las tareas;
+* Permite:
+*		1) Crear, eliminar, modificar y reprogramar tareas;
+*		2) Observar ejecucion de tareas:
+*			Se relanzan cada x tiempo, (definido en tiempoEscaneoTareas)
+*			si se corta el servicio;
+*
+* @class Programador
+* @constructor
+*/
+/**
+* Parametros de configuración (Tiempo de escaneo de tareas)
+* @property config
+* @type JSON
+*/
 //*************** Clase Arduinode *****************/
 var Programador = function()
 {
@@ -129,15 +170,25 @@ var Programador = function()
 		{
 			this.config = config;
 		};
+/**
+* Se lanza al modificar una tarea existente. Quita la tarea del scheduler,
+* y la agrega nuevamente con los cambios hechos.
+* @method reprogramarTarea
+* @param _tarea la configuración de la tarea, (se parsea y se crea instancia Tarea)
+* @return null
+*/
 		this.reprogramarTarea = function( _tarea )
 		{
-			//Elimino la tarea de tareas en ejecucion
 			this.quitarTareaEnEjecucion( _tarea );
-
-			//Añado la tarea actualizada, al scheduler
 			var tarea = new Tarea( _tarea );
 			this.loadInScheduler( tarea );
 		};
+/**
+* Quita una tarea del array de tareasActivas de DataStore
+* @method quitarTareaEnEjecucion
+* @param tarea la tarea a quitar
+* @return null
+*/
 		this.quitarTareaEnEjecucion = function( tarea )
 		{
 			DataStore.tareasActivas.forEach(function(s,k,_this) {
@@ -146,23 +197,34 @@ var Programador = function()
 				}
 			});
 		};
+/**
+* Al quitar una tarea, se ejecuta la accion de apagado sobre los
+* dispositivos asociados a la misma.
+* @method quitarTarea
+* @param _tarea la configuracion de tarea a quitar. (Se parsea y se crea instancia Tarea)
+* @return null
+*/
 		this.quitarTarea = function( _tarea )
 		{
-			//Ejecuta comandos de apagado en los dispositivos de la tarea
 			_tarea.accion = 1;
 			var tarea = new Tarea( _tarea );
 			tarea.ejecutar(function() {
 				this.quitarTareaEnEjecucion( _tarea);
 			});
 		};
+/**
+* Agrega un objeto Tarea al scheduler (modulo schedule).
+* dispositivos asociados a la misma.
+* Requiere el objeto rule devuelto por tarea.getExecutionRules()
+* Registra la tarea como activa, en DataStore.tareasActivas
+* @method loadInScheduler
+* @param tarea objeto tarea (instancia de Tarea)
+* @return null
+*/
 		this.loadInScheduler = function( tarea )
 		{
 			var This = this;
-
-			//Chequeo si la tarea deberia ejecutarse en este momento
 			this.forzarEjecucion( tarea );
-
-			//Agrego tarea al Scheduler
 			var job = schedule.scheduleJob( tarea.getExecutionRules(), function() {
 				console.log("Ejecutando tarea:",tarea.config.descripcion);
 
@@ -174,6 +236,13 @@ var Programador = function()
 			job.id = tarea.config.id_tarea;
 			DataStore.tareasActivas.push(job);
 		};
+/**
+* Intenta ejecutar una tarea forzosamente. Comprobando si es valida,
+* y el tiempo restante.
+* @method forzarEjecucion
+* @param tarea objeto tarea (instancia de Tarea)
+* @return null
+*/
 		this.forzarEjecucion = function( t )
 		{
 			if ( t.config.accion == 0 && t.isValid() ) {
@@ -189,6 +258,12 @@ var Programador = function()
 				console.log("La tarea a forzar no es valida",t.config.descripcion);
 			}
 		};
+/**
+* Recorre el listado de tareas e intenta forzar la ejecucion de cada una.
+* Registra la tarea como activa, en DataStore.tareasActivas
+* @method loadInScheduler
+* @param tiempoEscaneoTareas en milisegundos
+*/
 		this.observarCambios = function()
 		{
 			var This = this;
@@ -197,27 +272,26 @@ var Programador = function()
 						" minutos ...");
 			setInterval(function()
 			{
-				//Carga tareas en Scheduler
 				DataStore.tareas.forEach(function( tarea )
 				{
-					// Creo objeto tarea, parseando la configuracion
 					var tarea = new Tarea(tarea);
 					This.forzarEjecucion(tarea);
 				});
 			},this.config.tiempoEscaneoTareas)
 		};
+
+/**
+* Importa listado de tareas desde archivo JSON, a DataStore.tareas
+* y las carga en scheduler.
+* @method loadTareas
+*/
 		this.loadTareas = function()
 		{
 			var This = this;
-
-			//Carga lista de tareas en memoria => (DataStore.tareas)
 			DataStore.getFile('tareas');
 			console.log("Importando ",DataStore.tareas.length, " tarea/s");
-
-			//Carga tareas en Scheduler
 			DataStore.tareas.forEach(function( tarea )
 			{
-				// Creo objeto tarea, parseando la configuracion
 				var tarea = new Tarea(tarea);
 				This.loadInScheduler(tarea);
 			});

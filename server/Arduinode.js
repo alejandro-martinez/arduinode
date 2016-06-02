@@ -3,7 +3,7 @@ var clases 		= require('./Clases.js'),
 	DateConvert = require('./utils/DateConvert')(),
 	_ 			= require('underscore'),
 	Dispositivo = clases.Dispositivo,
-	DataStore 	= clases.DataStore,
+	DataStore 	= require('./DataStore').DataStore,
 	net 		= require('net');
 	const ON = 0, OFF = 1;
 

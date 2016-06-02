@@ -1,79 +1,16 @@
+/**
+ * Relacionado a la programacion y ejecucion de tareas sobre los dispositivos
+ *
+ * @module
+ */
 /**************** Clases de Arduinode *******************/
 //Dependencias
 var socket 		= require('./socket')(),
 	DateConvert = require('./utils/DateConvert')(),
+	DataStore	= require('./DataStore'),
 	fs			= require('fs'),
 	_ 			= require('underscore');
 
-/**************** Clase DataStore *******************
-
-Maneja los modelos (Dispositivos y Tareas) que se almacenan
-en archivos JSON, (directorio models)
-
-//**************** Clase DataStore *****************/
-
-function DataStore() {
-	this.reader 	  = require('jsonfile');
-	this.dispositivos = [];
-	this.tareas 	  = [];
-	this.tareasActivas= [];
-	this.getFile = function(file) {
-
-		//Si el archivo solicitado no existe, se crea
-		var filePath = './models/'+file+'.json';
-		if (!fs.existsSync(filePath)) {
-			fs.writeFileSync(filePath, '[]');
-		}
-		this[file] = this.reader.readFileSync('./models/'+file+'.json');
-		return this[file];
-	};
-	this.lastID = function( tarea ) {
-		var id_tarea;
-		if (this.tareas.length) {
-			var last = _.last(this.tareas);
-			id_tarea= last.id_tarea + 1;
-		}
-		else {
-			id_tarea = 1;
-		}
-		return id_tarea;
-	};
-	this.saveModel = function( fileName, model, key, callback ) {
-		//Nuevo
-		if (model.isNew) {
-			delete model.isNew;
-			if (fileName == 'tareas') {
-				model[key] = this.lastID();
-			}
-			this[fileName].push( model );
-		}
-		else {
-			//Busco el modelo, y lo reemplazo por el recibido
-			var filter = {};
-				filter[key] = model[key];
-			_.extend(_.findWhere(this[fileName], filter ), model);
-		}
-		this.updateFile(fileName,function(response) {
-			callback(response, model)
-		});
-	};
-	this.updateFile = function(file, callback) {
-		var onWrite = function(err) {
-			callback(err);
-		}
-		//Escribo el archivo json
-		this.reader.writeFile('./models/'+file+'.json', this[file], onWrite);
-	};
-	this.deleteModel = function(fileName, filter, callback) {
-
-		//Actualiza el array, removiendo el modelo que coincide con filter
-		this[fileName] = _.without(this[fileName],_.findWhere(this[fileName], filter));
-
-		this.updateFile(fileName,function(response) {
-			callback(response)
-		});
-	};
-};
 
 /**************** Clase Dispositivo *******************
 
@@ -277,14 +214,4 @@ function SalidaFactory() {
 		}
 	}
 }
-
 exports.Dispositivo = Dispositivo;
-
-DataStore.instance = null;
-DataStore.getInstance = function(){
-    if(this.instance === null){
-        this.instance = new DataStore();
-    }
-    return this.instance;
-}
-exports.DataStore = DataStore.getInstance();
