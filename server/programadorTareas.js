@@ -133,6 +133,7 @@ var Programador = function()
 		{
 			//Elimino la tarea de tareas en ejecucion
 			this.quitarTareaEnEjecucion( _tarea );
+
 			//Añado la tarea actualizada, al scheduler
 			var tarea = new Tarea( _tarea );
 			this.loadInScheduler( tarea );
@@ -156,39 +157,34 @@ var Programador = function()
 		{
 			var This = this;
 
-			//Chequeo si la tarea es valida para ejecutarse en este momento
-			// y si la accion de la misma es Encendido (las de Apagado no se forzan)
-			if (tarea.isValid()) {
-				this.forzarEjecucion( tarea );
-			}
-			else {
-				console.log("La tarea a forzar no es valida",tarea.config.descripcion);
-			}
+			//Chequeo si la tarea deberia ejecutarse en este momento
+			this.forzarEjecucion( tarea );
+
+			//Agrego tarea al Scheduler
 			var job = schedule.scheduleJob( tarea.getExecutionRules(), function() {
 				console.log("Ejecutando tarea:",tarea.config.descripcion);
+
 				if ( tarea.isValid() ) {
 					tarea.ejecutar();
 				}
 			});
+
 			job.id = tarea.config.id_tarea;
 			DataStore.tareasActivas.push(job);
 		};
 		this.forzarEjecucion = function( t ) {
 
-			if (t.config.accion == 0) {
-				var tiempo_restante = t.isValid( t );
-				if (tiempo_restante) {
-					console.log("Tiempo restante de ",
-						t.config.descripcion,
-						DateConvert.min_a_horario(tiempo_restante)
-					);
-					t.config.estado = t.accion;
-					t.config.temporizada = tiempo_restante;
-					t.ejecutar();
-				}
+			if ( t.config.accion == 0 && t.isValid() ) {
+				var tiempo_restante = t.getTiempoRestante();
+
+				console.log("Tiempo restante de ",t.config.descripcion,
+							DateConvert.min_a_horario(tiempo_restante));
+				t.config.estado = t.accion;
+				t.config.temporizada = tiempo_restante;
+				t.ejecutar();
 			}
 			else {
-				console.log("La tarea '" + t.config.descripcion + "' es de apagado, no se obliga la ejecucion");
+				console.log("La tarea a forzar no es valida",t.config.descripcion);
 			}
 		};
 		this.observarCambios = function()
