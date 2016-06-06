@@ -1,5 +1,5 @@
 /**
- * Relacionado a la programacion y ejecucion de tareas sobre los dispositivos
+ * Módulo para la programacion y ejecucion de tareas sobre los dispositivos
  *
  * @module Programador de Tareas
  */
@@ -261,7 +261,7 @@ var Programador = function()
 /**
 * Recorre el listado de tareas e intenta forzar la ejecucion de cada una.
 * Registra la tarea como activa, en DataStore.tareasActivas
-* @method loadInScheduler
+* @method observarCambios
 * @param tiempoEscaneoTareas en milisegundos
 */
 		this.observarCambios = function()

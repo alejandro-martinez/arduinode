@@ -1,10 +1,10 @@
 /**
- * Modulo Principal de la aplicación
+ * Modulo con clase Principal de la aplicación
  * Interactua con Dispositivo y Socket, a través de una clase Facade (Arduinode)
  * @module Arduinode
  */
 
-var clases 		= require('./Clases.js'),
+var clases 		= require('./Main.js'),
 	socket 		= require('./socket')(),
 	DateConvert = require('./utils/DateConvert')(),
 	_ 			= require('underscore'),
@@ -13,20 +13,6 @@ var clases 		= require('./Clases.js'),
 	net 		= require('net');
 	const ON = 0, OFF = 1;
 
-/**************** Clase Arduinode *******************
-
-Clase (Singleton) principal de la aplicación
-
-	- Interactua con Dispositivo y Socket;
-	- Mantiene un listado de dispositivos activos
-
-Permite:
-	1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,
-	   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast
-	   a todos los sockets conectados.
-	2) Consultar listado de Salidas activas (Luces encendidas)
-
-//*************** Clase Arduinode *****************/
 /**
 * Clase (Singleton, Facade) principal de la aplicación
 * - Interactua con Dispositivo y Socket;

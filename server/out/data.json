@@ -12,21 +12,28 @@
             "fors": {},
             "namespaces": {}
         },
-        "Clases.js": {
-            "name": "Clases.js",
-            "modules": {},
-            "classes": {
-                "Dispositivo": 1
-            },
-            "fors": {},
-            "namespaces": {}
-        },
         "DataStore.js": {
             "name": "DataStore.js",
             "modules": {
                 "DataStore": 1
             },
-            "classes": {},
+            "classes": {
+                "DataStore": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Main.js": {
+            "name": "Main.js",
+            "modules": {
+                "Main": 1
+            },
+            "classes": {
+                "Dispositivo": 1,
+                "Salida": 1,
+                "Luz": 1,
+                "Persiana": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -62,22 +69,39 @@
             "namespaces": {},
             "tag": "module",
             "file": "Arduinode.js",
-            "line": 30,
-            "description": "Modulo Principal de la aplicación\nInteractua con Dispositivo y Socket, a través de una clase Facade (Arduinode)"
+            "line": 16,
+            "description": "Modulo con clase Principal de la aplicación\nInteractua con Dispositivo y Socket, a través de una clase Facade (Arduinode)"
         },
         "DataStore": {
             "name": "DataStore",
             "submodules": {},
             "elements": {},
             "classes": {
-                "Dispositivo": 1
+                "DataStore": 1
             },
             "fors": {},
             "namespaces": {},
             "tag": "module",
-            "file": "Clases.js",
-            "line": 16,
+            "file": "DataStore.js",
+            "line": 11,
             "description": "Almacena en memoria, y archivos JSON, los modelos de la aplicación.\nLista de dispositivos y salidas asociadas.\nLista de tareas programadas."
+        },
+        "Main": {
+            "name": "Main",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "Dispositivo": 1,
+                "Salida": 1,
+                "Luz": 1,
+                "Persiana": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "Main.js",
+            "line": 277,
+            "description": "Modulo con clases Dispositivo y Salida"
         },
         "Programador de Tareas": {
             "name": "Programador de Tareas",
@@ -92,7 +116,7 @@
             "tag": "module",
             "file": "programadorTareas.js",
             "line": 149,
-            "description": "Relacionado a la programacion y ejecucion de tareas sobre los dispositivos"
+            "description": "Módulo para la programacion y ejecucion de tareas sobre los dispositivos"
         }
     },
     "classes": {
@@ -107,8 +131,23 @@
             "module": "Arduinode",
             "namespace": "",
             "file": "Arduinode.js",
-            "line": 30,
+            "line": 16,
             "description": "Clase (Singleton, Facade) principal de la aplicación\n- Interactua con Dispositivo y Socket;\n- Mantiene un listado de dispositivos activos",
+            "is_constructor": 1
+        },
+        "DataStore": {
+            "name": "DataStore",
+            "shortname": "DataStore",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "DataStore",
+            "namespace": "",
+            "file": "DataStore.js",
+            "line": 11,
+            "description": "Clase (singleton) para trabajar con archivos JSON\ny almacenar los modelos de la aplicación",
             "is_constructor": 1
         },
         "Dispositivo": {
@@ -119,11 +158,68 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "module": "DataStore",
+            "module": "Main",
             "namespace": "",
-            "file": "Clases.js",
-            "line": 16,
-            "description": "Representa un Dispositivo Arduino",
+            "file": "Main.js",
+            "line": 13,
+            "description": "Representa un Dispositivo Arduino. Permite:\n1) accionar las salidas que posee, (Luces, Bombas, Persianas);\n2) Consultar lista de salidas y sus estados",
+            "is_constructor": 1
+        },
+        "Salida": {
+            "name": "Salida",
+            "shortname": "Salida",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Main",
+            "namespace": "",
+            "file": "Main.js",
+            "line": 162,
+            "description": "Representa una Salida de un Dispositivo",
+            "is_constructor": 1
+        },
+        "Luz": {
+            "name": "Luz",
+            "shortname": "Luz",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Main",
+            "namespace": "",
+            "file": "Main.js",
+            "line": 244,
+            "description": "Representa una Salida tipo Luz",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "nro_salida",
+                    "description": "Numero de Salida",
+                    "type": "Integer"
+                },
+                {
+                    "name": "_note",
+                    "description": "Descripción de Salida",
+                    "type": "String"
+                }
+            ]
+        },
+        "Persiana": {
+            "name": "Persiana",
+            "shortname": "Persiana",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Main",
+            "namespace": "",
+            "file": "Main.js",
+            "line": 277,
+            "description": "Representa una Salida tipo Persiana",
             "is_constructor": 1
         },
         "Tarea": {
@@ -161,14 +257,7 @@
     "classitems": [
         {
             "file": "Arduinode.js",
-            "line": 16,
-            "description": "Clase (Singleton) principal de la aplicación\n\t- Interactua con Dispositivo y Socket;\n\t- Mantiene un listado de dispositivos activos\nPermite:\n\t1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,\n\t   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast\n\t   a todos los sockets conectados.\n\t2) Consultar listado de Salidas activas (Luces encendidas)",
-            "class": "Arduinode",
-            "module": "Arduinode"
-        },
-        {
-            "file": "Arduinode.js",
-            "line": 39,
+            "line": 25,
             "description": "Instancia de modulo net, para recibir datos de Dispositivos Arduino reales",
             "itemtype": "property",
             "name": "socketTCP",
@@ -178,7 +267,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 44,
+            "line": 30,
             "description": "Lista de dispositivos Arduino registrados",
             "itemtype": "property",
             "name": "dispositivos",
@@ -188,7 +277,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 51,
+            "line": 37,
             "description": "Registra un socket para escuchar eventos de los dispositivos Arduino reales.\nEmite un broadcast a todos los dispositivos conectados a la aplicacion,\ncuando se produce un evento,",
             "itemtype": "method",
             "name": "listenSwitchEvents",
@@ -206,7 +295,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 84,
+            "line": 70,
             "description": "Devuelve lista de dispositivos Arduino registrados",
             "itemtype": "method",
             "name": "getAll",
@@ -224,7 +313,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 93,
+            "line": 79,
             "description": "Devuelve dispositivo filtrado por IP",
             "itemtype": "method",
             "name": "getByIP",
@@ -242,7 +331,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 102,
+            "line": 88,
             "description": "Ejecuta un comando sobre una salida de un Dispositivo",
             "itemtype": "method",
             "name": "accionar",
@@ -260,7 +349,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 115,
+            "line": 101,
             "description": "Devuelve las salidas de un Dispositivo Arduino",
             "itemtype": "method",
             "name": "getSalidas",
@@ -282,7 +371,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 129,
+            "line": 115,
             "description": "Devuelve listado de salidas de un Dispositivo, filtradas por estado = 0 (Encendidas)",
             "itemtype": "method",
             "name": "getSalidasEncendidas",
@@ -304,7 +393,7 @@
         },
         {
             "file": "Arduinode.js",
-            "line": 195,
+            "line": 181,
             "description": "Registra dispositivos cargados en el modelo (dispositivos.json), en DataStore.dispositivos\ny en atributo lista de esta clase",
             "itemtype": "method",
             "name": "load",
@@ -312,45 +401,146 @@
             "module": "Arduinode"
         },
         {
-            "file": "Clases.js",
-            "line": 1,
-            "description": "Representa un Dispositivo Arduino, y sus Salidas\nPermite:\n1) accionar las salidas que posee, (Luces, Bombas, Persianas);\n2) Consultar lista de salidas y sus estados",
-            "class": "Dispositivo",
-            "module": ""
+            "file": "DataStore.js",
+            "line": 19,
+            "description": "Listado de dispositivos Arduino registrados",
+            "itemtype": "property",
+            "name": "dispositivos",
+            "type": "Array",
+            "class": "DataStore",
+            "module": "DataStore"
         },
         {
-            "file": "Clases.js",
-            "line": 23,
-            "description": "Dirección IP del dispositivo Arduino",
+            "file": "DataStore.js",
+            "line": 24,
+            "description": "Listado de tareas programadas registradas",
+            "itemtype": "property",
+            "name": "tareas",
+            "type": "Array",
+            "class": "DataStore",
+            "module": "DataStore"
+        },
+        {
+            "file": "DataStore.js",
+            "line": 29,
+            "description": "Listado de tareas cargadas en scheduler (listas para ejecución)",
+            "itemtype": "property",
+            "name": "tareasActivas",
+            "type": "Array",
+            "class": "DataStore",
+            "module": "DataStore"
+        },
+        {
+            "file": "DataStore.js",
+            "line": 61,
+            "description": "Método para actualizar un modelo",
+            "itemtype": "method",
+            "name": "saveModel",
+            "params": [
+                {
+                    "name": "fileName",
+                    "description": "Nombre del archivo JSON",
+                    "type": "String"
+                },
+                {
+                    "name": "model",
+                    "description": "Datos del nuevo o modificado modelo",
+                    "type": "JSON"
+                },
+                {
+                    "name": "key",
+                    "description": "Clave por la cual filtrar el modelo a modificar",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "Function de retorno",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataStore",
+            "module": "DataStore"
+        },
+        {
+            "file": "DataStore.js",
+            "line": 88,
+            "description": "Método para escribir en el archivo JSON",
+            "itemtype": "method",
+            "name": "updateFile",
+            "params": [
+                {
+                    "name": "file",
+                    "description": "Nombre del modelo",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "Function de retorno",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataStore",
+            "module": "DataStore"
+        },
+        {
+            "file": "DataStore.js",
+            "line": 101,
+            "description": "Método para escribir en el archivo JSON",
+            "itemtype": "method",
+            "name": "deleteModel",
+            "params": [
+                {
+                    "name": "fileName",
+                    "description": "Nombre del archivo JSON",
+                    "type": "String"
+                },
+                {
+                    "name": "filter",
+                    "description": "Filtro para encontrar el modelo a eliminar",
+                    "type": "JSON"
+                },
+                {
+                    "name": "callback",
+                    "description": "Function de retorno",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataStore",
+            "module": "DataStore"
+        },
+        {
+            "file": "Main.js",
+            "line": 21,
+            "description": "Dirección IP del dispositivo",
             "itemtype": "property",
             "name": "ip",
             "type": "String",
             "class": "Dispositivo",
-            "module": ""
+            "module": "Main"
         },
         {
-            "file": "Clases.js",
-            "line": 28,
+            "file": "Main.js",
+            "line": 26,
             "description": "Descripción del dispositivo",
             "itemtype": "property",
             "name": "note",
             "type": "String",
             "class": "Dispositivo",
-            "module": ""
+            "module": "Main"
         },
         {
-            "file": "Clases.js",
-            "line": 33,
+            "file": "Main.js",
+            "line": 31,
             "description": "Lista de salidas (instancias de Salida) del dispositivo",
             "itemtype": "property",
             "name": "salidas",
             "type": "Array",
             "class": "Dispositivo",
-            "module": ""
+            "module": "Main"
         },
         {
-            "file": "Clases.js",
-            "line": 46,
+            "file": "Main.js",
+            "line": 44,
             "description": "Devuelve una salida por Numero.",
             "itemtype": "method",
             "name": "getSalidaByNro",
@@ -358,11 +548,11 @@
                 "description": "Salida"
             },
             "class": "Dispositivo",
-            "module": ""
+            "module": "Main"
         },
         {
-            "file": "Clases.js",
-            "line": 56,
+            "file": "Main.js",
+            "line": 54,
             "description": "Ejecuta un comando sobre una salida de un dispositivo.",
             "itemtype": "method",
             "name": "accionarSalida",
@@ -380,11 +570,11 @@
                 "description": "Boolean Resultado del comando"
             },
             "class": "Dispositivo",
-            "module": ""
+            "module": "Main"
         },
         {
-            "file": "Clases.js",
-            "line": 72,
+            "file": "Main.js",
+            "line": 70,
             "description": "Parsea los datos recibidos desde los dispositivos Arduino",
             "itemtype": "method",
             "name": "parseSalida",
@@ -402,44 +592,218 @@
                 "description": "Boolean Resultado del comando"
             },
             "class": "Dispositivo",
-            "module": ""
+            "module": "Main"
         },
         {
-            "file": "Clases.js",
-            "line": 142,
-            "description": "Representa un objeto Salida de la clase Dispositivo;\nLas instancias se crean a través de SalidaFactory,\ndependiento del atributo tipo;\nEl protocolo establece la siguiente sintaxis para enviar comandos\nal dispositivo Arduino:\n[Comando] [Nro de salida] [:] [Accion] [.] [Temporización]\ndonde:\n\t- Temporizacion [en minutos] es opcional\n\t- Accion [ 1,0 ] y  Temporizacion solo se usan cuando Comando = T\n\t- Comando: puede valer S, T, o P\n\t\tS sirve para consultar el estado de una salida\n\t\t\tUso: S + Nro de Salida\n\t\tT sirve para setear el estado de la Salida\n\t\t\tUso: T + Nro de Salida + Accion (1 o 0)\n\t\t\tEjemplo:\n\t\t\t\t\tT231 --> Apaga (OFF), a la salida numero 23\n\t\t\tEjemplo Temporizacion:\n\t\t\t\t\tT230.60 --> Activa la salida 23 por 60 (minutos)\n\t\tP sirve para accionar sobre Salidas tipo Persiana\n\t\t\tUso: P + Nro de Salida + Accion (0,1,2)\n\t\t\t\t0 --> Sube la Persiana\n\t\t\t\t1 --> Baja\n\t\t\t\t2 --> Detiene\n\t\t\tEjemplo:\n\t\t\t\t\tP251 --> Baja la persiana cuya salida es 25",
+            "file": "Main.js",
+            "line": 114,
+            "description": "Devuelve listado de salidas de un Dispositivo filtradas por Estado",
+            "itemtype": "method",
+            "name": "getSalidasByEstado",
+            "params": [
+                {
+                    "name": "_estado",
+                    "description": "Estado (0 o 1)"
+                },
+                {
+                    "name": "_array",
+                    "description": "Listado de salidas"
+                }
+            ],
+            "return": {
+                "description": "Array"
+            },
             "class": "Dispositivo",
-            "module": ""
+            "module": "Main"
         },
         {
-            "file": "DataStore.js",
-            "line": 18,
-            "description": "Listado de dispositivos Arduino registrados",
-            "itemtype": "property",
-            "name": "dispositivos",
-            "type": "Array",
-            "class": "Tarea",
-            "module": "DataStore"
+            "file": "Main.js",
+            "line": 124,
+            "description": "Devuelve listado de salidas de un Dispositivo filtradas por Ip",
+            "itemtype": "method",
+            "name": "getSalidas",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "JSON con clave: IP del Dispositivo"
+                },
+                {
+                    "name": "callback",
+                    "description": "Funcion callback que se ejecuta cuando se completa la operación"
+                }
+            ],
+            "return": {
+                "description": "Array"
+            },
+            "class": "Dispositivo",
+            "module": "Main"
         },
         {
-            "file": "DataStore.js",
-            "line": 23,
-            "description": "Listado de tareas programadas registradas",
-            "itemtype": "property",
-            "name": "tareas",
-            "type": "Array",
-            "class": "Tarea",
-            "module": "DataStore"
+            "file": "Main.js",
+            "line": 138,
+            "description": "Almacena listado de salidas en la instancia de un Dispositivo",
+            "itemtype": "method",
+            "name": "setSalidas",
+            "params": [
+                {
+                    "name": "_salidas",
+                    "description": "listado de salidas del Dispositivo",
+                    "type": "JSON Array"
+                }
+            ],
+            "class": "Dispositivo",
+            "module": "Main"
         },
         {
-            "file": "DataStore.js",
-            "line": 28,
-            "description": "Listado de tareas cargadas en scheduler (listas para ejecución)",
+            "file": "Main.js",
+            "line": 153,
+            "description": "Carga lista de dispositivos en memoria",
+            "itemtype": "method",
+            "name": "load",
+            "class": "Dispositivo",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 168,
+            "description": "Numero de salida",
             "itemtype": "property",
-            "name": "tareasActivas",
-            "type": "Array",
-            "class": "Tarea",
-            "module": "DataStore"
+            "name": "nro_salida",
+            "type": "Integer",
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 173,
+            "description": "Descripción de la salida",
+            "itemtype": "property",
+            "name": "note",
+            "type": "String",
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 178,
+            "description": "Tipo de Salida ( P o L)\nDispositivo real asociado a la salida (Luz, persiana, Bomba)\n*Bomba se trata como Luz",
+            "itemtype": "property",
+            "name": "tipo",
+            "type": "String",
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 185,
+            "description": "(Opcional) Temporizacion en minutos para activar una salida\nSe envia al socket como parte del comando. Solo es valida con salidas Tipo L\nEl dispositivo Arduino real, apaga la salida una vez agotado el tiempo de temporizada",
+            "itemtype": "property",
+            "name": "temporizada",
+            "type": "Integer",
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 192,
+            "description": "Accion a ejecutar sobre la salida\nSe envia al socket como parte inicial del atributo comando.\nSi la salida es tipo L: accion puede tomar los valores:\n--> S para consultar el estado de la salida\n--> T para encender o apagar la salida",
+            "itemtype": "property",
+            "name": "accion",
+            "type": "Integer",
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 201,
+            "description": "Estado actual de la salida (ON / OFF)\nSolo es valida con salidas tipo L\n[0, 1] Donde 0 significa ON (encendida), 1 (OFF)",
+            "itemtype": "property",
+            "name": "estado",
+            "type": "Integer",
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 208,
+            "description": "Comando a ejecutar sobre la salida\nSe envia al socket y tiene la siguiente sintaxis:\nACCION + NUMERO DE SALIDA + ESTADO ( + . TEMPORIZADA)\nEjemplo: Encender la salida numero 24 \t -> T240\nEjemplo: Encender la salida durante 1 hora -> T240.60",
+            "itemtype": "property",
+            "name": "comando",
+            "type": "Integer",
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 228,
+            "description": "Metodo switch para sobrecarga. Cada Tipo de Salida lo implementa distinto.\nInteractua con el socket enviandole un comando",
+            "itemtype": "method",
+            "name": "switch",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "Parametros para el socket, IP dispositivo, Comando, Numero de salida",
+                    "type": "JSON Array"
+                },
+                {
+                    "name": "callback",
+                    "description": "Function de retorno con resultado del comando enviado al Socket",
+                    "type": "Function"
+                }
+            ],
+            "class": "Salida",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 258,
+            "description": "Implementación de switch para Luz",
+            "itemtype": "method",
+            "name": "switch",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "Objeto JSON con la clave IP del dispositivo, numero de salida, y comando"
+                },
+                {
+                    "name": "callback",
+                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn"
+                }
+            ],
+            "class": "Luz",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 288,
+            "description": "Implementación de switch para Persiana. Utiliza la accion P",
+            "itemtype": "method",
+            "name": "switch\nUso: P + Nro de Salida + Accion (0,1,2)\n\t   \t0 --> Sube la Persiana\n\t\t1 --> Baja\n\t\t2 --> Detiene\n\t\tEjemplo: P251 --> Baja la persiana cuya salida es 25",
+            "params": [
+                {
+                    "name": "params",
+                    "description": "Objeto JSON con la clave IP del dispositivo, numero de salida, y comando"
+                },
+                {
+                    "name": "callback",
+                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn"
+                }
+            ],
+            "class": "Persiana",
+            "module": "Main"
+        },
+        {
+            "file": "Main.js",
+            "line": 307,
+            "description": "Factory para crear los distintos tipos de Salida",
+            "itemtype": "method",
+            "name": "SalidaFactory",
+            "return": {
+                "description": "Objeto Salida segun atributo tipo",
+                "type": "Salida"
+            },
+            "class": "Persiana",
+            "module": "Main"
         },
         {
             "file": "programadorTareas.js",
@@ -614,7 +978,7 @@
             "line": 261,
             "description": "Recorre el listado de tareas e intenta forzar la ejecucion de cada una.\nRegistra la tarea como activa, en DataStore.tareasActivas",
             "itemtype": "method",
-            "name": "loadInScheduler",
+            "name": "observarCambios",
             "params": [
                 {
                     "name": "tiempoEscaneoTareas",
@@ -654,16 +1018,20 @@
     ],
     "warnings": [
         {
-            "message": "Missing item type\nClase (Singleton) principal de la aplicación\n\t- Interactua con Dispositivo y Socket;\n\t- Mantiene un listado de dispositivos activos\nPermite:\n\t1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,\n\t   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast\n\t   a todos los sockets conectados.\n\t2) Consultar listado de Salidas activas (Luces encendidas)",
-            "line": " Arduinode.js:16"
+            "message": "replacing incorrect tag: params with param",
+            "line": " Main.js:228"
         },
         {
-            "message": "Missing item type\nRepresenta un Dispositivo Arduino, y sus Salidas\nPermite:\n1) accionar las salidas que posee, (Luces, Bombas, Persianas);\n2) Consultar lista de salidas y sus estados",
-            "line": " Clases.js:1"
+            "message": "replacing incorrect tag: params with param",
+            "line": " Main.js:228"
         },
         {
-            "message": "Missing item type\nRepresenta un objeto Salida de la clase Dispositivo;\nLas instancias se crean a través de SalidaFactory,\ndependiento del atributo tipo;\nEl protocolo establece la siguiente sintaxis para enviar comandos\nal dispositivo Arduino:\n[Comando] [Nro de salida] [:] [Accion] [.] [Temporización]\ndonde:\n\t- Temporizacion [en minutos] es opcional\n\t- Accion [ 1,0 ] y  Temporizacion solo se usan cuando Comando = T\n\t- Comando: puede valer S, T, o P\n\t\tS sirve para consultar el estado de una salida\n\t\t\tUso: S + Nro de Salida\n\t\tT sirve para setear el estado de la Salida\n\t\t\tUso: T + Nro de Salida + Accion (1 o 0)\n\t\t\tEjemplo:\n\t\t\t\t\tT231 --> Apaga (OFF), a la salida numero 23\n\t\t\tEjemplo Temporizacion:\n\t\t\t\t\tT230.60 --> Activa la salida 23 por 60 (minutos)\n\t\tP sirve para accionar sobre Salidas tipo Persiana\n\t\t\tUso: P + Nro de Salida + Accion (0,1,2)\n\t\t\t\t0 --> Sube la Persiana\n\t\t\t\t1 --> Baja\n\t\t\t\t2 --> Detiene\n\t\t\tEjemplo:\n\t\t\t\t\tP251 --> Baja la persiana cuya salida es 25",
-            "line": " Clases.js:142"
+            "message": "replacing incorrect tag: params with param",
+            "line": " Main.js:244"
+        },
+        {
+            "message": "replacing incorrect tag: params with param",
+            "line": " Main.js:244"
         }
     ]
 }

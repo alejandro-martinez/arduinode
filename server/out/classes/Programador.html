@@ -39,8 +39,12 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/Arduinode.html">Arduinode</a></li>
+                                <li><a href="../classes/DataStore.html">DataStore</a></li>
                                 <li><a href="../classes/Dispositivo.html">Dispositivo</a></li>
+                                <li><a href="../classes/Luz.html">Luz</a></li>
+                                <li><a href="../classes/Persiana.html">Persiana</a></li>
                                 <li><a href="../classes/Programador.html">Programador</a></li>
+                                <li><a href="../classes/Salida.html">Salida</a></li>
                                 <li><a href="../classes/Tarea.html">Tarea</a></li>
                             </ul>
                 
@@ -48,6 +52,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/Arduinode.html">Arduinode</a></li>
                                 <li><a href="../modules/DataStore.html">DataStore</a></li>
+                                <li><a href="../modules/Main.html">Main</a></li>
                                 <li><a href="../modules/Programador de Tareas.html">Programador de Tareas</a></li>
                             </ul>
                         </div>
@@ -165,11 +170,11 @@ si se corta el servicio;</p>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_loadInScheduler">loadInScheduler</a>
+                                <a href="#method_loadTareas">loadTareas</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_loadTareas">loadTareas</a>
+                                <a href="#method_observarCambios">observarCambios</a>
 
                             </li>
                             <li class="index-item method">
@@ -338,8 +343,40 @@ Registra la tarea como activa, en DataStore.tareasActivas</p>
 
 
 </div>
-<div id="method_loadInScheduler" class="method item">
-    <h3 class="name"><code>loadInScheduler</code></h3>
+<div id="method_loadTareas" class="method item">
+    <h3 class="name"><code>loadTareas</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/programadorTareas.js.html#l283"><code>programadorTareas.js:283</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Importa listado de tareas desde archivo JSON, a DataStore.tareas
+y las carga en scheduler.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_observarCambios" class="method item">
+    <h3 class="name"><code>observarCambios</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
@@ -389,38 +426,6 @@ Registra la tarea como activa, en DataStore.tareasActivas</p>
                 </li>
             </ul>
         </div>
-
-
-
-</div>
-<div id="method_loadTareas" class="method item">
-    <h3 class="name"><code>loadTareas</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/programadorTareas.js.html#l283"><code>programadorTareas.js:283</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Importa listado de tareas desde archivo JSON, a DataStore.tareas
-y las carga en scheduler.</p>
-
-    </div>
-
 
 
 

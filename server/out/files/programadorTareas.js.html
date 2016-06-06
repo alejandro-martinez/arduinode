@@ -39,8 +39,12 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/Arduinode.html">Arduinode</a></li>
+                                <li><a href="../classes/DataStore.html">DataStore</a></li>
                                 <li><a href="../classes/Dispositivo.html">Dispositivo</a></li>
+                                <li><a href="../classes/Luz.html">Luz</a></li>
+                                <li><a href="../classes/Persiana.html">Persiana</a></li>
                                 <li><a href="../classes/Programador.html">Programador</a></li>
+                                <li><a href="../classes/Salida.html">Salida</a></li>
                                 <li><a href="../classes/Tarea.html">Tarea</a></li>
                             </ul>
                 
@@ -48,6 +52,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/Arduinode.html">Arduinode</a></li>
                                 <li><a href="../modules/DataStore.html">DataStore</a></li>
+                                <li><a href="../modules/Main.html">Main</a></li>
                                 <li><a href="../modules/Programador de Tareas.html">Programador de Tareas</a></li>
                             </ul>
                         </div>
@@ -87,7 +92,7 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- * Relacionado a la programacion y ejecucion de tareas sobre los dispositivos
+ * Módulo para la programacion y ejecucion de tareas sobre los dispositivos
  *
  * @module Programador de Tareas
  */
@@ -349,7 +354,7 @@ var Programador = function()
 /**
 * Recorre el listado de tareas e intenta forzar la ejecucion de cada una.
 * Registra la tarea como activa, en DataStore.tareasActivas
-* @method loadInScheduler
+* @method observarCambios
 * @param tiempoEscaneoTareas en milisegundos
 */
 		this.observarCambios = function()

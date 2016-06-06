@@ -39,8 +39,12 @@
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
                                 <li><a href="../classes/Arduinode.html">Arduinode</a></li>
+                                <li><a href="../classes/DataStore.html">DataStore</a></li>
                                 <li><a href="../classes/Dispositivo.html">Dispositivo</a></li>
+                                <li><a href="../classes/Luz.html">Luz</a></li>
+                                <li><a href="../classes/Persiana.html">Persiana</a></li>
                                 <li><a href="../classes/Programador.html">Programador</a></li>
+                                <li><a href="../classes/Salida.html">Salida</a></li>
                                 <li><a href="../classes/Tarea.html">Tarea</a></li>
                             </ul>
                 
@@ -48,6 +52,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/Arduinode.html">Arduinode</a></li>
                                 <li><a href="../modules/DataStore.html">DataStore</a></li>
+                                <li><a href="../modules/Main.html">Main</a></li>
                                 <li><a href="../modules/Programador de Tareas.html">Programador de Tareas</a></li>
                             </ul>
                         </div>
@@ -87,12 +92,12 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 /**
- * Modulo Principal de la aplicación
+ * Modulo con clase Principal de la aplicación
  * Interactua con Dispositivo y Socket, a través de una clase Facade (Arduinode)
  * @module Arduinode
  */
 
-var clases 		= require(&#x27;./Clases.js&#x27;),
+var clases 		= require(&#x27;./Main.js&#x27;),
 	socket 		= require(&#x27;./socket&#x27;)(),
 	DateConvert = require(&#x27;./utils/DateConvert&#x27;)(),
 	_ 			= require(&#x27;underscore&#x27;),
@@ -101,20 +106,6 @@ var clases 		= require(&#x27;./Clases.js&#x27;),
 	net 		= require(&#x27;net&#x27;);
 	const ON = 0, OFF = 1;
 
-/**************** Clase Arduinode *******************
-
-Clase (Singleton) principal de la aplicación
-
-	- Interactua con Dispositivo y Socket;
-	- Mantiene un listado de dispositivos activos
-
-Permite:
-	1) Escuchar eventos de los dispositivos reales, a través de listenSwitchEvents,
-	   cuando se produce un evento (por Ej; switch de una Luz), se envía un broadcast
-	   a todos los sockets conectados.
-	2) Consultar listado de Salidas activas (Luces encendidas)
-
-//*************** Clase Arduinode *****************/
 /**
 * Clase (Singleton, Facade) principal de la aplicación
 * - Interactua con Dispositivo y Socket;
