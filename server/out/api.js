@@ -20,12 +20,12 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "Arduinode",
             "name": "Arduinode",
-            "description": "Modulo con clase Principal de la aplicación\nInteractua con Dispositivo y Socket, a través de una clase Facade (Arduinode)"
+            "description": "Módulo con clase Principal de la aplicación\nInteractua con Dispositivo y Socket, a través de una clase Facade (Arduinode)"
         },
         {
             "displayName": "DataStore",
             "name": "DataStore",
-            "description": "Almacena en memoria, y archivos JSON, los modelos de la aplicación.\nLista de dispositivos y salidas asociadas.\nLista de tareas programadas."
+            "description": "Módulo para el almacenamiento en memoria, y archivos JSON,\nde los modelos de la aplicación.\nLista de dispositivos y salidas asociadas.\nLista de tareas programadas."
         },
         {
             "displayName": "Main",

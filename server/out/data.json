@@ -48,13 +48,6 @@
             },
             "fors": {},
             "namespaces": {}
-        },
-        "server.js": {
-            "name": "server.js",
-            "modules": {},
-            "classes": {},
-            "fors": {},
-            "namespaces": {}
         }
     },
     "modules": {
@@ -70,7 +63,7 @@
             "tag": "module",
             "file": "Arduinode.js",
             "line": 16,
-            "description": "Modulo con clase Principal de la aplicación\nInteractua con Dispositivo y Socket, a través de una clase Facade (Arduinode)"
+            "description": "Módulo con clase Principal de la aplicación\nInteractua con Dispositivo y Socket, a través de una clase Facade (Arduinode)"
         },
         "DataStore": {
             "name": "DataStore",
@@ -83,8 +76,8 @@
             "namespaces": {},
             "tag": "module",
             "file": "DataStore.js",
-            "line": 11,
-            "description": "Almacena en memoria, y archivos JSON, los modelos de la aplicación.\nLista de dispositivos y salidas asociadas.\nLista de tareas programadas."
+            "line": 12,
+            "description": "Módulo para el almacenamiento en memoria, y archivos JSON,\nde los modelos de la aplicación.\nLista de dispositivos y salidas asociadas.\nLista de tareas programadas."
         },
         "Main": {
             "name": "Main",
@@ -146,7 +139,7 @@
             "module": "DataStore",
             "namespace": "",
             "file": "DataStore.js",
-            "line": 11,
+            "line": 12,
             "description": "Clase (singleton) para trabajar con archivos JSON\ny almacenar los modelos de la aplicación",
             "is_constructor": 1
         },
@@ -402,7 +395,7 @@
         },
         {
             "file": "DataStore.js",
-            "line": 19,
+            "line": 20,
             "description": "Listado de dispositivos Arduino registrados",
             "itemtype": "property",
             "name": "dispositivos",
@@ -412,7 +405,7 @@
         },
         {
             "file": "DataStore.js",
-            "line": 24,
+            "line": 25,
             "description": "Listado de tareas programadas registradas",
             "itemtype": "property",
             "name": "tareas",
@@ -422,7 +415,7 @@
         },
         {
             "file": "DataStore.js",
-            "line": 29,
+            "line": 30,
             "description": "Listado de tareas cargadas en scheduler (listas para ejecución)",
             "itemtype": "property",
             "name": "tareasActivas",
@@ -432,7 +425,7 @@
         },
         {
             "file": "DataStore.js",
-            "line": 61,
+            "line": 62,
             "description": "Método para actualizar un modelo",
             "itemtype": "method",
             "name": "saveModel",
@@ -463,7 +456,7 @@
         },
         {
             "file": "DataStore.js",
-            "line": 88,
+            "line": 87,
             "description": "Método para escribir en el archivo JSON",
             "itemtype": "method",
             "name": "updateFile",
@@ -484,7 +477,7 @@
         },
         {
             "file": "DataStore.js",
-            "line": 101,
+            "line": 99,
             "description": "Método para escribir en el archivo JSON",
             "itemtype": "method",
             "name": "deleteModel",
@@ -778,7 +771,7 @@
             "line": 288,
             "description": "Implementación de switch para Persiana. Utiliza la accion P",
             "itemtype": "method",
-            "name": "switch\nUso: P + Nro de Salida + Accion (0,1,2)\n\t   \t0 --> Sube la Persiana\n\t\t1 --> Baja\n\t\t2 --> Detiene\n\t\tEjemplo: P251 --> Baja la persiana cuya salida es 25",
+            "name": "switch",
             "params": [
                 {
                     "name": "params",
@@ -786,7 +779,7 @@
                 },
                 {
                     "name": "callback",
-                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn"
+                    "description": "Funcion callback que se ejecuta cuando se completa la operaciòn\n\nUso: P + Nro de Salida + Accion (0,1,2)\n\t   \t0 --> Sube la Persiana\n\t\t1 --> Baja\n\t\t2 --> Detiene\n\t\tEjemplo: P251 --> Baja la persiana cuya salida es 25"
                 }
             ],
             "class": "Persiana",
@@ -794,7 +787,7 @@
         },
         {
             "file": "Main.js",
-            "line": 307,
+            "line": 308,
             "description": "Factory para crear los distintos tipos de Salida",
             "itemtype": "method",
             "name": "SalidaFactory",
@@ -995,24 +988,6 @@
             "itemtype": "method",
             "name": "loadTareas",
             "class": "Programador",
-            "module": "Programador de Tareas"
-        },
-        {
-            "file": "server.js",
-            "line": 26,
-            "description": "Intenta ejecutar una tarea forzosamente. Comprobando si es valida,\ny el tiempo restante.",
-            "itemtype": "method",
-            "name": "forzarEjecucion",
-            "params": [
-                {
-                    "name": "tarea",
-                    "description": "objeto tarea (instancia de Tarea)"
-                }
-            ],
-            "return": {
-                "description": "null"
-            },
-            "class": "",
             "module": "Programador de Tareas"
         }
     ],

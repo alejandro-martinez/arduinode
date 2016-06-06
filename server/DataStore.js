@@ -1,5 +1,6 @@
 /**
- * Almacena en memoria, y archivos JSON, los modelos de la aplicación.
+ * Módulo para el almacenamiento en memoria, y archivos JSON,
+ * de los modelos de la aplicación.
  * Lista de dispositivos y salidas asociadas.
  * Lista de tareas programadas.
  * @module DataStore

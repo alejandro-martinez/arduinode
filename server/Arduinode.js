@@ -1,5 +1,5 @@
 /**
- * Modulo con clase Principal de la aplicación
+ * Módulo con clase Principal de la aplicación
  * Interactua con Dispositivo y Socket, a través de una clase Facade (Arduinode)
  * @module Arduinode
  */
