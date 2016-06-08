@@ -1,22 +1,8 @@
 <div>
 	<form novalidate class="simple-form" name="salidaForm" ng-model="salida">
-		<input type="hidden" name="x" ng-model="ngDialogData.x" />
-		<input type="hidden" name="y" ng-model="ngDialogData.y" />
-		<input type="hidden" name="id_planta" ng-model="ngDialogData.id_planta" />
-		<input type="hidden" name="tipo" ng-model="ngDialogData.tipo" />
 		<h3>{{(editing) ? "Modificar salida: " + salida.nro_salida : "Nueva salida" }}</h3>
 
-	    <div ng-show="{{!salida.nro_salida && showDispositivos}}">
-			<label>Dispositivo<br>
-			<select required id="dispositivo_slt"
-			ng-options="disp.id_disp as disp.note for disp in dispositivos"
-			ng-change="changeDispositivo()"
-			ng-model="disp.id_disp" name="dispositivo_id">
-			</select>
-			</label>
-		</div>
-
-		<div ng-show="{{!salida.nro && showSalidas}}">
+  		<div ng-show="{{!salida.nro && showSalidas}}">
 			<label>Salidas<br>
 			<select ng-options="salida as salida.note for salida in salidas"
 			ng-model="salidaData"></select>
@@ -27,10 +13,10 @@
 				<textarea ng-model="salida.note"></textarea>
 			</label>
 	    </div>
-	    <ul class="inlineButtons actionsPopup">
-			<li>
-			<input class="button" type="submit" ng-click="save(salida, salidaData)" value="Guardar" />
-			</li>
+	    	<ul class="inlineButtons actionsPopup">
+		 <li>
+		   <input class="button" type="submit" ng-click="save(salida, salidaData)" value="Guardar" />
+		 </li>
 		</ul>
 	    </div>
 	</form>
